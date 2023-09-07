@@ -6,13 +6,17 @@ var HOLE_CARDS = 2
 var COMM_CARDS = 5
 
 var HAND_RANKS = {
-	"SF": 8,
-	"4K": 7,
-	"FH": 6,
-	"FL": 5,
-	"ST": 4,
-	"3K": 3,
-	"2P": 2,
-	"1P": 1,
-	"HC": 0
+	"5K": 900, # 5-of-a-kind
+	"SF": 800, # Straight flush
+	"4K": 700, # 4-of-a-kind
+	"FH": 600, # Full house
+	"FL": 500, # Flush
+	"ST": 400, # Straight
+	"3K": 300, # 3-of-a-kind
+	"2P": 200, # 2 pairs
+	"1P": 100, # 1 pair
+	"HC": 0 # High card
 }
+
+func get_value(card: int): return card % VALS_PER_SUIT
+func get_suit(card: int): return (int)(card / VALS_PER_SUIT)
