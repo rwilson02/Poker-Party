@@ -1,6 +1,11 @@
 2a60927148abd1d33b818b535e306557
-::res://::1694057984
+::res://::1694121149
 icon.svg::CompressedTexture2D::1717295382922285159::1693779402::1693779418::1::::<><>::
-::res://scripts/::1693954908
-hand.gd::GDScript::-1::1693954261::0::1::::Hand<>RefCounted<>::
-rules.gd::GDScript::-1::1693954908::0::1::::<>Node<>::
+::res://scenes/::1694064624
+::res://scenes/debug/::1694121025
+test_hands.tscn::PackedScene::129484655841760468::1694121025::0::1::::<><>::res://scripts/debug/hand_generation.gd
+::res://scripts/::1694121025
+hand.gd::GDScript::-1::1694120651::0::1::::Hand<>RefCounted<>::
+rules.gd::GDScript::-1::1694121134::0::1::::<>Node<>::
+::res://scripts/debug/::1694118911
+hand_generation.gd::GDScript::-1::1694118911::0::1::::<>Node<>::
