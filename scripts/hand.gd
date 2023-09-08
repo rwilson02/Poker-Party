@@ -32,12 +32,12 @@ func classify():
 	runs.sort_custom(func(a,b): return a[0] > b[0])
 	
 	match [is_straight, is_flush]:
-		[true, true]:
-			self.rank = "SF"
+		[true, var also_flush]:
 			self.kickerA = self.cards.front()
-		[true, false]:
-			self.rank = "ST"
-			self.kickerA = self.cards.front()
+			if Rules.get_value(self.kickerA) == Rules.VALS_PER_SUIT - 1:
+				if Rules.get_value(self.cards[1]) == 3:
+					self.kickerA = self.cards[1]
+			self.rank = "SF" if also_flush else "ST"
 		[false, true]:
 			self.rank = "FL"
 		[false, false]:
@@ -46,10 +46,11 @@ func classify():
 				1:
 					self.kickerA = runs[0][1]
 					match runs[0][0]:
-						2: self.rank = "1P"
-						3: self.rank = "3K"
-						4: self.rank = "4K"
+						6: self.rank = "6K"
 						5: self.rank = "5K"
+						4: self.rank = "4K"
+						3: self.rank = "3K"
+						2: self.rank = "1P"
 				2:
 					self.kickerA = runs[0][1]
 					self.kickerB = runs[1][1]
@@ -76,6 +77,9 @@ func get_name():
 	var properB = Rules.get_proper_value(kickerB)
 	
 	match rank:
+		"6K":
+			hand_name = "6-of-a-kind (%ss)"
+			return hand_name % properA
 		"5K":
 			hand_name = "5-of-a-kind (%ss)"
 			return hand_name % properA
@@ -109,6 +113,25 @@ func get_name():
 		"":
 			hand_name = "Invalid hand"
 
+func sequential(array):
+	var is_sequential = true
+	for i in array.size() - 1:
+		is_sequential = is_sequential and (array[i] - 1 == array[i+1])
+		if not is_sequential: break
+	
+	var ace_low_test = range(array.size() - 1)
+	ace_low_test.append(Rules.VALS_PER_SUIT - 1)
+	ace_low_test.reverse()
+	
+	return is_sequential or (array == ace_low_test)
+
+func all_equal(array):
+	var equal = true
+	for i in array.size() - 1:
+		equal = equal and (array[i] == array[i+1])
+		if not equal: break
+	return equal
+
 static func sort(a: Hand, b:Hand) -> bool:
 	if a.rank != b.rank:
 		return Rules.HAND_RANKS[a.rank] > Rules.HAND_RANKS[b.rank]
@@ -122,30 +145,6 @@ static func sort(a: Hand, b:Hand) -> bool:
 		return a.cards.map(Rules.get_value) > b.cards.map(Rules.get_value)
 
 static func get_best_hand(given_cards: Array, hand_size: int):
-#	var spans = cards.size() - hand_size
-#
-#	var best_straight = null
-#	var best_flush = null
-#	var best_combo = null
-#
-#	cards.sort()
-#
-#	# Determine best flush
-#	var flushes: Array
-#	for suit in Rules.SUITS:
-#		var possible_flush = cards.filter(func(val): Rules.get_suit(val) == suit)
-#		if possible_flush.size() >= hand_size:
-#			flushes.append(possible_flush.slice(0, hand_size))
-#
-#	flushes.sort()
-#	best_flush = flushes.front()
-#
-#	# Determine best straight
-#	for i in spans + 1:
-#		var cut = cards.slice(i, hand_size + i)
-#		if best_straight == null \
-#		and cut.reduce(func(accum, num): return accum + num, 0)/hand_size == cut[2]:
-#			best_straight = cut
 	var best_hand: Hand = Hand.new([])
 	var possible_hands = get_combinations(given_cards, hand_size)
 	
@@ -154,25 +153,6 @@ static func get_best_hand(given_cards: Array, hand_size: int):
 		best_hand = new_hand if Hand.sort(new_hand, best_hand) else best_hand
 	
 	return best_hand
-
-func sequential(array):
-	var is_sequential = true
-	for i in array.size() - 1:
-		is_sequential = is_sequential and (array[i] - 1 == array[i+1])
-		if not is_sequential: break
-	
-	var ace_low_test = range(array.size() - 1)
-	ace_low_test.reverse()
-	ace_low_test.append(Rules.VALS_PER_SUIT - 1)
-	
-	return is_sequential or (array == ace_low_test)
-
-func all_equal(array):
-	var equal = true
-	for i in array.size() - 1:
-		equal = equal and (array[i] == array[i+1])
-		if not equal: break
-	return equal
 
 static func get_combinations(n: Array, k: int):
 	var returned = []

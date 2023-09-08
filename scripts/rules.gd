@@ -22,7 +22,8 @@ var HAND_RANKS = {
 	# 6-card exclusives (values estimated)
 	"CR": 550, # Crowd (not-quite-full house)
 	"3P": 570, # 3 pair
-	"2T": 590  # 2 trips
+	"2T": 590, # 2 trips
+	"6K": 999  # 6-of-a-kind
 }
 
 func get_value(card: int): return card % VALS_PER_SUIT

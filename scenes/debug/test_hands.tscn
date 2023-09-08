@@ -11,114 +11,127 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_yr0r1")
 
-[node name="Config" type="Panel" parent="."]
+[node name="Config" type="TabContainer" parent="."]
 layout_mode = 0
 offset_left = 135.0
-offset_top = 202.0
-offset_right = 405.0
-offset_bottom = 517.0
+offset_top = 200.0
+offset_right = 415.0
+offset_bottom = 520.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Config"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -117.0
-offset_top = -138.0
-offset_right = 117.0
-offset_bottom = 138.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Hole" type="HBoxContainer" parent="Config/VBoxContainer"]
+[node name="Deck" type="VBoxContainer" parent="Config"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Config/VBoxContainer/Hole"]
+[node name="Hole" type="HBoxContainer" parent="Config/Deck"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Config/Deck/Hole"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Hole Cards: "
 horizontal_alignment = 2
 
-[node name="SpinBox" type="SpinBox" parent="Config/VBoxContainer/Hole"]
+[node name="SpinBox" type="SpinBox" parent="Config/Deck/Hole"]
 layout_mode = 2
 min_value = 1.0
 max_value = 3.0
 value = 2.0
 
-[node name="Comm" type="HBoxContainer" parent="Config/VBoxContainer"]
+[node name="Comm" type="HBoxContainer" parent="Config/Deck"]
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="Config/VBoxContainer/Comm"]
+[node name="Label" type="Label" parent="Config/Deck/Comm"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Community Cards: "
 horizontal_alignment = 2
 
-[node name="SpinBox" type="SpinBox" parent="Config/VBoxContainer/Comm"]
+[node name="SpinBox" type="SpinBox" parent="Config/Deck/Comm"]
 layout_mode = 2
 min_value = 3.0
 max_value = 7.0
 value = 5.0
 
-[node name="Control" type="Control" parent="Config/VBoxContainer"]
+[node name="Control" type="Control" parent="Config/Deck"]
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 
-[node name="Hand" type="HBoxContainer" parent="Config/VBoxContainer"]
+[node name="Hand" type="HBoxContainer" parent="Config/Deck"]
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="Config/VBoxContainer/Hand"]
+[node name="Label" type="Label" parent="Config/Deck/Hand"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Cards in a Hand: "
 horizontal_alignment = 2
 
-[node name="SpinBox" type="SpinBox" parent="Config/VBoxContainer/Hand"]
+[node name="SpinBox" type="SpinBox" parent="Config/Deck/Hand"]
 layout_mode = 2
 min_value = 4.0
 max_value = 6.0
 value = 5.0
 
-[node name="Suits" type="HBoxContainer" parent="Config/VBoxContainer"]
+[node name="Suits" type="HBoxContainer" parent="Config/Deck"]
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="Config/VBoxContainer/Suits"]
+[node name="Label" type="Label" parent="Config/Deck/Suits"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Suits in the Deck: "
 horizontal_alignment = 2
 
-[node name="SpinBox" type="SpinBox" parent="Config/VBoxContainer/Suits"]
+[node name="SpinBox" type="SpinBox" parent="Config/Deck/Suits"]
 layout_mode = 2
 min_value = 2.0
 max_value = 6.0
 value = 4.0
 
-[node name="Values" type="HBoxContainer" parent="Config/VBoxContainer"]
+[node name="Values" type="HBoxContainer" parent="Config/Deck"]
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="Config/VBoxContainer/Values"]
+[node name="Label" type="Label" parent="Config/Deck/Values"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Cards per Suit: "
 horizontal_alignment = 2
 
-[node name="SpinBox" type="SpinBox" parent="Config/VBoxContainer/Values"]
+[node name="SpinBox" type="SpinBox" parent="Config/Deck/Values"]
 layout_mode = 2
 min_value = 7.0
 max_value = 19.0
 step = 3.0
 value = 13.0
 
-[node name="Control2" type="Control" parent="Config/VBoxContainer"]
+[node name="Control2" type="Control" parent="Config/Deck"]
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 
-[node name="Button" type="Button" parent="Config/VBoxContainer"]
+[node name="Generate" type="Button" parent="Config/Deck"]
 layout_mode = 2
 text = "Test Hand Generation"
+
+[node name="Hand" type="VBoxContainer" parent="Config"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Config/Hand"]
+layout_mode = 2
+text = "Lets you test how the program gets the best hand out of a particular set of inputs, subject to the rules on the other tab.
+
+Enter a list of values from 0 (inclusive) to %s (exclusive), separated by spaces."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="HandInput" type="LineEdit" parent="Config/Hand"]
+layout_mode = 2
+
+[node name="TestHand" type="Button" parent="Config/Hand"]
+layout_mode = 2
+text = "Test Specific Hand"
 
 [node name="Output" type="Panel" parent="."]
 layout_mode = 0
@@ -150,4 +163,6 @@ drag_and_drop_selection_enabled = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 
-[connection signal="pressed" from="Config/VBoxContainer/Button" to="." method="do_generation_test"]
+[connection signal="tab_changed" from="Config" to="." method="on_tab_changed"]
+[connection signal="pressed" from="Config/Deck/Generate" to="." method="do_generation_test"]
+[connection signal="pressed" from="Config/Hand/TestHand" to="." method="do_hand_test"]
