@@ -87,3 +87,6 @@ func on_tab_changed(tab):
 	if tab == 1:
 		set_rules()
 		hand_explainer.text = explanation % (Rules.SUITS * Rules.VALS_PER_SUIT)
+
+func on_quit():
+	get_tree().quit()

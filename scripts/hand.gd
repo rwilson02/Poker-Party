@@ -60,9 +60,11 @@ func classify():
 							self.rank = "2P"
 						[3, 3]:
 							self.rank = "2T"
-						_:
-							self.rank = "CR" if groups[0] + groups[1] < cards.size() \
-							else "FH"
+						[_, _]:
+							if groups[0] + groups[1] < cards.size():
+								self.rank = "CR"
+							else: 
+								self.rank = "FH"
 				3:
 					self.rank = "3P"
 					self.kickerA = runs[0][1]
@@ -91,6 +93,15 @@ func get_name():
 			return hand_name % properA
 		"FH":
 			hand_name = "Full house (%ss over %ss)"
+			return hand_name % [properA, properB]
+		"2T":
+			hand_name = "Two trips (%ss over %ss)"
+			return hand_name % [properA, properB]
+		"3P":
+			hand_name = "3 pair (%ss over %ss over %ss)"
+			return hand_name % [Rules.get_proper_value(kickerC), properB, properA]
+		"CR":
+			hand_name = "Crowd (%ss and %ss)"
 			return hand_name % [properA, properB]
 		"FL":
 			hand_name = "Flush"

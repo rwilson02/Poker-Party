@@ -163,6 +163,20 @@ drag_and_drop_selection_enabled = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 
+[node name="Button" type="Button" parent="."]
+modulate = Color(1, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = -46.0
+offset_right = 75.0
+offset_bottom = -15.0
+grow_vertical = 0
+text = "Quit"
+
 [connection signal="tab_changed" from="Config" to="." method="on_tab_changed"]
 [connection signal="pressed" from="Config/Deck/Generate" to="." method="do_generation_test"]
 [connection signal="pressed" from="Config/Hand/TestHand" to="." method="do_hand_test"]
+[connection signal="pressed" from="Button" to="." method="on_quit"]
