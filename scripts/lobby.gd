@@ -112,9 +112,16 @@ func on_join_button():
 	join_game(address_bar.text)
 
 func on_leave_button():
-	_on_player_disconnected(multiplayer.get_unique_id())
+	player_disconnected.emit(multiplayer.get_unique_id())
 	remove_multiplayer_peer()
 	update_player_display()
 	
 	leave_button.visible = false
 	other_buttons.visible = true
+
+func on_start_button():
+	start_game.rpc()
+
+@rpc("call_local", "reliable")
+func start_game():
+	get_parent().start_game()

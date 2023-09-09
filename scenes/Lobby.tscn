@@ -88,4 +88,5 @@ text = "Leave Game"
 
 [connection signal="pressed" from="Control/HBoxContainer/Create" to="." method="create_game"]
 [connection signal="pressed" from="Control/HBoxContainer/VBoxContainer/Join" to="." method="on_join_button"]
+[connection signal="pressed" from="Control/HostButton" to="." method="on_start_button"]
 [connection signal="pressed" from="Control/PlayerButton" to="." method="on_leave_button"]
