@@ -65,5 +65,27 @@ layout_mode = 2
 size_flags_vertical = 3
 text = "Join Game"
 
+[node name="HostButton" type="Button" parent="Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+disabled = true
+text = "Start Game"
+
+[node name="PlayerButton" type="Button" parent="Control"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Leave Game"
+
 [connection signal="pressed" from="Control/HBoxContainer/Create" to="." method="create_game"]
 [connection signal="pressed" from="Control/HBoxContainer/VBoxContainer/Join" to="." method="on_join_button"]
+[connection signal="pressed" from="Control/PlayerButton" to="." method="on_leave_button"]

@@ -19,6 +19,9 @@ var player_info = {
 
 @onready var player_display = $PlayerDisplay/MarginContainer/RichTextLabel
 @onready var address_bar = $Control/HBoxContainer/VBoxContainer/Address
+@onready var other_buttons = $Control/HBoxContainer
+@onready var start_button = $Control/HostButton
+@onready var leave_button = $Control/PlayerButton
 
 func _ready():
 	multiplayer.peer_connected.connect(_on_player_connected)
@@ -27,6 +30,7 @@ func _ready():
 	multiplayer.connection_failed.connect(_on_connected_fail)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	player_connected.connect(update_player_display)
+	player_disconnected.connect(update_player_display)
 
 func join_game(address = ""):
 	if address.is_empty():
@@ -36,6 +40,9 @@ func join_game(address = ""):
 	var error = peer.create_client(address, PORT)
 	if error: return error
 	multiplayer.multiplayer_peer = peer
+	
+	other_buttons.visible = false
+	leave_button.visible = true
 
 func create_game():
 	var peer = ENetMultiplayerPeer.new()
@@ -45,6 +52,8 @@ func create_game():
 	
 	players[1] = player_info
 	player_connected.emit(1, player_info)
+	other_buttons.visible = false
+	start_button.visible = true
 
 func remove_multiplayer_peer():
 	multiplayer.multiplayer_peer = null
@@ -57,10 +66,12 @@ func _register_player(new_player_info):
 	var new_player_id = multiplayer.get_remote_sender_id()
 	players[new_player_id] = new_player_info
 	player_connected.emit(new_player_id, new_player_info)
+	test_start()
 
 func _on_player_disconnected(id):
 	players.erase(id)
 	player_disconnected.emit(id)
+	test_start()
 
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()
@@ -74,19 +85,36 @@ func _on_server_disconnected():
 	remove_multiplayer_peer()
 	server_disconnected.emit()
 
-func update_player_display(_id, _info):
-	var template_string = "%s\t%s\n"
+func test_start():
+	start_button.disabled = false if players.keys().size() >= 2 else true
+
+func update_player_display(_id = null, _info = null):
+	var template_string = "%s\n"
 	
 	player_display.clear()
+	if not multiplayer.has_multiplayer_peer(): return
+	
 	player_display.push_font_size(20)
 	for player_id in players:
 		if player_id == 1:
 			player_display.push_color(Color.GOLD)
-			player_display.add_text(template_string % ["Host", players[player_id].name])
+			player_display.add_text(template_string % players[player_id].name)
+			player_display.pop()
+		elif player_id == multiplayer.get_unique_id():
+			player_display.push_color(Color.LIGHT_BLUE)
+			player_display.add_text(template_string % players[player_id].name)
 			player_display.pop()
 		else:
-			player_display.add_text(template_string % [player_id, players[player_id].name])
+			player_display.add_text(template_string % players[player_id].name)
 	player_display.pop()
 
 func on_join_button():
 	join_game(address_bar.text)
+
+func on_leave_button():
+	_on_player_disconnected(multiplayer.get_unique_id())
+	remove_multiplayer_peer()
+	update_player_display()
+	
+	leave_button.visible = false
+	other_buttons.visible = true
