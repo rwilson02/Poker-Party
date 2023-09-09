@@ -24,7 +24,7 @@ func classify():
 	is_straight = sequential(clean_values)
 	is_flush = all_equal(clean_suits)
 	
-	for value in Rules.VALS_PER_SUIT:
+	for value in Rules.RULES["VALS_PER_SUIT"]:
 		var val_count = clean_values.count(value)
 		if val_count > 1:
 			runs.append([val_count, value])
@@ -34,7 +34,7 @@ func classify():
 	match [is_straight, is_flush]:
 		[true, var also_flush]:
 			self.kickerA = self.cards.front()
-			if Rules.get_value(self.kickerA) == Rules.VALS_PER_SUIT - 1:
+			if Rules.get_value(self.kickerA) == Rules.RULES["VALS_PER_SUIT"] - 1:
 				if Rules.get_value(self.cards[1]) == 3:
 					self.kickerA = self.cards[1]
 			self.rank = "SF" if also_flush else "ST"
@@ -131,7 +131,7 @@ func sequential(array):
 		if not is_sequential: break
 	
 	var ace_low_test = range(array.size() - 1)
-	ace_low_test.append(Rules.VALS_PER_SUIT - 1)
+	ace_low_test.append(Rules.RULES["VALS_PER_SUIT"] - 1)
 	ace_low_test.reverse()
 	
 	return is_sequential or (array == ace_low_test)
@@ -145,7 +145,7 @@ func all_equal(array):
 
 static func sort(a: Hand, b:Hand) -> bool:
 	if a.rank != b.rank:
-		return Rules.HAND_RANKS[a.rank] > Rules.HAND_RANKS[b.rank]
+		return Rules.RULES["HAND_RANKS"][a.rank] > Rules.RULES["HAND_RANKS"][b.rank]
 	elif a.kickerA != b.kickerA:
 		return a.kickerA > b.kickerA
 	elif a.kickerB != b.kickerB:

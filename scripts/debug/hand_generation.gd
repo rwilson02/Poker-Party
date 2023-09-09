@@ -17,9 +17,9 @@ func do_generation_test():
 	output_box.clear()
 	set_rules()
 	
-	var deck = range(0, Rules.SUITS * Rules.VALS_PER_SUIT)
+	var deck = range(0, Rules.get_deck_size())
 	deck.shuffle()
-	var pull = Rules.HOLE_CARDS + Rules.COMM_CARDS
+	var pull = Rules.RULES["HOLE_CARDS"] + Rules.RULES["COMM_CARDS"]
 	
 	var current_line = 0
 	while deck.size() >= pull:
@@ -29,7 +29,7 @@ func do_generation_test():
 		for i in pull:
 			cards.append(deck.pop_back())
 		
-		var best_hand = Hand.get_best_hand(cards, Rules.CARDS_PER_HAND)
+		var best_hand = Hand.get_best_hand(cards, Rules.RULES["CARDS_PER_HAND"])
 		var end_time = Time.get_ticks_msec() - start_time
 		
 		if best_hand.rank != "":
@@ -60,14 +60,14 @@ func do_hand_test():
 	if invalid:
 		output_box.set_line(0, "Error (Noninteger or nonspace in text box)")
 		return
-	elif input_cards.size() < Rules.CARDS_PER_HAND:
+	elif input_cards.size() < Rules.RULES["CARDS_PER_HAND"]:
 		output_box.set_line(0, "Error (Too few cards to make a hand)")
 		return
-	elif input_cards.any(func(c): return c >= Rules.SUITS * Rules.VALS_PER_SUIT):
+	elif input_cards.any(func(c): return c >= Rules.get_deck_size()):
 		output_box.set_line(0, "Error (Card index out of range of deck size)")
 		return
 	
-	var best_hand = Hand.get_best_hand(input_cards, Rules.CARDS_PER_HAND)
+	var best_hand = Hand.get_best_hand(input_cards, Rules.RULES["CARDS_PER_HAND"])
 	
 	if best_hand.rank != "":
 		output_box.set_line(0, "%s\n" % Rules.hand_to_string(input_cards))
@@ -77,16 +77,16 @@ func do_hand_test():
 	Rules.reset()
 
 func set_rules():
-	Rules.SUITS = suit_selection.text.to_int()
-	Rules.VALS_PER_SUIT = vals_selection.text.to_int()
-	Rules.HOLE_CARDS = hole_selection.text.to_int()
-	Rules.COMM_CARDS = comm_selection.text.to_int()
-	Rules.CARDS_PER_HAND = hand_selection.text.to_int()
+	Rules.set_rule("SUITS", suit_selection.text.to_int())
+	Rules.set_rule("VALS_PER_SUIT", vals_selection.text.to_int())
+	Rules.set_rule("HOLE_CARDS", hole_selection.text.to_int())
+	Rules.set_rule("COMM_CARDS", comm_selection.text.to_int())
+	Rules.set_rule("CARDS_PER_HAND", hand_selection.text.to_int())
 
 func on_tab_changed(tab):
 	if tab == 1:
 		set_rules()
-		hand_explainer.text = explanation % (Rules.SUITS * Rules.VALS_PER_SUIT)
+		hand_explainer.text = explanation % (Rules.get_deck_size())
 
 func on_quit():
 	get_tree().quit()
