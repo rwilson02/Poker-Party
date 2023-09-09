@@ -1,0 +1,69 @@
+[gd_scene load_steps=2 format=3 uid="uid://3qprhn0jes4i"]
+
+[ext_resource type="Script" path="res://scripts/lobby.gd" id="1_vmmqq"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_vmmqq")
+
+[node name="PlayerDisplay" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 390.0
+offset_top = 60.0
+offset_right = 790.0
+offset_bottom = 560.0
+
+[node name="MarginContainer" type="MarginContainer" parent="PlayerDisplay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PlayerDisplay/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+
+[node name="Control" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 390.0
+offset_top = 580.0
+offset_right = 790.0
+offset_bottom = 660.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Create" type="Button" parent="Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Create Game"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Address" type="LineEdit" parent="Control/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "127.0.0.1"
+alignment = 1
+
+[node name="Join" type="Button" parent="Control/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Join Game"
+
+[connection signal="pressed" from="Control/HBoxContainer/Create" to="." method="create_game"]
+[connection signal="pressed" from="Control/HBoxContainer/VBoxContainer/Join" to="." method="on_join_button"]
