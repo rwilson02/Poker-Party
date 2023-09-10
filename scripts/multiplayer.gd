@@ -3,6 +3,7 @@ extends Node
 signal player_connected(peer_id, player_info)
 signal player_disconnected(peer_id)
 signal server_disconnected()
+signal test_player_conditions(players_remaining)
 
 const PORT = 7000
 const DEFAULT_IP = "127.0.0.1"
@@ -41,6 +42,7 @@ func create_game():
 	
 	players[1] = player_info
 	player_connected.emit(1, player_info)
+	test_player_conditions.emit(1)
 
 func remove_multiplayer_peer():
 	multiplayer.multiplayer_peer = null
@@ -53,10 +55,12 @@ func _register_player(new_player_info):
 	var new_player_id = multiplayer.get_remote_sender_id()
 	players[new_player_id] = new_player_info
 	player_connected.emit(new_player_id, new_player_info)
+	test_player_conditions.emit(players.keys().size())
 
 func _on_player_disconnected(id):
 	players.erase(id)
 	player_disconnected.emit(id)
+	test_player_conditions.emit(players.keys().size())
 
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()

@@ -1,19 +1,21 @@
 extends Node
 
-@onready var player_display = $PlayerDisplay/MarginContainer/RichTextLabel
-@onready var address_bar = $Control/HBoxContainer/VBoxContainer/Address
-@onready var other_buttons = $Control/HBoxContainer
-@onready var start_button = $Control/HostButton
-@onready var leave_button = $Control/PlayerButton
+@onready var player_display = $LobbyControls/PlayerDisplay/MarginContainer/RichTextLabel
+@onready var address_bar = $LobbyControls/Control/PreGame/VBoxContainer/Address
+@onready var other_buttons = $LobbyControls/Control/PreGame
+@onready var start_button = $LobbyControls/Control/InGame/StartButton
+@onready var cancel_button = $LobbyControls/Control/InGame/CancelButton
+
+@onready var name_input = $PlayerSetup/LineEdit
 
 func _ready():
-	Netgame.player_connected.connect(update_player_display)
-	Netgame.player_disconnected.connect(update_player_display)
+	Netgame.test_player_conditions.connect(update_player_display)
+	Netgame.test_player_conditions.connect(test_start)
 
-func test_start():
-	start_button.disabled = false if Netgame.players.keys().size() >= 2 else true
+func test_start(remaining_players):
+	start_button.disabled = false if remaining_players >= 2 else true
 
-func update_player_display(_id = null, _info = null):
+func update_player_display(_remaining = null):
 	var template_string = "%s\n"
 	
 	player_display.clear()
@@ -33,16 +35,37 @@ func update_player_display(_id = null, _info = null):
 			player_display.add_text(template_string % Netgame.players[player_id].name)
 	player_display.pop()
 
-func on_join_button():
-	Netgame.join_game(address_bar.text)
+func create_game():
+	if not name_input.text.is_empty():
+		Netgame.player_info["name"] = name_input.text
+	name_input.editable = false
+	
+	Netgame.create_game()
+	other_buttons.visible = false
+	start_button.visible = true
+	cancel_button.visible = true
 
-func on_leave_button():
-	Netgame.player_disconnected.emit(multiplayer.get_unique_id())
+func on_join_button():
+	if not name_input.text.is_empty():
+		Netgame.player_info["name"] = name_input.text
+	name_input.editable = false
+	
+	Netgame.join_game(address_bar.text)
+	other_buttons.visible = false
+	cancel_button.visible = true
+
+func on_cancel_button():
+	if multiplayer.is_server():
+		Netgame.server_disconnected.emit()
+	else:
+		Netgame.player_disconnected.emit(multiplayer.get_unique_id())
 	multiplayer.multiplayer_peer = null
 	update_player_display()
 	
-	leave_button.visible = false
+	start_button.visible = false
+	cancel_button.visible = false
 	other_buttons.visible = true
+	name_input.editable = true
 
 func on_start_button():
 	start_game.rpc()

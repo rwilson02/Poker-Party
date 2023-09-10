@@ -5,16 +5,32 @@
 [node name="Lobby" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 720.0
 script = ExtResource("1_vmmqq")
 
-[node name="PlayerDisplay" type="Panel" parent="."]
-layout_mode = 0
-offset_left = 390.0
-offset_top = 60.0
-offset_right = 790.0
-offset_bottom = 560.0
+[node name="LobbyControls" type="ReferenceRect" parent="."]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -540.0
+offset_top = -320.0
+offset_right = -100.0
+offset_bottom = 320.0
+grow_horizontal = 0
+grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="PlayerDisplay"]
+[node name="PlayerDisplay" type="Panel" parent="LobbyControls"]
+layout_mode = 1
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 420.0
+offset_bottom = 520.0
+
+[node name="MarginContainer" type="MarginContainer" parent="LobbyControls/PlayerDisplay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -26,18 +42,22 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="RichTextLabel" type="RichTextLabel" parent="PlayerDisplay/MarginContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="LobbyControls/PlayerDisplay/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
 
-[node name="Control" type="Panel" parent="."]
-layout_mode = 0
-offset_left = 390.0
-offset_top = 580.0
-offset_right = 790.0
-offset_bottom = 660.0
+[node name="Control" type="Panel" parent="LobbyControls"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -100.0
+offset_right = 420.0
+offset_bottom = -20.0
+grow_vertical = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+[node name="PreGame" type="HBoxContainer" parent="LobbyControls/Control"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -45,27 +65,27 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Create" type="Button" parent="Control/HBoxContainer"]
+[node name="Create" type="Button" parent="LobbyControls/Control/PreGame"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Create Game"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Control/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="LobbyControls/Control/PreGame"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Address" type="LineEdit" parent="Control/HBoxContainer/VBoxContainer"]
+[node name="Address" type="LineEdit" parent="LobbyControls/Control/PreGame/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "127.0.0.1"
 alignment = 1
 
-[node name="Join" type="Button" parent="Control/HBoxContainer/VBoxContainer"]
+[node name="Join" type="Button" parent="LobbyControls/Control/PreGame/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 text = "Join Game"
 
-[node name="HostButton" type="Button" parent="Control"]
+[node name="InGame" type="HBoxContainer" parent="LobbyControls/Control"]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -73,20 +93,45 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-disabled = true
+
+[node name="StartButton" type="Button" parent="LobbyControls/Control/InGame"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Start Game"
 
-[node name="PlayerButton" type="Button" parent="Control"]
-visible = false
+[node name="CancelButton" type="Button" parent="LobbyControls/Control/InGame"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Exit Game"
+
+[node name="PlayerSetup" type="ReferenceRect" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 100.0
+offset_top = -320.0
+offset_right = 540.0
+offset_bottom = 320.0
+grow_vertical = 2
+
+[node name="LineEdit" type="LineEdit" parent="PlayerSetup"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -20.0
+offset_right = 80.0
+offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Leave Game"
+placeholder_text = "Player Name"
+alignment = 1
 
-[connection signal="pressed" from="Control/HBoxContainer/Create" to="." method="create_game"]
-[connection signal="pressed" from="Control/HBoxContainer/VBoxContainer/Join" to="." method="on_join_button"]
-[connection signal="pressed" from="Control/HostButton" to="." method="on_start_button"]
-[connection signal="pressed" from="Control/PlayerButton" to="." method="on_leave_button"]
+[connection signal="pressed" from="LobbyControls/Control/PreGame/Create" to="." method="create_game"]
+[connection signal="pressed" from="LobbyControls/Control/PreGame/VBoxContainer/Join" to="." method="on_join_button"]
+[connection signal="pressed" from="LobbyControls/Control/InGame/StartButton" to="." method="on_start_button"]
+[connection signal="pressed" from="LobbyControls/Control/InGame/CancelButton" to="." method="on_cancel_button"]
