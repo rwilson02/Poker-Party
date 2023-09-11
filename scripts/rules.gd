@@ -3,7 +3,7 @@ extends Node
 var RULES
 
 func _ready():
-	RULES = JSON.parse_string(FileAccess.get_file_as_string("res://rules/base_rules.json"))
+	reset()
 
 func get_value(card: int): return card % RULES["VALS_PER_SUIT"]
 func get_suit(card: int): return card / RULES["VALS_PER_SUIT"]
@@ -37,10 +37,9 @@ func hand_to_string(hand: Array):
 	return hand_string
 
 func reset():
-	var basics = FileAccess.open("res://rules/base_rules.json", FileAccess.READ)
-	var as_text = basics.get_as_text()
-	basics.close()
-	RULES = JSON.parse_string(as_text)
+	var rules_string = FileAccess.get_file_as_string("res://rules/base_rules.json")
+	RULES = JSON.parse_string(rules_string)
+	integerize(RULES)
 
 func set_rule(rule: StringName, value: Variant):
 	if RULES.has(rule) and typeof(RULES[rule]) == typeof(value):
@@ -49,7 +48,7 @@ func set_rule(rule: StringName, value: Variant):
 	
 	# Special considerations for other rules
 	# e.g. setting/resetting certain hand ranks for certain hand sizes
-	if rule == "HAND_RANKS":
+	if rule == "CARDS_PER_HAND":
 		var card_rules
 		var path = "res://rules/%s.json"
 		
@@ -69,3 +68,12 @@ func set_rule(rule: StringName, value: Variant):
 func load_json_at(path: String):
 	var it = JSON.parse_string(FileAccess.get_file_as_string(path))
 	if it: return it
+
+func integerize(dict: Dictionary):
+	for key in dict:
+		match typeof(dict[key]):
+			TYPE_FLOAT:
+				dict[key] = int(dict[key])
+			TYPE_DICTIONARY:
+				integerize(dict[key])
+			_: pass
