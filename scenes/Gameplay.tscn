@@ -1,6 +1,9 @@
-[gd_scene format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=2 format=3 uid="uid://bdhun1e2i03cn"]
+
+[ext_resource type="Script" path="res://scripts/gameplay.gd" id="1_3vg1j"]
 
 [node name="Gameplay" type="Node"]
+script = ExtResource("1_3vg1j")
 
 [node name="Label" type="Label" parent="."]
 offset_right = 40.0

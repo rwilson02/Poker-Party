@@ -64,6 +64,7 @@ func set_rule(rule: StringName, value: Variant):
 				RULES["HAND_RANKS"].merge(card_rules, true)
 			_: 
 				push_error("wait you can't have that many")
+		integerize(RULES)
 
 func load_json_at(path: String):
 	var it = JSON.parse_string(FileAccess.get_file_as_string(path))

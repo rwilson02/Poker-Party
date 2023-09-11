@@ -2,9 +2,8 @@ extends Node
 
 @onready var player_display = $LobbyControls/PlayerDisplay/MarginContainer/RichTextLabel
 @onready var address_bar = $LobbyControls/Control/PreGame/VBoxContainer/Address
-@onready var other_buttons = $LobbyControls/Control/PreGame
-@onready var start_button = $LobbyControls/Control/InGame/StartButton
-@onready var cancel_button = $LobbyControls/Control/InGame/CancelButton
+@onready var lobby_controls = $LobbyControls/Control/PreGame
+@onready var start_controls = $LobbyControls/Control/InGame
 
 @onready var name_input = $PlayerSetup/LineEdit
 
@@ -13,7 +12,7 @@ func _ready():
 	Netgame.test_player_conditions.connect(test_start)
 
 func test_start(remaining_players):
-	start_button.disabled = false if remaining_players >= 2 else true
+	start_controls.get_node("StartButton").disabled = false if remaining_players >= 2 else true
 
 func update_player_display(_remaining = null):
 	var template_string = "%s\n"
@@ -41,9 +40,9 @@ func create_game():
 	name_input.editable = false
 	
 	Netgame.create_game()
-	other_buttons.visible = false
-	start_button.visible = true
-	cancel_button.visible = true
+	lobby_controls.visible = false
+	start_controls.visible = true
+	start_controls.get_node("StartButton").visible = true
 
 func on_join_button():
 	if not name_input.text.is_empty():
@@ -51,8 +50,9 @@ func on_join_button():
 	name_input.editable = false
 	
 	Netgame.join_game(address_bar.text)
-	other_buttons.visible = false
-	cancel_button.visible = true
+	lobby_controls.visible = false
+	start_controls.visible = true
+	start_controls.get_node("StartButton").visible = false
 
 func on_cancel_button():
 	if multiplayer.is_server():
@@ -62,9 +62,8 @@ func on_cancel_button():
 	multiplayer.multiplayer_peer = null
 	update_player_display()
 	
-	start_button.visible = false
-	cancel_button.visible = false
-	other_buttons.visible = true
+	start_controls.visible = false
+	lobby_controls.visible = true
 	name_input.editable = true
 
 func on_start_button():

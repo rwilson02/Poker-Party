@@ -10,8 +10,6 @@ const DEFAULT_IP = "127.0.0.1"
 const MAX_CONNECTIONS = 10
 
 var players = {}
-var players_loaded = 0
-
 var player_info = {
 	"name": "Player",
 	"cards": [],

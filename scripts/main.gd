@@ -3,8 +3,6 @@ extends Node
 var lobby = preload("res://scenes/Lobby.tscn")
 var gameplay = preload("res://scenes/Gameplay.tscn")
 
-var players
-
 func _ready():
 	pass
 
@@ -20,4 +18,4 @@ func goto_scene(scene: PackedScene):
 func _real_goto_scene(scene: PackedScene):
 	get_child(0).free()
 	var new_scene = scene.instantiate()
-	add_child(new_scene)
+	add_child(new_scene, true)
