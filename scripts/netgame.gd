@@ -13,7 +13,7 @@ var players = {}
 var player_info = {
 	"name": "Player",
 	"cards": [],
-	"chips": 0
+	"chips": 200
 }
 
 func _ready():
@@ -71,3 +71,6 @@ func _on_connected_fail():
 func _on_server_disconnected():
 	remove_multiplayer_peer()
 	server_disconnected.emit()
+
+func me():
+	return players[multiplayer.get_unique_id()]

@@ -1,11 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=3 format=3 uid="uid://bdhun1e2i03cn"]
 
-[ext_resource type="Script" path="res://scripts/gameplay.gd" id="1_3vg1j"]
+[ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
+[ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
 
 [node name="Gameplay" type="Node"]
-script = ExtResource("1_3vg1j")
+script = ExtResource("1_glytd")
 
-[node name="Label" type="Label" parent="."]
-offset_right = 40.0
-offset_bottom = 23.0
-text = "hi :)"
+[node name="Display" type="Node" parent="."]
+script = ExtResource("2_lvqcw")
+
+[node name="Label" type="Label" parent="Display"]
+offset_right = 81.0
+offset_bottom = 52.0
+text = "[NAME]
+Chips: XXX"
+horizontal_alignment = 1
+
+[node name="Betting" type="Node" parent="."]
