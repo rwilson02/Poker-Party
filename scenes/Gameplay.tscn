@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=6 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
+[ext_resource type="Script" path="res://scripts/gameplay/gameplay_betting.gd" id="3_xwsyi"]
+[ext_resource type="PackedScene" uid="uid://cnd6j21isfrjj" path="res://scenes/ui/scorebug.tscn" id="4_otush"]
+[ext_resource type="PackedScene" uid="uid://cl1k1vjj8jeil" path="res://scenes/ui/betting_bar.tscn" id="5_nnckb"]
 
 [node name="Gameplay" type="Node"]
 script = ExtResource("1_glytd")
@@ -9,11 +12,27 @@ script = ExtResource("1_glytd")
 [node name="Display" type="Node" parent="."]
 script = ExtResource("2_lvqcw")
 
-[node name="Label" type="Label" parent="Display"]
-offset_right = 81.0
-offset_bottom = 52.0
-text = "[NAME]
-Chips: XXX"
-horizontal_alignment = 1
+[node name="Scorebug" parent="Display" instance=ExtResource("4_otush")]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -105.0
+offset_right = 250.0
+offset_bottom = -30.0
+grow_vertical = 0
 
 [node name="Betting" type="Node" parent="."]
+script = ExtResource("3_xwsyi")
+
+[node name="BetBar" parent="Betting" instance=ExtResource("5_nnckb")]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 340.0
+offset_top = 615.0
+offset_right = -340.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2

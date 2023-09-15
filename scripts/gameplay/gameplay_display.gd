@@ -1,12 +1,12 @@
 extends Node
 
-@onready var HUD_self_text = $Label
+@onready var HUD_self_text = $Scorebug/RichTextLabel
 
-const self_text_template = "%s\nChips: %d"
+const self_text_template = "[center]%s\nChips: %d[/center]"
 
 func _ready():
-	update_display()
+	Netgame.state_updated.connect(update_display)
 
-@rpc("authority", "call_local", "unreliable", 1)
+#@rpc("authority", "call_local", "unreliable", 2)
 func update_display():
 	HUD_self_text.text = self_text_template % [Netgame.me().name, Netgame.me().chips]

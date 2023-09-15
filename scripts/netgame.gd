@@ -4,6 +4,7 @@ signal player_connected(peer_id, player_info)
 signal player_disconnected(peer_id)
 signal server_disconnected()
 signal test_player_conditions(players_remaining)
+signal state_updated()
 
 const PORT = 7000
 const DEFAULT_IP = "127.0.0.1"
@@ -13,7 +14,15 @@ var players = {}
 var player_info = {
 	"name": "Player",
 	"cards": [],
-	"chips": 200
+	"chips": 200,
+	"current_bet": 0
+}
+var game_state = {
+	"pot": 0,
+	"comm_cards": [],
+	"active_players": [],
+	"folded_players": [],
+	"losers": []
 }
 
 func _ready():
@@ -74,3 +83,13 @@ func _on_server_disconnected():
 
 func me():
 	return players[multiplayer.get_unique_id()]
+
+func get_live_players():
+	return game_state["active_players"].size() - game_state["folded_players"].size()
+
+@rpc("authority", "call_local", "reliable", 2)
+func sync_data(player_data, state):
+	Netgame.players = player_data
+	Netgame.game_state = state
+#	prints(multiplayer.get_unique_id(), "data received")
+	state_updated.emit()

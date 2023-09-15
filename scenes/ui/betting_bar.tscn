@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cl1k1vjj8jeil"]
+
+[node name="betting_bar" type="Panel"]
+offset_right = 634.0
+offset_bottom = 108.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CheckCall" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CHECK"
+
+[node name="BetRaise" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Button" type="Button" parent="HBoxContainer/BetRaise"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "BET"
+
+[node name="Input" type="SpinBox" parent="HBoxContainer/BetRaise"]
+layout_mode = 2
+size_flags_vertical = 3
+step = 5.0
+alignment = 1
+custom_arrow_step = 5.0
+
+[node name="Fold" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Forfeit the round and wait for the next one."
+text = "FOLD"

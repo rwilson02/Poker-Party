@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://cnd6j21isfrjj"]
+
+[node name="scorebug" type="Panel"]
+offset_right = 220.0
+offset_bottom = 75.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -23.0
+offset_right = 120.0
+offset_bottom = 23.0
+grow_vertical = 2
+bbcode_enabled = true
+text = "[center]Player Name
+Chips: XXXXX[/center]"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+shortcut_keys_enabled = false
