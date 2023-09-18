@@ -37,28 +37,54 @@ func update_player_display(_remaining = null):
 func create_game():
 	if not name_input.text.is_empty():
 		Netgame.player_info["name"] = name_input.text
-	name_input.editable = false
 	
-	Netgame.create_game()
-	lobby_controls.visible = false
-	start_controls.visible = true
-	start_controls.get_node("StartButton").visible = true
+	var error = Netgame.create_game()
+	if not error:
+		name_input.editable = false
+		lobby_controls.visible = false
+		start_controls.visible = true
+		start_controls.get_node("StartButton").visible = true
+	else:
+		player_display.clear()
+		player_display.push_color(Color.RED)
+		match error:
+			ERR_CANT_CREATE:
+				player_display.append_text("ERROR: Can't create lobby.")
+			_:
+				player_display.append_text("Not sure what the issue is: %s" % error)
+		player_display.pop()
 
 func on_join_button():
 	if not name_input.text.is_empty():
 		Netgame.player_info["name"] = name_input.text
-	name_input.editable = false
 	
-	Netgame.join_game(address_bar.text)
-	lobby_controls.visible = false
-	start_controls.visible = true
-	start_controls.get_node("StartButton").visible = false
+	var error = Netgame.join_game(address_bar.text)
+	if not error:
+		name_input.editable = false
+		lobby_controls.visible = false
+		start_controls.visible = true
+		start_controls.get_node("StartButton").visible = false
+		
+		player_display.clear()
+		player_display.append_text("...")
+		await get_tree().create_timer(0.1).timeout
+		if not Netgame.players.has(1):
+			player_display.clear()
+			player_display.push_italics()
+			player_display.push_color(Color.DARK_GRAY)
+			player_display.append_text("Nobody seems to be hosting yet...\n")
+			player_display.append_text("But you'll automatically join once they do.")
+			player_display.pop()
+			player_display.pop()
+	else:
+		print(error)
 
 func on_cancel_button():
 	if multiplayer.is_server():
 		Netgame.server_disconnected.emit()
 	else:
 		Netgame.player_disconnected.emit(multiplayer.get_unique_id())
+		Netgame.players.clear()
 	multiplayer.multiplayer_peer = null
 	update_player_display()
 	
