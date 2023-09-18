@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cl1k1vjj8jeil"]
 
-[node name="betting_bar" type="Panel"]
+[node name="BetBar" type="Panel"]
 offset_right = 634.0
 offset_bottom = 108.0
 

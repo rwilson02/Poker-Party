@@ -98,7 +98,7 @@ func get_bet_option(current_bet):
 	
 	# Show bet bar now that everything's settled
 	bet_bar.visible = true
-#	print("bet bar activated")
+	prints("bet bar for", multiplayer.get_unique_id(), "activated:", bet_bar.is_visible())
 
 @rpc("any_peer","call_local","reliable")
 func send_option(option, value):
@@ -138,9 +138,9 @@ func button_pressed(option):
 		"RAISE":
 			value = bet_raise_input.value
 	
-	send_option.rpc_id(1, option, value)
 	bet_bar.visible = false
-#	print("bet bar deactivated")
+	prints("bet bar for", multiplayer.get_unique_id(), "deactivated")
+	send_option.rpc_id(1, option, value)
 
 func all_bets_equal():
 	var last_num = null

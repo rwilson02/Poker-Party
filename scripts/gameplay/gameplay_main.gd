@@ -20,25 +20,6 @@ func player_ready():
 		player_responses = 0
 		gameplay_loop()
 
-## Server-side function to get values back from players
-#@rpc("any_peer", "reliable", "call_local")
-#func receive_from_all(value: Variant):
-#	player_responses += 1
-#	if player_responses == Netgame.game_state["active_players"].size():
-#		player_responses = 0
-#		all_responses_received.emit()
-#
-#@rpc("any_peer", "reliable", "call_local")
-#func receive_from_one(value: Variant):
-#	all_responses_received.emit()
-#
-## Corresponding client-side function to send those values
-#func send_to_server(value: Variant, needs_everyone: bool = true):
-#	if needs_everyone:
-#		receive_from_all.rpc_id(1, value)
-#	else:
-#		receive_from_one.rpc_id(1, value)
-
 func gameplay_loop():
 	print("play ball")
 	
@@ -46,20 +27,23 @@ func gameplay_loop():
 		Netgame.game_state["active_players"].append(id)
 	Netgame.game_state["active_players"].shuffle()
 	
-	while(Netgame.game_state["active_players"].size() > 1 or round_start_index < Rules.RULES["GAMEPLAY_ROUNDS"]):
+	while(Netgame.game_state["active_players"].size() > 1 and round_start_index < Rules.RULES["GAMEPLAY_ROUNDS"]):
 		round_start_index += 1
 		deck = range(0, Rules.get_deck_size())
 		deck.shuffle()
+		print("round start")
 		
 		#get ante
 		Netgame.game_state["folded_players"].clear()
+		Netgame.game_state["comm_cards"].clear()
 		for id in Netgame.game_state.active_players:
+			Netgame.players[id]["cards"].clear()
 			get_ante(id)
 		clear_losers()
 		Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
 		
 		# do initial deal (player hands and comm cards)
-		for i in Rules.RULES["COMM_CARDS"]:
+		for i in (Rules.RULES["COMM_CARDS"] - Rules.RULES["HOLE_CARDS"]):
 			Netgame.game_state["comm_cards"].append(deck.pop_back())
 			print("given comm card")
 		for i in Rules.RULES["HOLE_CARDS"]:
@@ -76,6 +60,7 @@ func gameplay_loop():
 			# while current comm cards < rules comm cards
 			while Netgame.game_state["comm_cards"].size() < Rules.RULES["COMM_CARDS"]:
 				# show comm card
+				print("new comm card")
 				Netgame.game_state["comm_cards"].append(deck.pop_back())
 				Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
 				# do betting round
@@ -91,8 +76,11 @@ func gameplay_loop():
 				return c not in Netgame.game_state.folded_players)
 		Netgame.players[winner].chips += Netgame.game_state.pot
 		Netgame.game_state.pot = 0
+		print("round over, %s won" % winner)
 		
 		# do rule change
+	
+	print("oh huh the game is over now")
 
 func get_ante(player_id):
 	var me = Netgame.players[player_id]
