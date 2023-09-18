@@ -51,9 +51,6 @@ func create_game():
 	player_connected.emit(1, player_info)
 	test_player_conditions.emit(1)
 
-func remove_multiplayer_peer():
-	multiplayer.multiplayer_peer = null
-
 func _on_player_connected(id):
 	_register_player.rpc_id(id, player_info)
 
@@ -75,10 +72,10 @@ func _on_connected_ok():
 	player_connected.emit(peer_id, player_info)
 
 func _on_connected_fail():
-	remove_multiplayer_peer()
+	multiplayer.multiplayer_peer = null
 
 func _on_server_disconnected():
-	remove_multiplayer_peer()
+	multiplayer.multiplayer_peer = null
 	server_disconnected.emit()
 
 func me():

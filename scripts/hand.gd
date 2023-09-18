@@ -155,9 +155,9 @@ static func sort(a: Hand, b:Hand) -> bool:
 	else:
 		return a.cards.map(Rules.get_value) > b.cards.map(Rules.get_value)
 
-static func get_best_hand(given_cards: Array, hand_size: int):
+static func get_best_hand(given_cards: Array):
 	var best_hand: Hand = Hand.new([])
-	var possible_hands = get_combinations(given_cards, hand_size)
+	var possible_hands = get_combinations(given_cards, Rules.RULES["CARDS_PER_HAND"])
 	
 	for hand in possible_hands:
 		var new_hand = Hand.new(hand)
