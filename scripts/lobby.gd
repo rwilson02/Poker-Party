@@ -10,6 +10,7 @@ extends Node
 func _ready():
 	Netgame.test_player_conditions.connect(update_player_display)
 	Netgame.test_player_conditions.connect(test_start)
+	Netgame.server_disconnected.connect(server_exploded)
 
 func test_start(remaining_players):
 	start_controls.get_node("StartButton").disabled = false if remaining_players >= 2 else true
@@ -84,13 +85,13 @@ func on_cancel_button():
 		Netgame.server_disconnected.emit()
 	else:
 		Netgame.player_disconnected.emit(multiplayer.get_unique_id())
-		Netgame.players.clear()
-	multiplayer.multiplayer_peer = null
-	update_player_display()
-	
-	start_controls.visible = false
-	lobby_controls.visible = true
-	name_input.editable = true
+#		Netgame.players.clear()
+#	multiplayer.multiplayer_peer = null
+#	update_player_display()
+#
+#	start_controls.visible = false
+#	lobby_controls.visible = true
+#	name_input.editable = true
 
 func on_start_button():
 	start_game.rpc()
@@ -98,3 +99,18 @@ func on_start_button():
 @rpc("call_local", "reliable")
 func start_game():
 	get_parent().start_game()
+
+func server_exploded():
+	var is_server = multiplayer.is_server()
+	Netgame.players.clear()
+	multiplayer.multiplayer_peer = null
+	
+	start_controls.visible = false
+	lobby_controls.visible = true
+	name_input.editable = true
+	
+	player_display.clear()
+	if not is_server:
+		player_display.push_color(Color.RED)
+		player_display.append_text("Server closed!")
+		player_display.pop()
