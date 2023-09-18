@@ -29,6 +29,8 @@ func _ready():
 	
 
 func do_betting_round(start_index):
+	if Netgame.get_live_players() == 1: return
+	
 	# Initial round of bets
 	print("Begin betting round.")
 	for i in Netgame.game_state["active_players"].size():
@@ -44,16 +46,13 @@ func do_betting_round(start_index):
 		if got_bet: 
 			initial_bettor_index = Netgame.game_state["active_players"].find(next_player)
 			break
-		if Netgame.get_live_players() == 1:
-			print("Everyone else folded.")
-			return
 	
-	# If everyone folded or nobody bet, leave
-	if all_bets_equal() or Netgame.get_live_players() == 1:
+	# If nobody bet, leave
+	if all_bets_equal():
 		print("Everyone checked.")
 		return
 	
-	# Keep it rolling around
+	# Keep it rolling around if people are there
 	var index = initial_bettor_index
 	while not all_bets_equal() and Netgame.get_live_players() > 1:
 		index += 1
@@ -126,8 +125,6 @@ func send_option(option, value):
 				prints(sender, "raises to %d." % value)
 		"FOLD":
 			Netgame.game_state["folded_players"].append(sender)
-			Netgame.game_state["pot"] += Netgame.players[sender].current_bet
-			Netgame.players[sender].current_bet = 0
 			prints(sender, "folds.")
 	
 	input_received.emit(option == "RAISE")

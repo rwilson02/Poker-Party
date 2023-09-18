@@ -70,23 +70,29 @@ func gameplay_loop():
 		
 		# do first betting round
 		await BETTING.do_betting_round(round_start_index)
-		print("End of betting round.")
-		prints("Total pot:", Netgame.game_state.pot)
-		return
-#		# while current comm cards < rules comm cards
-#		while Netgame.game_state["comm_cards"].size < Rules.RULES["COMM_CARDS"]:
-#			# show comm card
-#			Netgame.game_state["comm_cards"].append(deck.pop_back())
-#			Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
-#			# do betting round
-#			BETTING.do_betting_round(round_start_index)
-#		# if there are still players
-#		var winner
-#		if Netgame.game_state["active_players"].size() > 1:
-#			# do showdown
-#			pass
-#		# award pot to winner
-#		# do rule change
+		
+		# Don't need the rest of the comm cards if everyone else folded
+		if Netgame.get_live_players() > 1:
+			# while current comm cards < rules comm cards
+			while Netgame.game_state["comm_cards"].size() < Rules.RULES["COMM_CARDS"]:
+				# show comm card
+				Netgame.game_state["comm_cards"].append(deck.pop_back())
+				Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
+				# do betting round
+				await BETTING.do_betting_round(round_start_index)
+				if Netgame.get_live_players() == 1: break
+		
+		var winner
+		# if there are still players
+		if Netgame.get_live_players() > 1:
+			winner = do_showdown()
+		else:
+			winner = Netgame.game_state["active_players"].filter(func(c): \
+				return c not in Netgame.game_state.folded_players)
+		Netgame.players[winner].chips += Netgame.game_state.pot
+		Netgame.game_state.pot = 0
+		
+		# do rule change
 
 func get_ante(player_id):
 	var me = Netgame.players[player_id]
@@ -100,3 +106,17 @@ func get_ante(player_id):
 func clear_losers():
 	for id in Netgame.game_state.losers:
 		Netgame.game_state["active_players"].erase(id)
+
+func do_showdown():
+	var player_bests = []
+	
+	for id in Netgame.game_state.active_players:
+		if id not in Netgame.game_state.folded_players:
+			player_bests.append([id, \
+			Hand.get_best_hand(Netgame.players[id].cards + Netgame.game_state.comm_cards)])
+	player_bests.sort_custom(func(a,b): return Hand.sort(a[1], b[1]))
+	
+	for combi in player_bests:
+		prints(combi[0], "had", combi[1].get_name())
+	
+	return player_bests[0][0]
