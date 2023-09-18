@@ -21,12 +21,14 @@ const name_tooltip_combos =[
 
 var initial_bettor_index = 0
 var bet_to_match = 0
+var awaiting_player
 
 func _ready():
 	check_call.pressed.connect(button_pressed.bind("CALL"))
 	bet_raise_button.pressed.connect(button_pressed.bind("RAISE"))
 	fold.pressed.connect(button_pressed.bind("FOLD"))
 	
+	Netgame.player_disconnected.connect(player_disconnected)
 
 func do_betting_round(start_index):
 	if Netgame.get_live_players() == 1: return
@@ -36,15 +38,15 @@ func do_betting_round(start_index):
 	for i in Netgame.game_state["active_players"].size():
 		var got_bet
 		var next_up = (i + start_index) % Netgame.game_state["active_players"].size()
-		var next_player = Netgame.game_state.active_players[next_up]
-		if next_player not in Netgame.game_state.folded_players:
-			prints("paging", next_player)
-			get_bet_option.rpc_id(next_player, 0)
+		awaiting_player = Netgame.game_state.active_players[next_up]
+		if awaiting_player not in Netgame.game_state.folded_players:
+#			prints("paging", awaiting_player)
+			get_bet_option.rpc_id(awaiting_player, 0)
 			got_bet = await input_received
 			Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
 		
 		if got_bet: 
-			initial_bettor_index = Netgame.game_state["active_players"].find(next_player)
+			initial_bettor_index = Netgame.game_state["active_players"].find(awaiting_player)
 			break
 	
 	# If nobody bet, leave
@@ -57,10 +59,10 @@ func do_betting_round(start_index):
 	while not all_bets_equal() and Netgame.get_live_players() > 1:
 		index += 1
 		var next_up = index % Netgame.game_state["active_players"].size()
-		var next_player = Netgame.game_state.active_players[next_up]
-		if next_player not in Netgame.game_state.folded_players:
-			prints("paging", next_player)
-			get_bet_option.rpc_id(next_player, get_max_bet())
+		awaiting_player = Netgame.game_state.active_players[next_up]
+		if awaiting_player not in Netgame.game_state.folded_players:
+			prints("paging", awaiting_player)
+			get_bet_option.rpc_id(awaiting_player, get_max_bet())
 			await input_received
 			Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
 	
@@ -98,7 +100,7 @@ func get_bet_option(current_bet):
 	
 	# Show bet bar now that everything's settled
 	bet_bar.visible = true
-	prints("bet bar for", multiplayer.get_unique_id(), "activated:", bet_bar.is_visible())
+#	prints("bet bar for", multiplayer.get_unique_id(), "activated:", bet_bar.is_visible())
 
 @rpc("any_peer","call_local","reliable")
 func send_option(option, value):
@@ -126,6 +128,8 @@ func send_option(option, value):
 		"FOLD":
 			Netgame.game_state["folded_players"].append(sender)
 			prints(sender, "folds.")
+		"DISCONNECT":
+			prints(sender, "disconnected.")
 	
 	input_received.emit(option == "RAISE")
 
@@ -139,7 +143,7 @@ func button_pressed(option):
 			value = bet_raise_input.value
 	
 	bet_bar.visible = false
-	prints("bet bar for", multiplayer.get_unique_id(), "deactivated")
+#	prints("bet bar for", multiplayer.get_unique_id(), "deactivated")
 	send_option.rpc_id(1, option, value)
 
 func all_bets_equal():
@@ -159,3 +163,16 @@ func get_max_bet():
 	for id in Netgame.game_state.active_players:
 		max_bet = maxi(max_bet, Netgame.players[id].current_bet)
 	return max_bet
+
+func player_disconnected(disconnected_id):
+	if awaiting_player == disconnected_id:
+		send_option.rpc_id(1, "DISCONNECT", null)
+
+func redistribute_wealth(from):
+	var free_money = Netgame.players[from].chips
+	var redistributed = free_money / Netgame.game_state["active_players"].size()
+	
+	for id in Netgame.game_state.active_players:
+		Netgame.players[id].chips += redistributed
+		free_money -= redistributed
+	Netgame.game_state.pot += free_money
