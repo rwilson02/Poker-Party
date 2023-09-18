@@ -18,6 +18,6 @@
 		"": -9999,
 	},
 	"ANTE": 20,
-	"GAMEPLAY_ROUNDS": 5,
+	"GAMEPLAY_ROUNDS": 5000,
 	"MIN_BET": 5
 }
