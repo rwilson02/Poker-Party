@@ -16,7 +16,7 @@ offset_bottom = 23.0
 grow_vertical = 2
 bbcode_enabled = true
 text = "[center]Player Name
-Chips: XXXXX[/center]"
+[img=24]res://textures/ico_chips.png[/img] XXXXX[/center]"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0
