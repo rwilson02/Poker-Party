@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://cnd6j21isfrjj"]
 
 [node name="Scorebug" type="Panel"]
-clip_children = 2
 offset_right = 320.0
 offset_bottom = 75.0
 
@@ -24,23 +23,32 @@ scroll_active = false
 autowrap_mode = 0
 shortcut_keys_enabled = false
 
-[node name="HoleCards" type="HBoxContainer" parent="."]
+[node name="ClipMask" type="Control" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HoleCards" type="HBoxContainer" parent="ClipMask"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -83.0
+offset_left = -4.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="Marker1" type="Control" parent="HoleCards"]
+[node name="Marker1" type="Control" parent="ClipMask/HoleCards"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8
 
-[node name="Marker2" type="Control" parent="HoleCards"]
+[node name="Marker2" type="Control" parent="ClipMask/HoleCards"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8

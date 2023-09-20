@@ -1,7 +1,7 @@
 extends Node
 
 @onready var scorebug = $Scorebug
-@onready var hole_card_holder = $Scorebug/HoleCards
+@onready var hole_card_holder = $Scorebug/ClipMask/HoleCards
 @onready var comm_card_holder = $CommCards
 @onready var card_marker = $CommCards/Marker1
 
