@@ -1,0 +1,107 @@
+[gd_scene load_steps=4 format=3 uid="uid://bci8qpa7y3464"]
+
+[ext_resource type="Script" path="res://scripts/ui/card_setup.gd" id="1_hdb8b"]
+[ext_resource type="Texture2D" uid="uid://cl00gjptu5w6e" path="res://textures/cards/suit_selector.tres" id="1_lfkq7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_22ryu"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+anti_aliasing = false
+
+[node name="Card" type="Panel"]
+custom_minimum_size = Vector2(15, 22)
+offset_left = -120.0
+offset_top = -176.0
+offset_right = 120.0
+offset_bottom = 176.0
+pivot_offset = Vector2(120, 176)
+theme_override_styles/panel = SubResource("StyleBoxFlat_22ryu")
+script = ExtResource("1_hdb8b")
+metadata/card = 0
+
+[node name="FaceArt" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopLeft" type="ReferenceRect" parent="."]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 1
+offset_left = 15.0
+offset_top = 15.0
+offset_right = 55.0
+offset_bottom = 85.0
+scale = Vector2(1.5, 1.5)
+
+[node name="Text" type="Label" parent="TopLeft"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 27
+text = "???"
+horizontal_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="TopLeft"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = ExtResource("1_lfkq7")
+expand_mode = 4
+
+[node name="BottomRight" type="ReferenceRect" parent="."]
+modulate = Color(0, 0, 0, 1)
+layout_mode = 1
+offset_left = 225.0
+offset_top = 337.0
+offset_right = 265.0
+offset_bottom = 407.0
+rotation = 3.14159
+scale = Vector2(1.5, 1.5)
+
+[node name="Text" type="Label" parent="BottomRight"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_font_sizes/font_size = 27
+text = "???"
+horizontal_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="BottomRight"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = ExtResource("1_lfkq7")
+expand_mode = 4
