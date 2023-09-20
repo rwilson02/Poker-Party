@@ -1,6 +1,7 @@
 extends Node
 
-@onready var HUD_self_text = $Scorebug/RichTextLabel
+@onready var scorebug = $Scorebug
+@onready var hole_card_holder = $Scorebug/HoleCards
 @onready var comm_card_holder = $CommCards
 @onready var card_marker = $CommCards/Marker1
 
@@ -15,50 +16,37 @@ func _ready():
 #@rpc("authority", "call_local", "unreliable", 2)
 func update_display():
 	# Handle scorebug
-	HUD_self_text.text = SELF_TEXT_TEMPLATE % [Netgame.me().name, Netgame.me().chips]
+	scorebug.get_node("HUDText").text = SELF_TEXT_TEMPLATE % [Netgame.me().name, Netgame.me().chips]
 	
-	# Handle community cards
+	# Handle community and hole cards
 	adjust_cards()
-	adjust_holder()
+	adjust_comm_holder()
 
 func adjust_cards():
-	var difference = comm_card_holder.get_child_count() - Rules.RULES["COMM_CARDS"]
+	var comm_difference = comm_card_holder.get_child_count() - Rules.RULES["COMM_CARDS"]
+	var hole_difference = hole_card_holder.get_child_count() - Rules.RULES["HOLE_CARDS"]
 	
-	while difference != 0:
-		if difference > 0:
+	while comm_difference != 0:
+		if comm_difference > 0:
 			comm_card_holder.get_children()[-1].free()
-		elif difference < 0:
-			comm_card_holder.add_child(card_marker.duplicate())
+		elif comm_difference < 0:
+#			comm_card_holder.add_child(card_marker.duplicate())
+			comm_card_holder.add_child(comm_card_holder.get_child(0).duplicate())
+	while hole_difference != 0:
+		if hole_difference > 0:
+			hole_card_holder.get_children()[-1].free()
+		elif hole_difference < 0:
+#			hole_card_holder.add_child(card_marker.duplicate())
+			hole_card_holder.add_child(hole_card_holder.get_child(0).duplicate())
 	
 	if Netgame.game_state["comm_cards"].size() == 0: return
 	
-	var known_comm_cards = Netgame.game_state["comm_cards"].size()
 	for id in comm_card_holder.get_child_count():
-		var marker = comm_card_holder.get_child(id)
-		var card_exists = marker.get_child_count() == 1
-		var corresponding_comm_card = Netgame.game_state.comm_cards[id] \
-			if id < known_comm_cards else null
-		
-		# If there's not a card there...
-		if not card_exists:
-			# ... and there's supposed to be...
-			if id < known_comm_cards:
-				# ... make it.
-				marker.add_child(create_new_card(corresponding_comm_card))
-		# But if there is a card there...
-		else:
-			# ... when there shouldn't be...
-			if id >= known_comm_cards:
-				# Get rid of it.
-				marker.get_child(0).queue_free()
-			# If it should be, but it's not right...
-			elif marker.get_child(0).get_meta("card") != corresponding_comm_card:
-				# Get rid of it,
-				marker.get_child(0).queue_free()
-				# and put the right one there.
-				marker.add_child(create_new_card(corresponding_comm_card))
+		determine_card("comm", comm_card_holder, id)
+	for id in hole_card_holder.get_child_count():
+		determine_card("hole", hole_card_holder, id)
 
-func adjust_holder():
+func adjust_comm_holder():
 	var viewport_size = get_viewport().get_visible_rect().size
 	
 	comm_card_holder.size.x = HOLDER_BASE_WIDTH + (75 * (Rules.RULES["COMM_CARDS"] - 5))
@@ -67,6 +55,41 @@ func adjust_holder():
 		(viewport_size.x - comm_card_holder.size.x) / 2,
 		(viewport_size.y - comm_card_holder.size.y) / 2
 	)
+
+func determine_card(flavor: String, holder: Node, id: int):
+	var known_cards
+	var corresponding_card
+	var marker = holder.get_child(id)
+	var card_exists = marker.get_child_count() == 1
+	
+	match flavor:
+		"comm":
+			known_cards = Netgame.game_state["comm_cards"].size()
+			corresponding_card = Netgame.game_state.comm_cards[id] \
+				if id < known_cards else null
+		"hole":
+			var player = Netgame.me()
+			known_cards = player["cards"].size()
+			corresponding_card = player.cards[id]
+	
+	# If there's not a card there...
+	if not card_exists:
+		# ... and there's supposed to be...
+		if id < known_cards:
+			# ... make it.
+			marker.add_child(create_new_card(corresponding_card))
+	# But if there is a card there...
+	else:
+		# ... when there shouldn't be...
+		if not corresponding_card:
+			# Get rid of it.
+			marker.get_child(0).queue_free()
+		# If it should be, but it's not right...
+		elif marker.get_child(0).get_meta("card") != corresponding_card:
+			# Get rid of it,
+			marker.get_child(0).queue_free()
+			# and put the right one there.
+			marker.add_child(create_new_card(corresponding_card))
 
 func create_new_card(card: int):
 	var new_card = UI_CARD.instantiate()
