@@ -36,6 +36,8 @@ func do_betting_round(start_index):
 	# Initial round of bets
 	print("Begin betting round.")
 	for i in Netgame.game_state["active_players"].size():
+		if Netgame.get_live_players() == 1: break
+		
 		var got_bet
 		var next_up = (i + start_index) % Netgame.game_state["active_players"].size()
 		awaiting_player = Netgame.game_state.active_players[next_up]

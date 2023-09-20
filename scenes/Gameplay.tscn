@@ -60,6 +60,21 @@ layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 
+[node name="PotText" type="RichTextLabel" parent="Display"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -130.0
+offset_right = 50.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+text = "[center][img=24]res://textures/ico_chips.png[/img] 5000[/center]"
+
 [node name="Betting" type="Node" parent="."]
 script = ExtResource("3_xwsyi")
 

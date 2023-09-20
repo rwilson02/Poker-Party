@@ -74,7 +74,7 @@ func gameplay_loop():
 		else:
 			winner = Netgame.game_state["active_players"].filter(func(c): \
 				return c not in Netgame.game_state.folded_players)
-		Netgame.players[winner].chips += Netgame.game_state.pot
+		Netgame.players[winner[0]].chips += Netgame.game_state.pot
 		Netgame.game_state.pot = 0
 		print("round over, %s won" % winner)
 		

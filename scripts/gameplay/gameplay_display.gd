@@ -5,7 +5,7 @@ extends Node
 @onready var comm_card_holder = $CommCards
 @onready var card_marker = $CommCards/Marker1
 
-const SELF_TEXT_TEMPLATE = "[center]%s\n[img=24]res://textures/ico_chips.png[/img] %d[/center]"
+const CHIP_TEMPLATE = "[img=24]res://textures/ico_chips.png[/img] %d"
 const UI_CARD = preload("res://scenes/ui/ui_card.tscn")
 const CARD_SCALE = Vector2.ONE * 0.4
 const HOLDER_BASE_WIDTH = 600
@@ -16,7 +16,12 @@ func _ready():
 #@rpc("authority", "call_local", "unreliable", 2)
 func update_display():
 	# Handle scorebug
-	scorebug.get_node("HUDText").text = SELF_TEXT_TEMPLATE % [Netgame.me().name, Netgame.me().chips]
+	var hudtext: RichTextLabel = scorebug.get_node("HUDText")
+#	scorebug.get_node("HUDText").text = CHIP_TEMPLATE % [Netgame.me().name, Netgame.me().chips]
+	hudtext.text = "[center]%s\n%s[/center]" % [Netgame.me().name, CHIP_TEMPLATE % Netgame.me().chips]
+	
+	# Handle pot
+	$PotText.text = CHIP_TEMPLATE % Netgame.game_state.pot
 	
 	# Handle community and hole cards
 	adjust_cards()
