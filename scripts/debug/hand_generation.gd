@@ -29,7 +29,7 @@ func do_generation_test():
 		for i in pull:
 			cards.append(deck.pop_back())
 		
-		var best_hand = Hand.get_best_hand(cards, Rules.RULES["CARDS_PER_HAND"])
+		var best_hand = Hand.get_best_hand(cards)
 		var end_time = Time.get_ticks_msec() - start_time
 		
 		if best_hand.rank != "":
@@ -46,6 +46,7 @@ func do_generation_test():
 
 func do_hand_test():
 	output_box.clear()
+	set_rules()
 	
 	var invalid = false
 	
@@ -67,7 +68,7 @@ func do_hand_test():
 		output_box.set_line(0, "Error (Card index out of range of deck size)")
 		return
 	
-	var best_hand = Hand.get_best_hand(input_cards, Rules.RULES["CARDS_PER_HAND"])
+	var best_hand = Hand.get_best_hand(input_cards)
 	
 	if best_hand.rank != "":
 		output_box.set_line(0, "%s\n" % Rules.hand_to_string(input_cards))
