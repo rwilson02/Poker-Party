@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cnd6j21isfrjj"]
 
-[node name="scorebug" type="Panel"]
+[node name="Scorebug" type="Panel"]
 clip_children = 2
 offset_right = 320.0
 offset_bottom = 75.0
