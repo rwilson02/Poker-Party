@@ -85,13 +85,13 @@ func on_cancel_button():
 		Netgame.server_disconnected.emit()
 	else:
 		Netgame.player_disconnected.emit(multiplayer.get_unique_id())
-#		Netgame.players.clear()
-#	multiplayer.multiplayer_peer = null
-#	update_player_display()
-#
-#	start_controls.visible = false
-#	lobby_controls.visible = true
-#	name_input.editable = true
+		Netgame.players.clear()
+	multiplayer.multiplayer_peer = null
+	update_player_display()
+
+	start_controls.visible = false
+	lobby_controls.visible = true
+	name_input.editable = true
 
 func on_start_button():
 	start_game.rpc()
