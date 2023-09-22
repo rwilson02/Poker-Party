@@ -68,7 +68,7 @@ func _on_player_disconnected(id):
 	
 	if game_state["active_players"].size() > 0:
 		game_state["losers"].append(id)
-		game_state["active_players"].erase(id)
+		game_state["folded_players"].append(id)
 		game_state.pot += players[id].chips
 
 func _on_connected_ok():
