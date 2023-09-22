@@ -1,6 +1,7 @@
 extends Node
 
-@onready var scorebug = $Scorebug
+@onready var hud_text = $Scorebug/HUDText
+@onready var wager_text = $Scorebug/WagerText
 @onready var hole_card_holder = $Scorebug/ClipMask/HoleCards
 @onready var comm_card_holder = $CommCards
 @onready var card_marker = $CommCards/Marker1
@@ -16,9 +17,12 @@ func _ready():
 #@rpc("authority", "call_local", "unreliable", 2)
 func update_display():
 	# Handle scorebug
-	var hudtext: RichTextLabel = scorebug.get_node("HUDText")
-#	scorebug.get_node("HUDText").text = CHIP_TEMPLATE % [Netgame.me().name, Netgame.me().chips]
-	hudtext.text = "[center]%s\n%s[/center]" % [Netgame.me().name, CHIP_TEMPLATE % Netgame.me().chips]
+	hud_text.text = "[center]%s\n%s[/center]" % [Netgame.me().name, CHIP_TEMPLATE % Netgame.me().chips]
+	var betted = Netgame.me().current_bet
+	if betted > 0:
+		wager_text.visible = true
+		wager_text.text = "[center]%s[/center]" % (CHIP_TEMPLATE % betted)
+	else: wager_text.visible = false
 	
 	# Handle pot
 	$PotText.text = CHIP_TEMPLATE % Netgame.game_state.pot
