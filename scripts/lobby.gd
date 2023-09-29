@@ -11,6 +11,7 @@ func _ready():
 	Netgame.test_player_conditions.connect(update_player_display)
 	Netgame.test_player_conditions.connect(test_start)
 	Netgame.server_disconnected.connect(server_exploded)
+	Netgame.players.clear()
 
 func test_start(remaining_players):
 	start_controls.get_node("StartButton").disabled = false if remaining_players >= 2 else true

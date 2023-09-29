@@ -5,12 +5,11 @@ signal okay_continue
 
 @onready var shade = $Shade
 @onready var rule_changer = $RuleChange
-
-var CENTER_OF_SCREEN
+@onready var end_screen = $End
 
 func _ready():
 	rule_changer.hide_menu.connect(hide_rule_changer)
-	CENTER_OF_SCREEN = rule_changer.position
+	end_screen.get_node("Button").pressed.connect(okay_get_out)
 
 func toggle_shadow():
 	var tween = create_tween()
@@ -31,14 +30,16 @@ func show_rule_changer():
 	rule_changer.setup_menu()
 	toggle_shadow()
 	await animation_complete
-	rule_changer.position = CENTER_OF_SCREEN + (Vector2.UP * 720)
+	rule_changer.position = screen_center(rule_changer) + (Vector2.UP * 720)
 	if not rule_changer.visible: rule_changer.visible = true
 	var tween = create_tween()
-	tween.tween_property(rule_changer, "position", CENTER_OF_SCREEN, 1).set_ease(Tween.EASE_IN)
+	tween.tween_property(rule_changer, "position", screen_center(rule_changer), 1)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
 func hide_rule_changer():
 	var tween = create_tween()
-	tween.tween_property(rule_changer, "position", CENTER_OF_SCREEN + (Vector2.DOWN * 720), 1).set_ease(Tween.EASE_OUT)
+	tween.tween_property(rule_changer, "position", screen_center(rule_changer) + (Vector2.DOWN * 720), 1)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	await tween.finished
 	if rule_changer.visible: rule_changer.visible = false
 	toggle_shadow()
@@ -48,3 +49,19 @@ func hide_rule_changer():
 @rpc("any_peer","call_local","reliable")
 func fine_make_me_rpc_why_dont_you():
 	okay_continue.emit()
+
+@rpc("authority", "call_local", "reliable")
+func show_end_screen():
+	toggle_shadow()
+	await animation_complete
+	if Netgame.game_state["active_players"].has(multiplayer.get_unique_id()):
+		end_screen.get_node("Label").text = "YOU WIN"
+	var tween = create_tween()
+	tween.tween_property(end_screen, "position", screen_center(end_screen), 1).set_trans(Tween.TRANS_BOUNCE)
+
+func okay_get_out():
+	multiplayer.multiplayer_peer = null
+	$"/root/Main".end_game()
+
+func screen_center(node: Node):
+	return (Vector2(get_tree().root.content_scale_size) - node.size) / 2.0

@@ -30,8 +30,8 @@ func gameplay_loop():
 	
 	while(Netgame.game_state["active_players"].size() > 1 and round_start_index < Rules.RULES["GAMEPLAY_ROUNDS"]):
 		round_start_index += 1
-		print(Rules.RULES.CURRENT_CHANGES)
-		print("%dx%d" % [Rules.RULES["SUITS"], Rules.RULES["VALS_PER_SUIT"]])
+#		print(Rules.RULES.CURRENT_CHANGES) # TODO: Add list of changes in icon form somewhere onscreen
+#		print("%dx%d" % [Rules.RULES["SUITS"], Rules.RULES["VALS_PER_SUIT"]])
 		deck = range(0, Rules.get_deck_size())
 		deck.shuffle()
 		print("round start")
@@ -40,9 +40,7 @@ func gameplay_loop():
 		Netgame.game_state["folded_players"].clear()
 		Netgame.game_state["comm_cards"].clear()
 		for id in Netgame.game_state.active_players:
-			Netgame.players[id]["cards"].clear()
 			get_ante(id)
-		clear_losers()
 		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		# do initial deal (player hands and comm cards)
@@ -93,9 +91,17 @@ func gameplay_loop():
 		MENU.show_rule_changer.rpc_id(losingest_player)
 #		await MENU.get_node("RuleChange").on_receive_button_input
 		await MENU.okay_continue
+		
+		for id in Netgame.game_state.active_players:
+			Netgame.players[id]["cards"].clear()
+			if Netgame.players[id]["chips"] == 0:
+				Netgame.game_state["losers"].append(id)
+		clear_losers()
+		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		print("alright next round")
 	
 	print("oh huh the game is over now")
+	MENU.show_end_screen.rpc()
 
 func get_ante(player_id):
 	var me = Netgame.players[player_id]

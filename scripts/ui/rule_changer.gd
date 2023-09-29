@@ -55,8 +55,6 @@ func compute_possible_changes():
 	# Don't offer a full reset if the game isn't spicy enough
 	if Rules.RULES.CURRENT_CHANGES.size() < 5: 
 		possible_changes.erase("FULL_RESET")
-	else:
-		print("too spicy lol")
 	
 	for change in CHANGES:
 		# Eliminate changes which already happened twice

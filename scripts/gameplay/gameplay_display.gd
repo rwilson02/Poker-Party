@@ -30,7 +30,7 @@ func update_display():
 	# Handle community and hole cards
 	adjust_cards()
 	adjust_comm_holder()
-	prints(multiplayer.get_unique_id(), "has", Netgame.game_state.comm_cards)
+#	prints(multiplayer.get_unique_id(), "has", Netgame.game_state.comm_cards)
 
 func adjust_cards():
 	var comm_difference = comm_card_holder.get_child_count() - Rules.RULES["COMM_CARDS"]
@@ -80,7 +80,8 @@ func determine_card(flavor: String, holder: Node, id: int):
 		"hole":
 			var player = Netgame.me()
 			known_cards = player["cards"].size()
-			corresponding_card = player.cards[id]
+			corresponding_card = player.cards[id] \
+				if id < known_cards else null
 	
 	# If there's not a card there...
 	if not card_exists:
@@ -91,7 +92,7 @@ func determine_card(flavor: String, holder: Node, id: int):
 	# But if there is a card there...
 	else:
 		# ... when there shouldn't be...
-		if not corresponding_card:
+		if not corresponding_card and corresponding_card != 0:
 			# Get rid of it.
 			marker.get_child(0).queue_free()
 		# If it should be, but it's not right...
