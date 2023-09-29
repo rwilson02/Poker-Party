@@ -96,7 +96,7 @@ func get_name():
 			return hand_name % [properA, properB]
 		"2T":
 			hand_name = "Two trips (%ss over %ss)"
-			return hand_name % [properA, properB]
+			return hand_name % [properB, properA]
 		"3P":
 			hand_name = "3 pair (%ss over %ss over %ss)"
 			return hand_name % [Rules.get_proper_value(kickerC), properB, properA]

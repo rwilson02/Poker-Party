@@ -4,6 +4,7 @@ signal all_responses_received
 
 @onready var DISPLAY = $Display
 @onready var BETTING = $Betting
+@onready var MENU = $Menus
 
 var player_responses = 0
 var round_start_index = -1
@@ -29,6 +30,8 @@ func gameplay_loop():
 	
 	while(Netgame.game_state["active_players"].size() > 1 and round_start_index < Rules.RULES["GAMEPLAY_ROUNDS"]):
 		round_start_index += 1
+		print(Rules.RULES.CURRENT_CHANGES)
+		print("%dx%d" % [Rules.RULES["SUITS"], Rules.RULES["VALS_PER_SUIT"]])
 		deck = range(0, Rules.get_deck_size())
 		deck.shuffle()
 		print("round start")
@@ -40,7 +43,7 @@ func gameplay_loop():
 			Netgame.players[id]["cards"].clear()
 			get_ante(id)
 		clear_losers()
-		Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
+		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		# do initial deal (player hands and comm cards)
 		for i in (Rules.RULES["COMM_CARDS"] - Rules.RULES["HOLE_CARDS"]):
@@ -50,7 +53,7 @@ func gameplay_loop():
 			for id in Netgame.game_state.active_players:
 				prints("given hole card to", id)
 				Netgame.players[id].cards.append(deck.pop_back())
-		Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
+		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		# do first betting round
 		await BETTING.do_betting_round(round_start_index)
@@ -62,7 +65,7 @@ func gameplay_loop():
 				# show comm card
 				print("new comm card")
 				Netgame.game_state["comm_cards"].append(deck.pop_back())
-				Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
+				Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 				# do betting round
 				await BETTING.do_betting_round(round_start_index)
 				if Netgame.get_live_players() == 1: break
@@ -78,20 +81,32 @@ func gameplay_loop():
 		Netgame.players[winner].chips += Netgame.game_state.pot
 		Netgame.game_state.pot = 0
 		print("round over, %s won" % winner)
+		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		# do rule change
+		var player_chips = []
+		for id in Netgame.game_state.active_players:
+			player_chips.append([id, Netgame.players[id].chips])
+		player_chips.sort_custom(func(a,b): return a[1] > b[1])
+		var losingest_player = player_chips.pop_back()[0]
+#		MENU.get_node("RuleChange").setup_menu.rpc_id(losingest_player)
+		MENU.show_rule_changer.rpc_id(losingest_player)
+#		await MENU.get_node("RuleChange").on_receive_button_input
+		await MENU.okay_continue
+		print("alright next round")
 	
 	print("oh huh the game is over now")
 
 func get_ante(player_id):
 	var me = Netgame.players[player_id]
 	if me.chips <= 0:
-		if player_id not in Netgame.game_state.losers
+		if player_id not in Netgame.game_state.losers:
 			Netgame.game_state["losers"].append(player_id)
 	else:
 		var ante = mini(me.chips, Rules.RULES["ANTE"])
 		me.chips -= ante
 		Netgame.game_state.pot += ante
+		prints("took", ante, "chips from", player_id)
 
 func clear_losers():
 	for id in Netgame.game_state.losers:

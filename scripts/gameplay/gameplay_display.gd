@@ -30,6 +30,7 @@ func update_display():
 	# Handle community and hole cards
 	adjust_cards()
 	adjust_comm_holder()
+	prints(multiplayer.get_unique_id(), "has", Netgame.game_state.comm_cards)
 
 func adjust_cards():
 	var comm_difference = comm_card_holder.get_child_count() - Rules.RULES["COMM_CARDS"]
@@ -37,13 +38,13 @@ func adjust_cards():
 	
 	while comm_difference != 0:
 		if comm_difference > 0:
-			comm_card_holder.get_children()[-1].free()
+			comm_card_holder.get_children()[-1].get_child(0).free()
 		elif comm_difference < 0:
 #			comm_card_holder.add_child(card_marker.duplicate())
 			comm_card_holder.add_child(comm_card_holder.get_child(0).duplicate())
 	while hole_difference != 0:
 		if hole_difference > 0:
-			hole_card_holder.get_children()[-1].free()
+			hole_card_holder.get_children()[-1].get_child(0).free()
 		elif hole_difference < 0:
 #			hole_card_holder.add_child(card_marker.duplicate())
 			hole_card_holder.add_child(hole_card_holder.get_child(0).duplicate())

@@ -1,6 +1,8 @@
 extends Node
 
 const COLORS = [Color.BLACK, Color.RED, Color.BLACK, Color.RED, Color.GOLD, Color.GOLD]
+const SUITS_PER_ROW = 3
+const SUIT_SIZE = 256
 
 func setup(card: int):
 	var indices = [$TopLeft, $BottomRight]
@@ -12,9 +14,10 @@ func setup(card: int):
 	var suit = Rules.get_suit(card)
 	
 	for i in icons:
-#		i.texture.region.x = 256 * (suit % 3)
-#		i.texture.region.y = 256 * (suit / 3)
-		i.texture.region = Rect2i(256 * (suit % 3), 256 * (suit / 3), 256, 256)
+		i.texture.region = Rect2i(\
+			SUIT_SIZE * (suit % SUITS_PER_ROW), \
+			SUIT_SIZE * (suit / SUITS_PER_ROW), \
+			SUIT_SIZE, SUIT_SIZE)
 	for t in texts:
 		t.text = value
 	for idx in indices:

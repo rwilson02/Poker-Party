@@ -1,0 +1,77 @@
+[gd_scene load_steps=2 format=3 uid="uid://br8kujy37icgm"]
+
+[ext_resource type="Script" path="res://scripts/ui/rule_changer.gd" id="1_hcc7p"]
+
+[node name="RuleChange" type="Panel"]
+offset_right = 800.0
+offset_bottom = 500.0
+script = ExtResource("1_hcc7p")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Option1" type="VBoxContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Title" type="RichTextLabel" parent="HBoxContainer/Option1"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=20][center]Example Option"
+fit_content = true
+
+[node name="Image" type="TextureRect" parent="HBoxContainer/Option1"]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Description" type="RichTextLabel" parent="HBoxContainer/Option1"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=20][center][wave]Who knows what this option will do?[/wave][/center]"
+fit_content = true
+autowrap_mode = 2
+
+[node name="Select" type="Button" parent="HBoxContainer/Option1"]
+custom_minimum_size = Vector2(200, 66)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Select Change"
+
+[node name="Option2" type="VBoxContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Title" type="RichTextLabel" parent="HBoxContainer/Option2"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=20][center]Example Option"
+fit_content = true
+
+[node name="Image" type="TextureRect" parent="HBoxContainer/Option2"]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Description" type="RichTextLabel" parent="HBoxContainer/Option2"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[font_size=20][center][wave]Who knows what this option will do?[/wave][/center]"
+fit_content = true
+autowrap_mode = 2
+
+[node name="Select" type="Button" parent="HBoxContainer/Option2"]
+custom_minimum_size = Vector2(200, 66)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Select Change"

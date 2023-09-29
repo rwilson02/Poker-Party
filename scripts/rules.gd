@@ -37,34 +37,46 @@ func hand_to_string(hand: Array):
 	return hand_string
 
 func reset():
-	var rules_string = FileAccess.get_file_as_string("res://rules/base_rules.json")
-	RULES = JSON.parse_string(rules_string)
+	RULES = load_json_at("res://rules/base_rules.json")
 	integerize(RULES)
 
-func set_rule(rule: StringName, value: Variant):
+func set_rule(rule: String, value: Variant):
 	if RULES.has(rule) and typeof(RULES[rule]) == typeof(value):
 		RULES[rule] = value
-	else: return
 	
 	# Special considerations for other rules
 	# e.g. setting/resetting certain hand ranks for certain hand sizes
-	if rule == "CARDS_PER_HAND":
-		var card_rules
-		var path = "res://rules/%s.json"
-		
-		match value:
-			4:
-				card_rules = load_json_at(path % "four_cards")
-				RULES["HAND_RANKS"].merge(card_rules, true)
-			5:
-				card_rules = load_json_at(path % "base_rules")
-				RULES["HAND_RANKS"] = card_rules["HAND_RANKS"]
-			6:
-				card_rules = load_json_at(path % "six_cards")
-				RULES["HAND_RANKS"].merge(card_rules, true)
-			_: 
-				push_error("wait you can't have that many")
-		integerize(RULES)
+	match rule:
+		"RESET":
+			reset()
+		"CARDS_PER_HAND":
+			var card_rules
+			var path = "res://rules/%s.json"
+			
+			match value:
+				4:
+					card_rules = load_json_at(path % "four_cards")
+					RULES["HAND_RANKS"].merge(card_rules, true)
+				5:
+					card_rules = load_json_at(path % "base_rules")
+					RULES["HAND_RANKS"] = card_rules["HAND_RANKS"]
+				6:
+					card_rules = load_json_at(path % "six_cards")
+					RULES["HAND_RANKS"].merge(card_rules, true)
+				_: 
+					push_error("wait you can't have that many")
+			integerize(RULES)
+
+func add_change(change: String):
+	var counter_change
+	if change.ends_with("UP"):
+		counter_change = change.left(-2) + "DOWN"
+	elif change.ends_with("DOWN"):
+		counter_change = change.left(-4) + "UP"
+	if RULES.CURRENT_CHANGES.has(counter_change):
+		RULES.CURRENT_CHANGES.erase(counter_change)
+	else:
+		RULES.CURRENT_CHANGES.append(change)
 
 func load_json_at(path: String):
 	var it = JSON.parse_string(FileAccess.get_file_as_string(path))

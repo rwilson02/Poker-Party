@@ -1,0 +1,12 @@
+KEY,ICON_NAME_IF_DIFF,HAS_FORMAT,TITLE,DESCRIPTION,AFFECTED_RULE,NEW_VALUE
+FULL_RESET,,0,Full Reset,Reset all the rules back to the basic rules of poker.,RESET,0
+SUITS_UP,,0,Dress Up,[color=GREEN]Add an additional suit[/color] to the deck.,SUITS,1
+SUITS_DOWN,,0,Dress Down,[color=RED]Remove a suit[/color] from the deck.,SUITS,-1
+CARDS_UP,,0,Number Cruncher,[color=GREEN]Add 3 additional cards[/color] to each suit.,VALS_PER_SUIT,3
+CARDS_DOWN,,0,Hidden Figures,[color=RED]Remove 3 cards[/color] from each suit.,VALS_PER_SUIT,-3
+COMM_UP,,1,Metropolitan,Increase the number of community cards to [color=GREEN]%d[/color].,COMM_CARDS,1
+COMM_DOWN,,1,Locality,Decrease the number of community cards to [color=RED]%d[/color].,COMM_CARDS,-1
+HOLE_UP,,1,Bigger Pockets,Increase the number of cards given to players to [color=GREEN]%d[/color].,HOLE_CARDS,1
+HOLE_DOWN,,1,Empty Pockets,Decrease the number of cards given to players to [color=RED]%d[/color].,HOLE_CARDS,-1
+HAND_UP,,1,Polydactyly,Increase the number of cards required to make a hand to [color=GREEN]%d[/color].,CARDS_PER_HAND,1
+HAND_DOWN,,1,Oligodactyly,Decrease the number of cards required to make a hand to [color=RED]%d[/color].,CARDS_PER_HAND,-1

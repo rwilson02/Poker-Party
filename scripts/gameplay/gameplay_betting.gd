@@ -45,7 +45,7 @@ func do_betting_round(start_index):
 #			prints("paging", awaiting_player)
 			get_bet_option.rpc_id(awaiting_player, 0)
 			got_bet = await input_received
-			Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
+			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		if got_bet: 
 			initial_bettor_index = Netgame.game_state["active_players"].find(awaiting_player)
@@ -66,7 +66,7 @@ func do_betting_round(start_index):
 			prints("paging", awaiting_player)
 			get_bet_option.rpc_id(awaiting_player, get_max_bet())
 			await input_received
-			Netgame.sync_data.rpc(Netgame.players, Netgame.game_state)
+			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 	
 	# End of betting round
 	for id in Netgame.game_state.active_players:
@@ -102,7 +102,6 @@ func get_bet_option(current_bet):
 	
 	# Show bet bar now that everything's settled
 	bet_bar.visible = true
-#	prints("bet bar for", multiplayer.get_unique_id(), "activated:", bet_bar.is_visible())
 
 @rpc("any_peer","call_local","reliable")
 func send_option(option, value):

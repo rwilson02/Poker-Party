@@ -90,8 +90,9 @@ func get_live_players():
 	return game_state["active_players"].size() - game_state["folded_players"].size()
 
 @rpc("authority", "call_local", "reliable", 2)
-func sync_data(player_data, state):
+func sync_data(player_data, rules, state):
 	Netgame.players = player_data
+	Rules.RULES = rules
 	Netgame.game_state = state
 #	prints(multiplayer.get_unique_id(), "data received")
 	state_updated.emit()
