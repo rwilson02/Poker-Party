@@ -22,3 +22,5 @@ func setup(card: int):
 		t.text = value
 	for idx in indices:
 		idx.modulate = COLORS[suit]
+		
+	self.tooltip_text = Rules.get_proper_symbol(card)

@@ -70,15 +70,22 @@ func do_betting_round(start_index):
 	
 	# End of betting round
 	for id in Netgame.game_state.active_players:
-		Netgame.game_state.pot += Netgame.players[id].current_bet
-		Netgame.players[id].current_bet = 0
+		if Netgame.players[id].current_bet > 0:
+			Netgame.game_state.pot += absi(Netgame.players[id].current_bet)
+			Netgame.players[id].current_bet = 0
+	Netgame.sync_data(Netgame.players, Rules.RULES, Netgame.game_state)
 
 @rpc("authority","call_local","reliable")
 func get_bet_option(current_bet):
 	# Show correct labels/tooltips on buttons
 	var bet_stage = 0 if current_bet == 0 else 1
+#	if Netgame.me().chips > 0:
 	check_call.text = name_tooltip_combos[bet_stage][0][0]
 	check_call.tooltip_text = name_tooltip_combos[bet_stage][0][1]
+#	else:
+#		check_call.text = name_tooltip_combos[0][0][0]
+#		check_call.tooltip_text = name_tooltip_combos[0][0][1]
+	
 	bet_raise_button.text = name_tooltip_combos[bet_stage][1][0]
 	bet_raise_button.tooltip_text = name_tooltip_combos[bet_stage][1][1]
 	
@@ -90,7 +97,7 @@ func get_bet_option(current_bet):
 		else Netgame.me().chips >= (bet_to_match + Rules.RULES["MIN_BET"])
 	
 	# Those are positive checks, so invert to set disabled status
-	check_call.disabled = not check_or_call
+	check_call.disabled = not check_or_call # Should always be enabled?
 	bet_raise_button.disabled = not bet_or_raise
 	bet_raise_input.editable = bet_or_raise # should be true when you can bet or raise
 	
@@ -112,6 +119,10 @@ func send_option(option, value):
 		"CALL":
 			if bet_to_match == 0:
 				prints(sender, "checks.")
+			elif Netgame.players[sender].chips == 0:
+				Netgame.players[sender].current_bet = \
+					mini(Netgame.players[sender].current_bet, Netgame.players[sender].current_bet * -1)
+				prints(sender, "cannot make the bet.")
 			else:
 				Netgame.players[sender].chips -= value
 				Netgame.players[sender].current_bet += value

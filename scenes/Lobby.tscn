@@ -79,6 +79,7 @@ layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "127.0.0.1"
 alignment = 1
+context_menu_enabled = false
 
 [node name="Join" type="Button" parent="LobbyControls/Control/PreGame/VBoxContainer"]
 layout_mode = 2
@@ -130,6 +131,7 @@ grow_horizontal = 2
 grow_vertical = 2
 placeholder_text = "Player Name"
 alignment = 1
+context_menu_enabled = false
 
 [connection signal="pressed" from="LobbyControls/Control/PreGame/Create" to="." method="create_game"]
 [connection signal="pressed" from="LobbyControls/Control/PreGame/VBoxContainer/Join" to="." method="on_join_button"]

@@ -24,8 +24,12 @@ Netgame="*res://scripts/netgame.gd"
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
-window/stretch/mode="viewport"
+window/stretch/mode="canvas_items"
 
 [dotnet]
 
 project/assembly_name="Poker Party Prototype"
+
+[gui]
+
+timers/tooltip_delay_sec=0.33

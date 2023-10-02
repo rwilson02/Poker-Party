@@ -33,6 +33,28 @@ step = 5.0
 alignment = 1
 custom_arrow_step = 5.0
 
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/BetRaise"]
+visible = false
+layout_mode = 2
+
+[node name="ValueUp" type="Button" parent="HBoxContainer/BetRaise/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "+"
+
+[node name="LineEdit" type="LineEdit" parent="HBoxContainer/BetRaise/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+alignment = 1
+context_menu_enabled = false
+
+[node name="ValueDown" type="Button" parent="HBoxContainer/BetRaise/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "-
+"
+
 [node name="Fold" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3

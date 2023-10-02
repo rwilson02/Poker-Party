@@ -119,7 +119,7 @@ func attempt_upnp(port: int):
 		upnp.add_port_mapping(port, port, ProjectSettings.get_setting("application/config/name"), "UDP", 60*60*12) # 12 hours
 		upnp_complete.emit(OK)
 
-func _exit_tree():
-	if discovery_thread:
-		discovery_thread.wait_to_finish()
-	upnp.delete_port_mapping(PORT, "UDP")
+#func _exit_tree():
+#	if discovery_thread:
+#		discovery_thread.wait_to_finish()
+#	upnp.delete_port_mapping(PORT, "UDP")

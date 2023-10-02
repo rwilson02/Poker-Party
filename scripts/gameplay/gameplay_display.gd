@@ -18,7 +18,7 @@ func _ready():
 func update_display():
 	# Handle scorebug
 	hud_text.text = "[center]%s\n%s[/center]" % [Netgame.me().name, CHIP_TEMPLATE % Netgame.me().chips]
-	var betted = Netgame.me().current_bet
+	var betted = absi(Netgame.me().current_bet)
 	if betted > 0:
 		wager_text.visible = true
 		wager_text.text = "[center]%s[/center]" % (CHIP_TEMPLATE % betted)
