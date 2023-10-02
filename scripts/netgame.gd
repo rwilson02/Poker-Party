@@ -35,8 +35,8 @@ func _ready():
 	multiplayer.connection_failed.connect(_on_connected_fail)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	
-	discovery_thread = Thread.new()
-	discovery_thread.start(attempt_upnp.bind(PORT))
+#	discovery_thread = Thread.new()
+#	discovery_thread.start(attempt_upnp.bind(PORT))
 
 func join_game(address = ""):
 	if address.is_empty():
@@ -105,7 +105,8 @@ func sync_data(player_data, rules, state):
 
 func attempt_upnp(port: int):
 	upnp = UPNP.new()
-	print(IP.get_local_interfaces())
+#	print(IP.get_local_interfaces())
+#	print(IP.get_local_addresses())
 	var err = upnp.discover()
 	
 	if err != OK:

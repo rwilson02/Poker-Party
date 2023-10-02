@@ -28,6 +28,7 @@ func update_display():
 	$PotText.text = CHIP_TEMPLATE % Netgame.game_state.pot
 	
 	# Handle community and hole cards
+	await get_tree().create_timer(0.1).timeout
 	adjust_cards()
 	adjust_comm_holder()
 #	prints(multiplayer.get_unique_id(), "has", Netgame.game_state.comm_cards)
