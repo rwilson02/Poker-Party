@@ -11,6 +11,7 @@ func _ready():
 	Netgame.test_player_conditions.connect(update_player_display)
 	Netgame.test_player_conditions.connect(test_start)
 	Netgame.server_disconnected.connect(server_exploded)
+	Netgame.upnp_complete.connect(did_it_work)
 	Netgame.players.clear()
 
 func test_start(remaining_players):
@@ -115,3 +116,13 @@ func server_exploded():
 		player_display.push_color(Color.RED)
 		player_display.append_text("Server closed!")
 		player_display.pop()
+
+func did_it_work(notif):
+	player_display.clear()
+	if notif == OK:
+		player_display.append_text("UPNP OK!")
+	else:
+		player_display.push_color(Color.RED)
+		player_display.append_text("UPNP error: %s" % str(notif))
+		player_display.pop()
+	

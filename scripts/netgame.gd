@@ -5,8 +5,9 @@ signal player_disconnected(peer_id)
 signal server_disconnected()
 signal test_player_conditions(players_remaining)
 signal state_updated()
+signal upnp_complete(possible_error)
 
-const PORT = 7000
+const PORT = 17160 # 13! / 9!, AKQJ
 const DEFAULT_IP = "127.0.0.1"
 const MAX_CONNECTIONS = 10
 
@@ -24,6 +25,8 @@ var game_state = {
 	"folded_players": [],
 	"losers": []
 }
+var discovery_thread: Thread = null
+var upnp: UPNP = null
 
 func _ready():
 	multiplayer.peer_connected.connect(_on_player_connected)
@@ -31,6 +34,9 @@ func _ready():
 	multiplayer.connected_to_server.connect(_on_connected_ok)
 	multiplayer.connection_failed.connect(_on_connected_fail)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	
+	discovery_thread = Thread.new()
+	discovery_thread.start(attempt_upnp.bind(PORT))
 
 func join_game(address = ""):
 	if address.is_empty():
@@ -96,3 +102,23 @@ func sync_data(player_data, rules, state):
 	Netgame.game_state = state
 #	prints(multiplayer.get_unique_id(), "data received")
 	state_updated.emit()
+
+func attempt_upnp(port: int):
+	upnp = UPNP.new()
+	print(IP.get_local_interfaces())
+	var err = upnp.discover()
+	
+	if err != OK:
+		push_error("UPNP error: %s" % str(err))
+		upnp_complete.emit(err)
+		return
+	
+	var gateway = upnp.get_gateway()
+	if gateway and gateway.is_valid_gateway():
+		upnp.add_port_mapping(port, port, ProjectSettings.get_setting("application/config/name"), "UDP", 60*60*12) # 12 hours
+		upnp_complete.emit(OK)
+
+func _exit_tree():
+	if discovery_thread:
+		discovery_thread.wait_to_finish()
+	upnp.delete_port_mapping(PORT, "UDP")
