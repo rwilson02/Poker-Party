@@ -43,13 +43,17 @@ func join_game(address = ""):
 		address = DEFAULT_IP
 	
 	var peer = ENetMultiplayerPeer.new()
+#	var peer = WebRTCMultiplayerPeer.new()
 	var error = peer.create_client(address, PORT)
+#	var error = peer.create_client(randi() / 2)
 	if error: return error
 	multiplayer.multiplayer_peer = peer
 
 func create_game():
 	var peer = ENetMultiplayerPeer.new()
+#	var peer = WebRTCMultiplayerPeer.new()
 	var error = peer.create_server(PORT, MAX_CONNECTIONS)
+#	var error = peer.create_server()
 	if error: return error
 	multiplayer.multiplayer_peer = peer
 	
