@@ -24,7 +24,8 @@ func _real_goto_scene(scene: PackedScene):
 		new_scene.MENU.get_out.connect(end_game)
 
 func _exit_tree():
-	if multiplayer.is_server():
-		multiplayer.server_disconnected.emit()
-	else:
-		multiplayer.peer_disconnected.emit(multiplayer.get_unique_id())
+	if multiplayer:
+		if multiplayer.is_server():
+			multiplayer.server_disconnected.emit()
+		else:
+			multiplayer.peer_disconnected.emit(multiplayer.get_unique_id())

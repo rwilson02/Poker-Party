@@ -1,22 +1,23 @@
 extends Node
 
 signal animation_complete
+signal get_out
 signal okay_continue
-signal get_out()
 
 @onready var shade = $Shade
 @onready var rule_changer = $RuleChange
 @onready var end_screen = $End
 
 func _ready():
-	rule_changer.hide_menu.connect(hide_rule_changer)
+	rule_changer.option_selected.connect(hide_rule_changer)
+	rule_changer.option_selected.connect(func(): self.done_here.rpc_id(1))
 	end_screen.get_node("Button").pressed.connect(okay_get_out)
 
 func toggle_shadow():
 	var tween = create_tween()
 	
 	if shade.visible:
-		tween.tween_property(shade, "modulate", Color.hex(0xFFFFFF00), 0.5)
+		tween.tween_property(shade, "modulate", Color.hex(0xFFFFFF00), 0.25)
 		await tween.finished
 		shade.visible = false
 		animation_complete.emit()
@@ -39,16 +40,15 @@ func show_rule_changer():
 
 func hide_rule_changer():
 	var tween = create_tween()
-	tween.tween_property(rule_changer, "position", screen_center(rule_changer) + (Vector2.DOWN * 720), 1)\
+	tween.tween_property(rule_changer, "position", screen_center(rule_changer) + (Vector2.DOWN * 720), 0.5)\
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	await tween.finished
 	if rule_changer.visible: rule_changer.visible = false
 	toggle_shadow()
 	await animation_complete
-	fine_make_me_rpc_why_dont_you.rpc_id(1)
 
 @rpc("any_peer","call_local","reliable")
-func fine_make_me_rpc_why_dont_you():
+func done_here():
 	okay_continue.emit()
 
 @rpc("authority", "call_local", "reliable")
