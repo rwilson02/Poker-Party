@@ -12,6 +12,7 @@ var deck: Array
 
 func _ready():
 	rpc_id(1, "player_ready")
+	
 
 @rpc("any_peer", "call_local", "reliable")
 func player_ready():

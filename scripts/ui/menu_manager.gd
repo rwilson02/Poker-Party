@@ -2,6 +2,7 @@ extends Node
 
 signal animation_complete
 signal okay_continue
+signal get_out()
 
 @onready var shade = $Shade
 @onready var rule_changer = $RuleChange
@@ -61,7 +62,7 @@ func show_end_screen():
 
 func okay_get_out():
 	multiplayer.multiplayer_peer = null
-	$"/root/Main".end_game()
+	get_out.emit()
 
 func screen_center(node: Node):
 	return (Vector2(get_tree().root.content_scale_size) - node.size) / 2.0
