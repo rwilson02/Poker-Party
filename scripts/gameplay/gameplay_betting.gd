@@ -177,8 +177,9 @@ func get_max_bet():
 	return max_bet
 
 func player_disconnected(disconnected_id):
-	if awaiting_player == disconnected_id:
-		send_option.rpc_id(1, "DISCONNECT", null)
+	if awaiting_player == disconnected_id and multiplayer.is_server():
+#		send_option.rpc_id(1, "DISCONNECT", null)
+		send_option("DISCONNECT", null)
 
 func redistribute_wealth(from):
 	var free_money = Netgame.players[from].chips

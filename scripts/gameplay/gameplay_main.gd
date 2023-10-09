@@ -82,21 +82,20 @@ func gameplay_loop():
 		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		# do rule change
-		var player_chips = []
-		for id in Netgame.game_state.active_players:
-			player_chips.append([id, Netgame.players[id].chips])
-		player_chips.sort_custom(func(a,b): return a[1] > b[1])
-		var losingest_player = player_chips.pop_back()[0]
-#		MENU.get_node("RuleChange").setup_menu.rpc_id(losingest_player)
-		MENU.show_rule_changer.rpc_id(losingest_player)
-#		await MENU.get_node("RuleChange").on_receive_button_input
-		await MENU.okay_continue
-		
 		for id in Netgame.game_state.active_players:
 			Netgame.players[id]["cards"].clear()
 			if Netgame.players[id]["chips"] == 0:
 				Netgame.game_state["losers"].append(id)
 		clear_losers()
+		
+		var player_chips = []
+		for id in Netgame.game_state.active_players:
+			player_chips.append([id, Netgame.players[id].chips])
+		player_chips.sort_custom(func(a,b): return a[1] > b[1])
+		var losingest_player = player_chips.pop_back()[0]
+		MENU.show_rule_changer.rpc_id(losingest_player)
+		await MENU.okay_continue
+		
 		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		print("alright next round")
 	

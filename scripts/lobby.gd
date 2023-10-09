@@ -21,7 +21,7 @@ func update_player_display(_remaining = null):
 	var template_string = "%s\n"
 	
 	player_display.clear()
-	if not multiplayer.has_multiplayer_peer(): return
+	if not multiplayer or not multiplayer.has_multiplayer_peer(): return
 	
 	player_display.push_font_size(20)
 	for player_id in Netgame.players:

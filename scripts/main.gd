@@ -19,3 +19,9 @@ func _real_goto_scene(scene: PackedScene):
 	get_child(0).free()
 	var new_scene = scene.instantiate()
 	add_child(new_scene, true)
+
+func _exit_tree():
+	if multiplayer.is_server():
+		multiplayer.server_disconnected.emit()
+	else:
+		multiplayer.peer_disconnected.emit(multiplayer.get_unique_id())
