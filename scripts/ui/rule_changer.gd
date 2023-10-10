@@ -1,6 +1,6 @@
 extends Node
 
-signal option_selected
+signal option_selected(valid)
 
 # Delimiters of change types
 # All powers of two -1 because increases are odds
@@ -116,10 +116,11 @@ func get_option_information(option):
 func on_button_pressed(rule, value, change):
 	for button in buttons: button.disabled = true
 	on_receive_button_press.rpc_id(1, rule, value, change)
-	option_selected.emit()
+	option_selected.emit(change != "DISCONNECT")
 
 @rpc("any_peer", "call_local", "reliable")
 func on_receive_button_press(rule, value, change):
-	Rules.add_change(change)
-	Rules.set_rule(rule, value)
+	if change != "DISCONNECT":
+		Rules.add_change(change)
+		Rules.set_rule(rule, value)
 	

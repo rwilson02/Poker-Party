@@ -72,16 +72,14 @@ func _register_player(new_player_info):
 	test_player_conditions.emit(players.keys().size())
 
 func _on_player_disconnected(id):
-#	players.erase(id)
-	player_disconnected.emit(id)
-	test_player_conditions.emit(players.keys().size())
-	
 	if game_state["active_players"].size() > 0:
 		game_state["losers"].append(id)
 		game_state["folded_players"].append(id)
 		game_state.pot += players[id].chips
 		if multiplayer.is_server():
 			sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
+	player_disconnected.emit(id)
+	test_player_conditions.emit(players.keys().size())
 
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()

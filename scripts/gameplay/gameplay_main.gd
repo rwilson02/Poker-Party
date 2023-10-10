@@ -93,9 +93,17 @@ func gameplay_loop():
 		for id in Netgame.game_state.active_players:
 			player_chips.append([id, Netgame.players[id].chips])
 		player_chips.sort_custom(func(a,b): return a[1] > b[1])
-		var losingest_player = player_chips.pop_back()[0]
-		MENU.show_rule_changer.rpc_id(losingest_player)
-		await MENU.okay_continue
+		var is_good = false
+		
+		while not is_good:
+			var potential_player = player_chips.pop_back()
+			if potential_player == null: 
+				break
+			else:
+				var losingest_player = potential_player[0]
+				if losingest_player in Netgame.game_state["active_players"]:
+					MENU.show_rule_changer.rpc_id(losingest_player)
+					is_good = await MENU.okay_continue
 		
 		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		print("alright next round")

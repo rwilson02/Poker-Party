@@ -10,7 +10,11 @@ signal okay_continue
 
 func _ready():
 	rule_changer.option_selected.connect(hide_rule_changer)
-	rule_changer.option_selected.connect(func(): self.done_here.rpc_id(1))
+	rule_changer.option_selected.connect(func(value): self.done_here.rpc_id(1, value))
+	
+	if multiplayer.is_server():
+		Netgame.player_disconnected.connect(begone_thot)
+	
 	end_screen.get_node("Button").pressed.connect(okay_get_out)
 
 func toggle_shadow():
@@ -38,7 +42,7 @@ func show_rule_changer():
 	tween.tween_property(rule_changer, "position", screen_center(rule_changer), 1)\
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
-func hide_rule_changer():
+func hide_rule_changer(_value):
 	var tween = create_tween()
 	tween.tween_property(rule_changer, "position", screen_center(rule_changer) + (Vector2.DOWN * 720), 0.5)\
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
@@ -48,8 +52,13 @@ func hide_rule_changer():
 	await animation_complete
 
 @rpc("any_peer","call_local","reliable")
-func done_here():
-	okay_continue.emit()
+func done_here(valid):
+	okay_continue.emit(valid)
+
+func begone_thot(id):
+	prints(id, "gone")
+	if id in Netgame.game_state["losers"]:
+		done_here(false)
 
 @rpc("authority", "call_local", "reliable")
 func show_end_screen():
