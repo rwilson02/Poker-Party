@@ -70,7 +70,8 @@ func show_end_screen():
 	tween.tween_property(end_screen, "position", screen_center(end_screen), 1).set_trans(Tween.TRANS_BOUNCE)
 
 func okay_get_out():
-	multiplayer.multiplayer_peer = null
+	if multiplayer:
+		multiplayer.multiplayer_peer = null
 	get_out.emit()
 
 func screen_center(node: Node):
