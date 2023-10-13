@@ -81,6 +81,7 @@ func adjust_change_icons():
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.texture = load(ICON_TEMPLATE % change)
 		icon.self_modulate = Color.INDIAN_RED if "DOWN" in change else Color.GREEN_YELLOW
+		icon.tooltip_text = "peepee"
 		change_icons.add_child(icon)
 
 func determine_card(flavor: String, holder: Node, id: int):

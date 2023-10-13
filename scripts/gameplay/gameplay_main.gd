@@ -96,7 +96,7 @@ func gameplay_loop():
 		player_chips.sort_custom(func(a,b): return a[1] > b[1])
 		var is_good = false
 		
-		while not is_good:
+		while not is_good and Netgame.game_state["active_players"].size() > 1:
 			var potential_player = player_chips.pop_back()
 			if potential_player == null: 
 				break
