@@ -5,11 +5,13 @@ extends Node
 @onready var hole_card_holder = $Scorebug/ClipMask/HoleCards
 @onready var comm_card_holder = $CommCards
 @onready var card_marker = $CommCards/Marker1
+@onready var change_icons = $ChangeIcons
 
 const CHIP_TEMPLATE = "[img=24]res://textures/ico_chips.png[/img] %d"
 const UI_CARD = preload("res://scenes/ui/ui_card.tscn")
 const CARD_SCALE = Vector2.ONE * 0.4
 const HOLDER_BASE_WIDTH = 600
+const ICON_SIZE = 40
 
 func _ready():
 	Netgame.state_updated.connect(update_display)
@@ -31,6 +33,7 @@ func update_display():
 	await get_tree().create_timer(0.1).timeout
 	adjust_cards()
 	adjust_comm_holder()
+	adjust_change_icons()
 #	prints(multiplayer.get_unique_id(), "has", Netgame.game_state.comm_cards)
 
 func adjust_cards():
@@ -66,6 +69,19 @@ func adjust_comm_holder():
 		(viewport_size.x - comm_card_holder.size.x) / 2,
 		(viewport_size.y - comm_card_holder.size.y) / 2
 	)
+
+func adjust_change_icons():
+	const ICON_TEMPLATE = "res://textures/rule_changes/%s.png"
+	
+	for child in change_icons.get_children():
+		child.free()
+	for change in Rules.RULES.CURRENT_CHANGES:
+		var icon = TextureRect.new()
+		icon.custom_minimum_size = Vector2.ONE * ICON_SIZE
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.texture = load(ICON_TEMPLATE % change)
+		icon.self_modulate = Color.INDIAN_RED if "DOWN" in change else Color.GREEN_YELLOW
+		change_icons.add_child(icon)
 
 func determine_card(flavor: String, holder: Node, id: int):
 	var known_cards

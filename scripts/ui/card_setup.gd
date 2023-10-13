@@ -1,6 +1,6 @@
 extends Node
 
-const COLORS = [Color.BLACK, Color.RED, Color.BLACK, Color.RED, Color.GOLD, Color.GOLD]
+const COLORS = [Color.BLACK, Color.RED, Color.BLACK, Color.RED, Color.DARK_MAGENTA, Color.DARK_MAGENTA]
 const SUITS_PER_ROW = 3
 const SUIT_SIZE = 256
 
