@@ -181,3 +181,10 @@ static func get_combinations(n: Array, k: int):
 				returned.append(next)
 	return returned
 
+static func hand_to_string(hand: Array):
+	var hand_string = "["
+	for card in hand:
+		hand_string += Rules.get_proper_symbol(card)
+		hand_string += " "
+	hand_string[-1] = "]"
+	return hand_string

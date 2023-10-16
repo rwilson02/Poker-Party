@@ -33,8 +33,8 @@ func do_generation_test():
 		var end_time = Time.get_ticks_msec() - start_time
 		
 		if best_hand.rank != "":
-			output_box.set_line(current_line, "%s\n" % Rules.hand_to_string(cards))
-			output_box.set_line(current_line + 1, "%s\n" % Rules.hand_to_string(best_hand.cards))
+			output_box.set_line(current_line, "%s\n" % Hand.hand_to_string(cards))
+			output_box.set_line(current_line + 1, "%s\n" % Hand.hand_to_string(best_hand.cards))
 			output_box.set_line(current_line + 2, best_hand.get_name() + "\n")
 			output_box.set_line(current_line + 3, ("%dms" % end_time) + "\n\n")
 	#		output_box.grab_focus()
@@ -71,8 +71,8 @@ func do_hand_test():
 	var best_hand = Hand.get_best_hand(input_cards)
 	
 	if best_hand.rank != "":
-		output_box.set_line(0, "%s\n" % Rules.hand_to_string(input_cards))
-		output_box.set_line(1, "%s\n" % Rules.hand_to_string(best_hand.cards))
+		output_box.set_line(0, "%s\n" % Hand.hand_to_string(input_cards))
+		output_box.set_line(1, "%s\n" % Hand.hand_to_string(best_hand.cards))
 		output_box.set_line(2, best_hand.get_name() + "\n")
 	
 	Rules.reset()
