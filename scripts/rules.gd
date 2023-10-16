@@ -82,3 +82,32 @@ func integerize(dict: Dictionary):
 			TYPE_DICTIONARY:
 				integerize(dict[key])
 			_: pass
+
+func get_changes():
+	var change_array = []
+	
+	for change in RULES.CURRENT_CHANGES:
+		var template = "%screase %s by %d."
+		var mod = "In" if "UP" in change else "De"
+		var type = change.get_slice("_", 0)
+		var rule = ""
+		var value = RULES.CURRENT_CHANGES.count(change)
+		
+		match type:
+			"SUITS":
+				rule = "suits in the deck"
+			"CARDS": 
+				rule = "cards in each suit"
+				value *= 3
+			"COMM":
+				rule = "community cards"
+			"HOLE":
+				rule = "hole cards"
+			"HAND":
+				rule = "cards in a hand"
+			_:
+				push_error("you fucked it")
+		
+		change_array.append(template % [mod, rule, value])
+	
+	return change_array

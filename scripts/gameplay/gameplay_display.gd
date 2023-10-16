@@ -72,23 +72,25 @@ func adjust_comm_holder():
 
 func adjust_change_icons():
 	const ICON_TEMPLATE = "res://textures/rule_changes/%s.png"
+	var CHANGE_DESCS = Rules.get_changes()
+	var CHANGES = Rules.RULES.CURRENT_CHANGES
 	
 	for child in change_icons.get_children():
 		child.free()
-	for change in Rules.RULES.CURRENT_CHANGES:
+	for idx in CHANGES.size():
 		var icon = TextureRect.new()
 		icon.custom_minimum_size = Vector2.ONE * ICON_SIZE
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon.texture = load(ICON_TEMPLATE % change)
-		icon.self_modulate = Color.INDIAN_RED if "DOWN" in change else Color.GREEN_YELLOW
-		icon.tooltip_text = "peepee"
+		icon.texture = load(ICON_TEMPLATE % CHANGES[idx])
+		icon.self_modulate = Color.INDIAN_RED if "DOWN" in CHANGES[idx] else Color.GREEN_YELLOW
+		icon.tooltip_text = CHANGE_DESCS[idx]
 		change_icons.add_child(icon)
 
 func determine_card(flavor: String, holder: Node, id: int):
 	var known_cards
 	var corresponding_card
 	var marker = holder.get_child(id)
-	var card_exists = marker.get_child_count() == 1
+	var card_exists = marker.get_child_count() > 0
 	
 	match flavor:
 		"comm":
@@ -110,13 +112,15 @@ func determine_card(flavor: String, holder: Node, id: int):
 	# But if there is a card there...
 	else:
 		# ... when there shouldn't be...
-		if not corresponding_card and corresponding_card != 0:
+		if corresponding_card == null:
 			# Get rid of it.
-			marker.get_child(0).queue_free()
+			for child in marker.get_children():
+				child.queue_free()
 		# If it should be, but it's not right...
 		elif marker.get_child(0).get_meta("card") != corresponding_card:
 			# Get rid of it,
-			marker.get_child(0).queue_free()
+			for child in marker.get_children():
+				child.queue_free()
 			# and put the right one there.
 			marker.add_child(create_new_card(corresponding_card))
 
