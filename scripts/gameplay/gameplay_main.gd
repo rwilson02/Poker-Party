@@ -46,7 +46,8 @@ func gameplay_loop():
 		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		# do initial deal (player hands and comm cards)
-		for i in (Rules.RULES["COMM_CARDS"] - Rules.RULES["HOLE_CARDS"]):
+		for i in (Rules.RULES["CARDS_PER_HAND"] - Rules.RULES["HOLE_CARDS"]):
+			if i >= Rules.RULES["COMM_CARDS"]: break
 			Netgame.game_state["comm_cards"].append(deck.pop_back())
 			print("given comm card")
 		for i in Rules.RULES["HOLE_CARDS"]:
