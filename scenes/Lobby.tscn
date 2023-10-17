@@ -133,6 +133,9 @@ placeholder_text = "Player Name"
 alignment = 1
 context_menu_enabled = false
 
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="pressed" from="LobbyControls/Control/PreGame/Create" to="." method="create_game"]
 [connection signal="pressed" from="LobbyControls/Control/PreGame/VBoxContainer/Join" to="." method="on_join_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/StartButton" to="." method="on_start_button"]

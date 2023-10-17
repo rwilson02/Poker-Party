@@ -4,6 +4,7 @@ extends Node
 @onready var address_bar = $LobbyControls/Control/PreGame/VBoxContainer/Address
 @onready var lobby_controls = $LobbyControls/Control/PreGame
 @onready var start_controls = $LobbyControls/Control/InGame
+@onready var timer = $Timer
 
 @onready var name_input = $PlayerSetup/LineEdit
 
@@ -12,6 +13,7 @@ func _ready():
 	Netgame.test_player_conditions.connect(test_start)
 	Netgame.server_disconnected.connect(server_exploded)
 	Netgame.upnp_complete.connect(did_it_work)
+	timer.timeout.connect(timeout)
 	Netgame.players.clear()
 
 func test_start(remaining_players):
@@ -70,15 +72,7 @@ func on_join_button():
 		
 		player_display.clear()
 		player_display.append_text("...")
-		await get_tree().create_timer(0.1).timeout
-		if not Netgame.players.has(1):
-			player_display.clear()
-			player_display.push_italics()
-			player_display.push_color(Color.DARK_GRAY)
-			player_display.append_text("Nobody seems to be hosting yet...\n")
-			player_display.append_text("But you'll automatically join once they do.")
-			player_display.pop()
-			player_display.pop()
+		timer.start(5)
 	else:
 		print(error)
 
@@ -103,9 +97,10 @@ func start_game():
 	get_parent().start_game()
 
 func server_exploded():
-	var is_server = multiplayer.is_server()
+	var is_server = multiplayer.has_multiplayer_peer() and multiplayer.is_server()
 	Netgame.players.clear()
 	multiplayer.multiplayer_peer = null
+	timer.stop()
 	
 	start_controls.visible = false
 	lobby_controls.visible = true
@@ -126,3 +121,13 @@ func did_it_work(notif):
 		player_display.append_text("UPNP error: %s" % str(notif))
 		player_display.pop()
 	
+
+func timeout():
+	if not Netgame.players.has(1):
+			player_display.clear()
+			multiplayer.multiplayer_peer = null
+			player_display.push_color(Color.DARK_GRAY)
+			player_display.append_text("Nobody's hosting at this address right now.")
+			lobby_controls.visible = true
+			start_controls.visible = false
+			name_input.editable = true

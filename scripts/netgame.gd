@@ -62,7 +62,10 @@ func create_game():
 	test_player_conditions.emit(1)
 
 func _on_player_connected(id):
-	_register_player.rpc_id(id, player_info)
+	if multiplayer.is_server() and game_state.active_players.size() > 0:
+		multiplayer.multiplayer_peer.get_peer(id).peer_disconnect_now()
+	else:
+		_register_player.rpc_id(id, player_info)
 
 @rpc("any_peer", "reliable")
 func _register_player(new_player_info):
@@ -72,14 +75,15 @@ func _register_player(new_player_info):
 	test_player_conditions.emit(players.keys().size())
 
 func _on_player_disconnected(id):
-	if game_state["active_players"].size() > 0:
-		game_state["losers"].append(id)
-		game_state["folded_players"].append(id)
-		game_state.pot += players[id].chips
-		if multiplayer.is_server():
-			sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
-	player_disconnected.emit(id)
-	test_player_conditions.emit(players.keys().size())
+	if id in players:
+		if game_state["active_players"].size() > 0:
+			game_state["losers"].append(id)
+			game_state["folded_players"].append(id)
+			game_state.pot += players[id].chips
+			if multiplayer.is_server():
+				sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
+		player_disconnected.emit(id)
+		test_player_conditions.emit(players.keys().size())
 
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()
