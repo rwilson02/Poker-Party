@@ -15,6 +15,7 @@ func _ready():
 	rpc_id(1, "player_ready")
 	
 	Netgame.server_disconnected.connect(MENU.okay_get_out)
+	MENU.do_it_again.connect(start_game)
 
 @rpc("any_peer", "call_local", "reliable")
 func player_ready():
@@ -25,8 +26,10 @@ func player_ready():
 		start_game()
 
 func start_game():
+	MENU.hide_end_screen.rpc()
 	for id in Netgame.players:
 		Netgame.game_state["active_players"].append(id)
+		Netgame.players[id].chips = Rules.RULES["INITIAL_CHIPS"]
 	Netgame.game_state["active_players"].shuffle()
 	
 	while Netgame.game_state["active_players"].size() > 1 and round_start_index < Rules.RULES["GAMEPLAY_ROUNDS"]:

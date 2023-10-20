@@ -3,6 +3,7 @@ extends Node
 signal animation_complete
 signal get_out
 signal okay_continue
+signal do_it_again
 
 @onready var shade = $Shade
 @onready var rule_changer = $RuleChange
@@ -14,8 +15,11 @@ func _ready():
 	
 	if multiplayer.is_server():
 		Netgame.player_disconnected.connect(begone_thot)
+		end_screen.get_node("HBoxContainer/RestartButton").visible = true
+		end_screen.get_node("HBoxContainer/RestartButton").pressed.connect(func(): do_it_again.emit())
 	
-	end_screen.get_node("Button").pressed.connect(okay_get_out)
+	end_screen.get_node("HBoxContainer/ExitButton").pressed.connect(okay_get_out)
+	
 
 func toggle_shadow():
 	var tween = create_tween()
@@ -65,9 +69,26 @@ func show_end_screen():
 	toggle_shadow()
 	await animation_complete
 	if Netgame.game_state["active_players"].has(multiplayer.get_unique_id()):
-		end_screen.get_node("Label").text = "YOU WIN"
+		end_screen.get_node("BigText").text = "YOU WIN"
+	if multiplayer.is_server():
+		end_screen.get_node("Message").text = "You decide what's next!"
+	else:
+		end_screen.get_node("Message").text = "Waiting for the host's decision..."
+		
+	
 	var tween = create_tween()
 	tween.tween_property(end_screen, "position", screen_center(end_screen), 1).set_trans(Tween.TRANS_BOUNCE)
+
+@rpc("authority", "call_local", "reliable")
+func hide_end_screen():
+	if end_screen.position.y > 0:
+		var tween = create_tween()
+		tween.tween_property(end_screen, "position", screen_center(end_screen) + (Vector2.DOWN * 720), 0.5)\
+			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		await tween.finished
+		end_screen.position = screen_center(end_screen) + (Vector2.UP * 720)
+		toggle_shadow()
+		await animation_complete
 
 func okay_get_out():
 	if multiplayer:

@@ -18,6 +18,8 @@
 		"HC": 000,
 		"": -9999,
 	},
+
+	"INITIAL_CHIPS": 200,
 	"ANTE": 20,
 	"GAMEPLAY_ROUNDS": 5000,
 	"MIN_BET": 5

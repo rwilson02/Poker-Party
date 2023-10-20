@@ -15,7 +15,7 @@ var players = {}
 var player_info = {
 	"name": "Player",
 	"cards": [],
-	"chips": 200,
+	"chips": 0,
 	"current_bet": 0
 }
 var game_state = {
