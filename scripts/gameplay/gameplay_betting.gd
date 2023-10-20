@@ -54,11 +54,13 @@ func do_betting_round(start_index):
 	# If nobody bet, leave
 	if all_bets_equal():
 		print("Everyone checked.")
+		collect_all_bets()
+		Netgame.sync_data(Netgame.players, Rules.RULES, Netgame.game_state)
 		return
 	
 	# Keep it rolling around if people are there
 	var index = initial_bettor_index
-	while not all_bets_equal() and Netgame.get_live_players() > 1:
+	while not all_bets_equal(true) and Netgame.get_live_players() > 1:
 		index += 1
 		var next_up = index % Netgame.game_state["active_players"].size()
 		awaiting_player = Netgame.game_state.active_players[next_up]
@@ -69,35 +71,32 @@ func do_betting_round(start_index):
 			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 	
 	# End of betting round
-	for id in Netgame.game_state.active_players:
-		if Netgame.players[id].current_bet > 0:
-			Netgame.game_state.pot += absi(Netgame.players[id].current_bet)
-			Netgame.players[id].current_bet = 0
+	collect_all_bets()
 	Netgame.sync_data(Netgame.players, Rules.RULES, Netgame.game_state)
 
 @rpc("authority","call_local","reliable")
 func get_bet_option(current_bet):
 	# Show correct labels/tooltips on buttons
 	var bet_stage = 0 if current_bet == 0 else 1
-#	if Netgame.me().chips > 0:
-	check_call.text = name_tooltip_combos[bet_stage][0][0]
-	check_call.tooltip_text = name_tooltip_combos[bet_stage][0][1]
-#	else:
-#		check_call.text = name_tooltip_combos[0][0][0]
-#		check_call.tooltip_text = name_tooltip_combos[0][0][1]
+	if Netgame.me().chips > 0:
+		check_call.text = name_tooltip_combos[bet_stage][0][0]
+		check_call.tooltip_text = name_tooltip_combos[bet_stage][0][1]
+	else:
+		check_call.text = name_tooltip_combos[0][0][0]
+		check_call.tooltip_text = name_tooltip_combos[0][0][1]
 	
 	bet_raise_button.text = name_tooltip_combos[bet_stage][1][0]
 	bet_raise_button.tooltip_text = name_tooltip_combos[bet_stage][1][1]
 	
 	# Enable/disable buttons as possible based on player chips
 	bet_to_match = current_bet
-	var bet_difference = bet_to_match - Netgame.me().current_bet
-	var check_or_call = true if bet_to_match == 0 else Netgame.me().chips >= bet_difference
+#	var bet_difference = bet_to_match - Netgame.me().current_bet
+#	var check_or_call = true if bet_to_match == 0 else Netgame.me().chips >= bet_difference
 	var bet_or_raise = Netgame.me().chips >= Rules.RULES["MIN_BET"] if bet_to_match == 0 \
 		else Netgame.me().chips >= (bet_to_match + Rules.RULES["MIN_BET"])
 	
 	# Those are positive checks, so invert to set disabled status
-	check_call.disabled = not check_or_call # Should always be enabled?
+#	check_call.disabled = not check_or_call # Should always be enabled?
 	bet_raise_button.disabled = not bet_or_raise
 	bet_raise_input.editable = bet_or_raise # should be true when you can bet or raise
 	
@@ -120,12 +119,13 @@ func send_option(option, value):
 			if bet_to_match == 0:
 				prints(sender, "checks.")
 			elif Netgame.players[sender].chips == 0:
-				Netgame.players[sender].current_bet = \
-					mini(Netgame.players[sender].current_bet, Netgame.players[sender].current_bet * -1)
+#				Netgame.players[sender].current_bet = \
+#					mini(Netgame.players[sender].current_bet, Netgame.players[sender].current_bet * -1)
 				prints(sender, "cannot make the bet.")
 			else:
-				Netgame.players[sender].chips -= value
-				Netgame.players[sender].current_bet += value
+				var min_val = mini(Netgame.players[sender].chips, value)
+				Netgame.players[sender].chips -= min_val
+				Netgame.players[sender].current_bet += min_val
 				prints(sender, "calls.")
 		"RAISE":
 			if bet_to_match == 0:
@@ -158,14 +158,19 @@ func button_pressed(option):
 #	prints("bet bar for", multiplayer.get_unique_id(), "deactivated")
 	send_option.rpc_id(1, option, value)
 
-func all_bets_equal():
-	var last_num = null
+func all_bets_equal(_ignore_broke = false):
+	var last_num = get_max_bet()
 	var is_equal = true
 	for id in Netgame.game_state.active_players:
 		if id not in Netgame.game_state.folded_players:
-			if last_num == null:
-				last_num = Netgame.players[id].current_bet
-			else:
+#			if last_num == null:
+#				last_num = Netgame.players[id].current_bet
+#			else:
+				var bet_difference = get_max_bet() - Netgame.players[id].current_bet
+				if (Netgame.players[id].chips - bet_difference < 0 and Netgame.players[id].current_bet > 0) \
+					or (Netgame.players[id].chips == 0 and Netgame.players[id].current_bet <= get_max_bet()):
+					continue
+				
 				is_equal = is_equal and last_num == Netgame.players[id].current_bet
 		if not is_equal: break
 	return is_equal
@@ -175,6 +180,12 @@ func get_max_bet():
 	for id in Netgame.game_state.active_players:
 		max_bet = maxi(max_bet, Netgame.players[id].current_bet)
 	return max_bet
+
+func collect_all_bets():
+	for id in Netgame.game_state.active_players:
+		if Netgame.players[id].current_bet > 0:
+			Netgame.game_state.pot += absi(Netgame.players[id].current_bet)
+			Netgame.players[id].current_bet = 0
 
 func player_disconnected(disconnected_id):
 	if awaiting_player == disconnected_id and multiplayer.is_server():
