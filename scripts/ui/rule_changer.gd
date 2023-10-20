@@ -21,13 +21,13 @@ enum CHANGES {
 	SUITS_DOWN, # Decreases are even
 	CARDS_UP,
 	CARDS_DOWN,
-#	COMM_UP,
-#	COMM_DOWN,
+	COMM_UP,
+	COMM_DOWN,
 	# Applies once
 	HAND_UP = ONE_TIME_CHANGES,
 	HAND_DOWN,
-#	HOLE_UP,
-#	HOLE_DOWN
+	HOLE_UP,
+	HOLE_DOWN
 	
 }
 
@@ -51,6 +51,10 @@ func compute_possible_changes():
 	# Eliminate decreases which would run the deck out
 	if cpr > (s - 1) * v: possible_changes.erase(CHANGES.SUITS_DOWN)
 	if cpr > s * (v - 1): possible_changes.erase(CHANGES.CARDS_DOWN)
+	# Eliminate changes which would make hands unable to be completed
+	if (h - 1) + c < Rules.RULES["CARDS_PER_HAND"]: possible_changes.erase(CHANGES.HOLE_DOWN)
+	if h + (c - 1) < Rules.RULES["CARDS_PER_HAND"]: possible_changes.erase(CHANGES.COMM_DOWN)
+	if h + c < (Rules.RULES["CARDS_PER_HAND"] + 1): possible_changes.erase(CHANGES.HAND_UP)
 	
 	# Don't offer a full reset if the game isn't spicy enough
 	if Rules.RULES.CURRENT_CHANGES.size() < 5: 

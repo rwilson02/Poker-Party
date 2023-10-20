@@ -6,6 +6,7 @@ extends Node
 @onready var comm_card_holder = $CommCards
 @onready var card_marker = $CommCards/Marker1
 @onready var change_icons = $ChangeIcons
+@onready var showdown_panel = $ShowdownPanel
 
 const CHIP_TEMPLATE = "[img=24]res://textures/ico_chips.png[/img] %d"
 const UI_CARD = preload("res://scenes/ui/ui_card.tscn")
@@ -42,16 +43,18 @@ func adjust_cards():
 	
 	while comm_difference != 0:
 		if comm_difference > 0:
-			comm_card_holder.get_children()[-1].get_child(0).free()
+			comm_card_holder.get_children()[-1].free()
 		elif comm_difference < 0:
 #			comm_card_holder.add_child(card_marker.duplicate())
 			comm_card_holder.add_child(comm_card_holder.get_child(0).duplicate())
+		comm_difference = comm_card_holder.get_child_count() - Rules.RULES["COMM_CARDS"]
 	while hole_difference != 0:
 		if hole_difference > 0:
-			hole_card_holder.get_children()[-1].get_child(0).free()
+			hole_card_holder.get_children()[-1].free()
 		elif hole_difference < 0:
 #			hole_card_holder.add_child(card_marker.duplicate())
 			hole_card_holder.add_child(hole_card_holder.get_child(0).duplicate())
+		hole_difference = hole_card_holder.get_child_count() - Rules.RULES["HOLE_CARDS"]
 	
 	if Netgame.game_state["comm_cards"].size() == 0: return
 	
@@ -129,3 +132,23 @@ func create_new_card(card: int):
 	new_card.setup(card)
 	new_card.scale = CARD_SCALE
 	return new_card
+
+@rpc("authority","call_local","reliable")
+func display_showdown(results: Array):
+	var showdown_text: RichTextLabel = showdown_panel.get_node("RichTextLabel")
+	showdown_text.clear()
+	
+	for pair in results:
+		var id = pair[0]
+		var hand = Hand.new(pair[1])
+		showdown_text.append_text("%s:\n" % Netgame.players[id].name)
+		showdown_text.append_text("[b]%s[/b]\n" % Hand.hand_to_string(pair[1]))
+		showdown_text.append_text("[i]%s[/i]\n\n" % hand.get_name())
+	
+	var in_tween = create_tween()
+	in_tween.tween_property(showdown_panel, "position", showdown_panel.position + (Vector2.LEFT * 400), 0.5)
+	await in_tween.finished
+	await get_tree().create_timer(3 + results.size()).timeout
+	var out_tween = create_tween()
+	out_tween.tween_property(showdown_panel, "position", showdown_panel.position + (Vector2.RIGHT * 400), 0.5)
+#	await out_tween.finished
