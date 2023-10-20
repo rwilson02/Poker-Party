@@ -124,10 +124,10 @@ func did_it_work(notif):
 
 func timeout():
 	if not Netgame.players.has(1):
-			player_display.clear()
-			multiplayer.multiplayer_peer = null
-			player_display.push_color(Color.DARK_GRAY)
-			player_display.append_text("Nobody's hosting at this address right now.")
-			lobby_controls.visible = true
-			start_controls.visible = false
-			name_input.editable = true
+		player_display.clear()
+		multiplayer.multiplayer_peer = null
+		player_display.push_color(Color.DARK_GRAY)
+		player_display.append_text("Nobody's hosting at this address right now.")
+		lobby_controls.visible = true
+		start_controls.visible = false
+		name_input.editable = true

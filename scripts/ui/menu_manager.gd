@@ -4,10 +4,15 @@ signal animation_complete
 signal get_out
 signal okay_continue
 signal do_it_again
+signal request_restart
 
 @onready var shade = $Shade
 @onready var rule_changer = $RuleChange
 @onready var end_screen = $End
+@onready var pause = $Pause
+
+var paused = false
+var pause_tween
 
 func _ready():
 	rule_changer.option_selected.connect(hide_rule_changer)
@@ -17,9 +22,22 @@ func _ready():
 		Netgame.player_disconnected.connect(begone_thot)
 		end_screen.get_node("HBoxContainer/RestartButton").visible = true
 		end_screen.get_node("HBoxContainer/RestartButton").pressed.connect(func(): do_it_again.emit())
+		var pause_restart: Button = pause.get_node("VBoxContainer/Restart")
+		pause_restart.visible = true
+		pause_restart.pressed.connect(
+			func(): 
+				request_restart.emit()
+				pause_restart.text = "AWAITING..."
+				pause_restart.disabled = true
+		)
 	
 	end_screen.get_node("HBoxContainer/ExitButton").pressed.connect(okay_get_out)
-	
+	pause.get_node("VBoxContainer/Exit").pressed.connect(okay_get_out)
+
+func _input(event):
+	if event is InputEventKey:
+		if event.key_label == KEY_ESCAPE and event.is_pressed():
+			toggle_pause()
 
 func toggle_shadow():
 	var tween = create_tween()
@@ -89,6 +107,15 @@ func hide_end_screen():
 		end_screen.position = screen_center(end_screen) + (Vector2.UP * 720)
 		toggle_shadow()
 		await animation_complete
+
+func toggle_pause():
+	if pause_tween == null:
+		var dir = Vector2.RIGHT if not paused else Vector2.LEFT
+		pause_tween = create_tween()
+		pause_tween.tween_property(pause, "position", pause.position + (400 * dir), 0.5).set_ease(Tween.EASE_OUT)
+		await pause_tween.finished
+		paused = not paused
+		pause_tween = null
 
 func okay_get_out():
 	if multiplayer:

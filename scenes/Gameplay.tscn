@@ -82,6 +82,28 @@ offset_top = 30.0
 offset_right = 70.0
 offset_bottom = 70.0
 
+[node name="ShowdownPanel" type="Panel" parent="Display"]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 120.0
+offset_top = -200.0
+offset_right = 370.0
+offset_bottom = 200.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Display/ShowdownPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+
 [node name="Betting" type="Node" parent="."]
 script = ExtResource("3_xwsyi")
 
@@ -193,3 +215,33 @@ text = "KEEP PLAYING"
 layout_mode = 2
 tooltip_text = "Exit this lobby."
 text = "EXIT LOBBY"
+
+[node name="Pause" type="Panel" parent="Menus"]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -50.0
+offset_right = -100.0
+offset_bottom = 50.0
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Menus/Pause"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Restart" type="Button" parent="Menus/Pause/VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "RESTART"
+
+[node name="Exit" type="Button" parent="Menus/Pause/VBoxContainer"]
+layout_mode = 2
+text = "EXIT LOBBY"
+
+[node name="Timer" type="Timer" parent="."]
