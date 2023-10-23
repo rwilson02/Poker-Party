@@ -52,9 +52,9 @@ func classify():
 						3: self.rank = "3K"
 						2: self.rank = "1P"
 				2:
-					self.kickerA = runs[0][1]
-					self.kickerB = runs[1][1]
-					var groups = [runs[0][0], runs[1][0]]
+					self.kickerA = runs[1][1]
+					self.kickerB = runs[0][1]
+					var groups = [runs[1][0], runs[0][0]]
 					match groups:
 						[2, 2]:
 							self.rank = "2P"
@@ -67,9 +67,9 @@ func classify():
 								self.rank = "FH"
 				3:
 					self.rank = "3P"
-					self.kickerA = runs[0][1]
+					self.kickerA = runs[2][1]
 					self.kickerB = runs[1][1]
-					self.kickerC = runs[2][1]
+					self.kickerC = runs[0][1]
 				_:
 					push_error("wadda hell")
 
@@ -96,10 +96,10 @@ func get_name():
 			return hand_name % [properA, properB]
 		"2T":
 			hand_name = "Two trips (%ss over %ss)"
-			return hand_name % [properB, properA]
+			return hand_name % [properA, properB]
 		"3P":
 			hand_name = "3 pair (%ss over %ss over %ss)"
-			return hand_name % [Rules.get_proper_value(kickerC), properB, properA]
+			return hand_name % [properA, properB, Rules.get_proper_value(kickerC)]
 		"CR":
 			hand_name = "Crowd (%ss and %ss)"
 			return hand_name % [properA, properB]
@@ -114,7 +114,7 @@ func get_name():
 			return hand_name % properA
 		"2P":
 			hand_name = "2 pair (%ss over %ss)"
-			return hand_name % [properB, properA]
+			return hand_name % [properA, properB]
 		"1P":
 			hand_name = "1 pair (%ss)"
 			return hand_name % properA
@@ -123,6 +123,7 @@ func get_name():
 			return hand_name
 		"":
 			hand_name = "Invalid hand"
+	return hand_name
 
 func sequential(array):
 	var is_sequential = true
@@ -154,6 +155,15 @@ static func sort(a: Hand, b:Hand) -> bool:
 		return a.kickerC > b.kickerC
 	else:
 		return a.cards.map(Rules.get_value) > b.cards.map(Rules.get_value)
+
+static func is_equal(a, b) -> bool:
+	if typeof(a) == typeof(Hand) and typeof(b) == typeof(Hand):
+		return a.cards.map(Rules.get_value) == b.cards.map(Rules.get_value)
+	elif typeof(a) == TYPE_ARRAY and typeof(b) == TYPE_ARRAY:
+		return a.map(Rules.get_value) == b.map(Rules.get_value)
+	else:
+		push_error("Type mismatch on parameters")
+		return false
 
 static func get_best_hand(given_cards: Array):
 	var best_hand: Hand = Hand.new([])

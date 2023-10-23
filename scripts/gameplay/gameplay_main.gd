@@ -148,12 +148,24 @@ func credit_winners(winners: Array):
 	var divisions = winning_divisions[winning_players]
 	var original_pot = Netgame.game_state.pot
 	
+	var winner_groups = []
+	var current_group = []
+	for player in winners:
+		if current_group.is_empty() or Hand.is_equal(player[1], current_group[0][1]):
+			current_group.append(player)
+		else:
+			winner_groups.append(current_group)
+			current_group.clear()
+			current_group.append(player)
+	
 	# Give everyone their share
 	for idx in divisions.size():
-		var winner = winners[idx][0]
-		var value = roundi(original_pot * divisions[idx])
-		Netgame.players[winner].chips += value
-		Netgame.game_state.pot -= value
+		var group = winner_groups[idx] if idx < winner_groups.size() else null
+		if group != null:
+			for winner in group:
+				var value = roundi(original_pot * divisions[idx] * (1.0 / group.size()))
+				Netgame.players[winner[0]].chips += value
+				Netgame.game_state.pot -= value
 	# What to do with leftovers
 	if Netgame.game_state.pot > 0:
 		Netgame.players[winners[divisions.size() - 1][0]] += Netgame.game_state.pot
