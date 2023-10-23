@@ -43,7 +43,11 @@ func create_game():
 	if not name_input.text.is_empty():
 		Netgame.player_info["name"] = name_input.text
 	
-	var error = Netgame.create_game()
+	var port = ""
+	if ":" in address_bar.text:
+		port = address_bar.text.get_slice(":",1)
+	
+	var error = Netgame.create_game(port)
 	if not error:
 		name_input.editable = false
 		lobby_controls.visible = false
@@ -63,7 +67,13 @@ func on_join_button():
 	if not name_input.text.is_empty():
 		Netgame.player_info["name"] = name_input.text
 	
-	var error = Netgame.join_game(address_bar.text)
+	var error
+	if ":" in address_bar.text:
+		var address_pieces = address_bar.text.split(":")
+		error = Netgame.join_game(address_pieces[0], address_pieces[1])
+	else:
+		error = Netgame.join_game(address_bar.text)
+	
 	if not error:
 		name_input.editable = false
 		lobby_controls.visible = false

@@ -7,7 +7,7 @@ signal test_player_conditions(players_remaining)
 signal state_updated()
 signal upnp_complete(possible_error)
 
-const PORT = 17160 # 13! / 9!, AKQJ
+const DEFAULT_PORT = 17160 # 13! / 9!, AKQJ
 const DEFAULT_IP = "127.0.0.1"
 const MAX_CONNECTIONS = 10
 
@@ -36,23 +36,28 @@ func _ready():
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	
 #	discovery_thread = Thread.new()
-#	discovery_thread.start(attempt_upnp.bind(PORT))
+#	discovery_thread.start(attempt_upnp.bind(DEFAULT_PORT))
 
-func join_game(address = ""):
+func join_game(address = "", port = ""):
 	if address.is_empty():
 		address = DEFAULT_IP
+	if port.is_empty():
+		port = DEFAULT_PORT
 	
 	var peer = ENetMultiplayerPeer.new()
 #	var peer = WebRTCMultiplayerPeer.new()
-	var error = peer.create_client(address, PORT)
+	var error = peer.create_client(address, port)
 #	var error = peer.create_client(randi() / 2)
 	if error: return error
 	multiplayer.multiplayer_peer = peer
 
-func create_game():
+func create_game(port = ""):
+	if port.is_empty():
+		port = DEFAULT_PORT
+	
 	var peer = ENetMultiplayerPeer.new()
 #	var peer = WebRTCMultiplayerPeer.new()
-	var error = peer.create_server(PORT, MAX_CONNECTIONS)
+	var error = peer.create_server(port, MAX_CONNECTIONS)
 #	var error = peer.create_server()
 	if error: return error
 	multiplayer.multiplayer_peer = peer
@@ -140,4 +145,4 @@ func reset():
 #func _exit_tree():
 #	if discovery_thread:
 #		discovery_thread.wait_to_finish()
-#	upnp.delete_port_mapping(PORT, "UDP")
+#	upnp.delete_port_mapping(DEFAULT_PORT, "UDP")
