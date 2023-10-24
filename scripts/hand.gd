@@ -52,9 +52,10 @@ func classify():
 						3: self.rank = "3K"
 						2: self.rank = "1P"
 				2:
-					self.kickerA = runs[1][1]
-					self.kickerB = runs[0][1]
 					var groups = [runs[1][0], runs[0][0]]
+					groups.sort_custom(func(a,b): return a > b)
+					self.kickerA = runs[1][1] if runs[1][0] == groups[0] else runs[0][1]
+					self.kickerB = runs[0][1] if self.kickerA == runs[1][1] else runs[1][1]
 					match groups:
 						[2, 2]:
 							self.rank = "2P"
