@@ -148,12 +148,12 @@ func all_equal(array):
 static func sort(a: Hand, b:Hand) -> bool:
 	if a.rank != b.rank:
 		return Rules.RULES["HAND_RANKS"][a.rank] > Rules.RULES["HAND_RANKS"][b.rank]
-	elif a.kickerA != b.kickerA:
-		return a.kickerA > b.kickerA
-	elif a.kickerB != b.kickerB:
-		return a.kickerB > b.kickerB
-	elif a.kickerC != b.kickerC:
-		return a.kickerC > b.kickerC
+	elif Rules.get_value(a.kickerA) != Rules.get_value(b.kickerA):
+		return Rules.get_value(a.kickerA) > Rules.get_value(b.kickerA)
+	elif Rules.get_value(a.kickerB) != Rules.get_value(b.kickerB):
+		return Rules.get_value(a.kickerB) > Rules.get_value(b.kickerB)
+	elif Rules.get_value(a.kickerC) != Rules.get_value(b.kickerC):
+		return Rules.get_value(a.kickerC) > Rules.get_value(b.kickerC)
 	else:
 		return a.cards.map(Rules.get_value) > b.cards.map(Rules.get_value)
 
