@@ -139,24 +139,29 @@ func get_winners() -> Array:
 	return winners
 
 func credit_winners(winners: Array):
-	var winning_players = Rules.RULES.CURRENT_CHANGES.count("TRICKLE_DOWN") + 1
+	var players = winners.map(func(c): return c[0])
+	var hands = winners.map(func(c): return c[1])
+	
+	var winning_players = Rules.RULES.CURRENT_CHANGES.count("TRICKLE_DOWN")
 	var winning_divisions = {
-		1: [1],
-		2: [0.7, 0.3],
-		3: [0.6, 0.3, 0.1]
+		0: [1],
+		1: [0.7, 0.3],
+		2: [0.6, 0.3, 0.1]
 	}
 	var divisions = winning_divisions[winning_players]
 	var original_pot = Netgame.game_state.pot
 	
 	var winner_groups = []
 	var current_group = []
-	for player in winners:
-		if current_group.is_empty() or Hand.is_equal(player[1], current_group[0][1]):
-			current_group.append(player)
+	for idx in players.size():
+		if current_group.is_empty() or Hand.is_equal(hands[idx], hands[players.find(current_group[0])]):
+			current_group.append(players[idx])
 		else:
-			winner_groups.append(current_group)
+			winner_groups.append(current_group.duplicate())
 			current_group.clear()
-			current_group.append(player)
+			current_group.append(players[idx])
+	winner_groups.append(current_group.duplicate())
+	current_group.clear()
 	
 	# Give everyone their share
 	for idx in divisions.size():
@@ -164,13 +169,13 @@ func credit_winners(winners: Array):
 		if group != null:
 			for winner in group:
 				var value = roundi(original_pot * divisions[idx] * (1.0 / group.size()))
-				Netgame.players[winner[0]].chips += value
+				Netgame.players[winner].chips += value
 				Netgame.game_state.pot -= value
 	# What to do with leftovers
 	if Netgame.game_state.pot > 0:
-		Netgame.players[winners[divisions.size() - 1][0]] += Netgame.game_state.pot
+		Netgame.players[players[-1]].chips += Netgame.game_state.pot
 	elif Netgame.game_state.pot < 0:
-		Netgame.players[winners[0][0]] += Netgame.game_state.pot
+		Netgame.players[players[0]].chips += Netgame.game_state.pot
 	
 	Netgame.game_state.pot = 0
 
@@ -192,96 +197,6 @@ func do_rule_change():
 				MENU.show_rule_changer.rpc_id(losingest_player)
 				valid = await MENU.okay_continue
 		else: break
-
-#func gameplay_loop():
-#	print("play ball")
-#
-#	for id in Netgame.players:
-#		Netgame.game_state["active_players"].append(id)
-#	Netgame.game_state["active_players"].shuffle()
-#
-#	while(Netgame.game_state["active_players"].size() > 1 and round_start_index < Rules.RULES["GAMEPLAY_ROUNDS"]):
-#		round_start_index += 1
-#		print(Rules.RULES.CURRENT_CHANGES) # TODO: Add list of changes in icon form somewhere onscreen
-#		print("%dx%d" % [Rules.RULES["SUITS"], Rules.RULES["VALS_PER_SUIT"]])
-#		deck = range(0, Rules.get_deck_size())
-#		deck.shuffle()
-#		print("round start")
-#
-		#get ante
-#		Netgame.game_state["folded_players"].clear()
-#		Netgame.game_state["comm_cards"].clear()
-#		for id in Netgame.game_state.active_players:
-#			get_ante(id)
-#		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
-#
-		# do initial deal (player hands and comm cards)
-#		for i in (Rules.RULES["CARDS_PER_HAND"] - Rules.RULES["HOLE_CARDS"]):
-#			if i >= Rules.RULES["COMM_CARDS"]: break
-#			Netgame.game_state["comm_cards"].append(deck.pop_back())
-#			print("given comm card")
-#		for i in Rules.RULES["HOLE_CARDS"]:
-#			for id in Netgame.game_state.active_players:
-#				prints("given hole card to", id)
-#				Netgame.players[id].cards.append(deck.pop_back())
-#		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
-#
-		# do first betting round
-#		await BETTING.do_betting_round(round_start_index)
-#
-		# Don't need the rest of the comm cards if everyone else folded
-#		if Netgame.get_live_players() > 1:
-#			# while current comm cards < rules comm cards
-#			while Netgame.game_state["comm_cards"].size() < Rules.RULES["COMM_CARDS"]:
-#				# show comm card
-#				print("new comm card")
-#				Netgame.game_state["comm_cards"].append(deck.pop_back())
-#				Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
-#				# do betting round
-#				await BETTING.do_betting_round(round_start_index)
-#				if Netgame.get_live_players() == 1: break
-#
-#		var winner
-#		# if there are still players
-#		if Netgame.get_live_players() > 1:
-#			winner = do_showdown()
-#		else:
-#			winner = Netgame.game_state["active_players"].filter(func(c): \
-#				return c not in Netgame.game_state.folded_players)
-#			winner = winner.pop_back()
-#		Netgame.players[winner].chips += Netgame.game_state.pot
-#		Netgame.game_state.pot = 0
-#		print("round over, %s won" % winner)
-#		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
-#
-		# do rule change
-#		for id in Netgame.game_state.active_players:
-#			Netgame.players[id]["cards"].clear()
-#			if Netgame.players[id]["chips"] == 0:
-#				Netgame.game_state["losers"].append(id)
-#		clear_losers()
-#
-#		var player_chips = []
-#		for id in Netgame.game_state.active_players:
-#			player_chips.append([id, Netgame.players[id].chips])
-#		player_chips.sort_custom(func(a,b): return a[1] > b[1])
-#		var is_good = false
-#
-#		while not is_good and Netgame.game_state["active_players"].size() > 1:
-#			var potential_player = player_chips.pop_back()
-#			if potential_player == null: 
-#				break
-#			else:
-#				var losingest_player = potential_player[0]
-#				if losingest_player in Netgame.game_state["active_players"]:
-#					MENU.show_rule_changer.rpc_id(losingest_player)
-#					is_good = await MENU.okay_continue
-#
-#		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
-#		print("alright next round")
-#
-#	print("oh huh the game is over now")
-#	MENU.show_end_screen.rpc()
 
 func get_ante(player_id):
 	var me = Netgame.players[player_id]
