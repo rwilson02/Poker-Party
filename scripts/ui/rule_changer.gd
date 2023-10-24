@@ -49,12 +49,12 @@ func compute_possible_changes():
 		possible_changes.append(change)
 	
 	# Eliminate decreases which would run the deck out
-	if cpr > (s - 1) * v: possible_changes.erase(CHANGES.SUITS_DOWN)
-	if cpr > s * (v - 1): possible_changes.erase(CHANGES.CARDS_DOWN)
+	if cpr > (s - 1) * v: possible_changes.erase("SUITS_DOWN")
+	if cpr > s * (v - 3): possible_changes.erase("CARDS_DOWN")
 	# Eliminate changes which would make hands unable to be completed
-	if (h - 1) + c < Rules.RULES["CARDS_PER_HAND"]: possible_changes.erase(CHANGES.HOLE_DOWN)
-	if h + (c - 1) < Rules.RULES["CARDS_PER_HAND"]: possible_changes.erase(CHANGES.COMM_DOWN)
-	if h + c < (Rules.RULES["CARDS_PER_HAND"] + 1): possible_changes.erase(CHANGES.HAND_UP)
+	if (h - 1) + c < Rules.RULES["CARDS_PER_HAND"]: possible_changes.erase("HOLE_DOWN")
+	if h + (c - 1) < Rules.RULES["CARDS_PER_HAND"]: possible_changes.erase("COMM_DOWN")
+	if h + c < (Rules.RULES["CARDS_PER_HAND"] + 1): possible_changes.erase("HAND_UP")
 	
 	# Don't offer a full reset if the game isn't spicy enough
 	if Rules.RULES.CURRENT_CHANGES.size() < 5: 
