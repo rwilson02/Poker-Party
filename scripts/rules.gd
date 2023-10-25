@@ -5,8 +5,8 @@ var RULES
 func _ready():
 	reset()
 
-func get_value(card: int): return card % RULES["VALS_PER_SUIT"]
-func get_suit(card: int): return card / RULES["VALS_PER_SUIT"]
+func get_value(card): return card % RULES["VALS_PER_SUIT"] if card is int else -1
+func get_suit(card): return card / RULES["VALS_PER_SUIT"] if card is int else -1
 func get_deck_size(): return RULES["SUITS"] * RULES["VALS_PER_SUIT"]
 
 func get_proper_value(card):

@@ -35,7 +35,7 @@ func classify():
 		[true, var also_flush]:
 			self.kickerA = self.cards.front()
 			if Rules.get_value(self.kickerA) == Rules.RULES["VALS_PER_SUIT"] - 1:
-				if Rules.get_value(self.cards[1]) == 3:
+				if Rules.get_value(self.cards[1]) == Rules.RULES["CARDS_PER_HAND"] - 2:
 					self.kickerA = self.cards[1]
 			self.rank = "SF" if also_flush else "ST"
 		[false, true]:
@@ -198,4 +198,10 @@ static func hand_to_string(hand: Array):
 		hand_string += Rules.get_proper_symbol(card)
 		hand_string += " "
 	hand_string[-1] = "]"
+	
+	if Rules.get_value(hand.front()) == Rules.RULES["VALS_PER_SUIT"] - 1 \
+		and Rules.get_value(hand[1]) == Rules.RULES["CARDS_PER_HAND"] - 2:
+		var slices = hand_string.split(" ", false, 1)
+		hand_string = "[%s %s]" % [slices[1].left(-1), slices[0].right(2)]
+	
 	return hand_string
