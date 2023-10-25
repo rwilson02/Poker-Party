@@ -3,7 +3,7 @@ extends Node
 signal animation_complete
 signal get_out
 signal okay_continue
-signal do_it_again
+signal do_it_again(with_restart)
 signal request_restart
 
 @onready var shade = $Shade
@@ -21,7 +21,7 @@ func _ready():
 	if multiplayer.is_server():
 		Netgame.player_disconnected.connect(begone_thot)
 		end_screen.get_node("HBoxContainer/RestartButton").visible = true
-		end_screen.get_node("HBoxContainer/RestartButton").pressed.connect(func(): do_it_again.emit())
+		end_screen.get_node("HBoxContainer/RestartButton").pressed.connect(func(): do_it_again.emit(false))
 		var pause_restart: Button = pause.get_node("VBoxContainer/Restart")
 		pause_restart.visible = true
 		pause_restart.pressed.connect(

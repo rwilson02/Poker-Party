@@ -17,7 +17,7 @@ func _ready():
 	rpc_id(1, "player_ready")
 	
 	Netgame.server_disconnected.connect(MENU.okay_get_out)
-	MENU.do_it_again.connect(start_game.bind(false))
+	MENU.do_it_again.connect(start_game)
 	MENU.request_restart.connect(func(): restart_requested = true)
 
 @rpc("any_peer", "call_local", "reliable")
@@ -29,8 +29,8 @@ func player_ready():
 		start_game(true)
 
 func start_game(restart):
+	MENU.hide_end_screen.rpc()
 	if restart:
-		MENU.hide_end_screen.rpc()
 		Rules.reset()
 		
 		MENU.get_node("Pause/VBoxContainer/Restart").text = "RESTART"
@@ -213,16 +213,16 @@ func clear_losers():
 	for id in Netgame.game_state.losers:
 		Netgame.game_state["active_players"].erase(id)
 
-func do_showdown():
-	var player_bests = []
-	
-	for id in Netgame.game_state.active_players:
-		if id not in Netgame.game_state.folded_players:
-			player_bests.append([id, \
-			Hand.get_best_hand(Netgame.players[id].cards + Netgame.game_state.comm_cards)])
-	player_bests.sort_custom(func(a,b): return Hand.sort(a[1], b[1]))
-	
-	for combi in player_bests:
-		prints(combi[0], "had", combi[1].get_name())
-	
-	return player_bests[0][0]
+#func do_showdown():
+#	var player_bests = []
+#
+#	for id in Netgame.game_state.active_players:
+#		if id not in Netgame.game_state.folded_players:
+#			player_bests.append([id, \
+#			Hand.get_best_hand(Netgame.players[id].cards + Netgame.game_state.comm_cards)])
+#	player_bests.sort_custom(func(a,b): return Hand.sort(a[1], b[1]))
+#
+#	for combi in player_bests:
+#		prints(combi[0], "had", combi[1].get_name())
+#
+#	return player_bests[0][0]
