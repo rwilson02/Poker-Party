@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=10 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_betting.gd" id="3_xwsyi"]
 [ext_resource type="PackedScene" uid="uid://cnd6j21isfrjj" path="res://scenes/ui/scorebug.tscn" id="4_otush"]
+[ext_resource type="Texture2D" uid="uid://d1vdkbk325lco" path="res://textures/ico_chips.png" id="4_rxcjr"]
 [ext_resource type="PackedScene" uid="uid://cl1k1vjj8jeil" path="res://scenes/ui/betting_bar.tscn" id="5_nnckb"]
 [ext_resource type="PackedScene" uid="uid://br8kujy37icgm" path="res://scenes/ui/rule_change_menu.tscn" id="6_5hbob"]
 [ext_resource type="Script" path="res://scripts/ui/menu_manager.gd" id="6_jl3ny"]
@@ -103,6 +104,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 bbcode_enabled = true
+
+[node name="ChipZoom" type="TextureRect" parent="Display"]
+visible = false
+offset_right = 24.0
+offset_bottom = 24.0
+texture = ExtResource("4_rxcjr")
+expand_mode = 1
 
 [node name="Betting" type="Node" parent="."]
 script = ExtResource("3_xwsyi")

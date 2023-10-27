@@ -4,9 +4,9 @@ extends Node
 @onready var wager_text = $Scorebug/WagerText
 @onready var hole_card_holder = $Scorebug/ClipMask/HoleCards
 @onready var comm_card_holder = $CommCards
-@onready var card_marker = $CommCards/Marker1
 @onready var change_icons = $ChangeIcons
 @onready var showdown_panel = $ShowdownPanel
+@onready var chip_zoom = $ChipZoom
 
 const CHIP_TEMPLATE = "[img=24]res://textures/ico_chips.png[/img] %d"
 const UI_CARD = preload("res://scenes/ui/ui_card.tscn")
@@ -45,14 +45,12 @@ func adjust_cards():
 		if comm_difference > 0:
 			comm_card_holder.get_children()[-1].free()
 		elif comm_difference < 0:
-#			comm_card_holder.add_child(card_marker.duplicate())
 			comm_card_holder.add_child(comm_card_holder.get_child(0).duplicate())
 		comm_difference = comm_card_holder.get_child_count() - Rules.RULES["COMM_CARDS"]
 	while hole_difference != 0:
 		if hole_difference > 0:
 			hole_card_holder.get_children()[-1].free()
 		elif hole_difference < 0:
-#			hole_card_holder.add_child(card_marker.duplicate())
 			hole_card_holder.add_child(hole_card_holder.get_child(0).duplicate())
 		hole_difference = hole_card_holder.get_child_count() - Rules.RULES["HOLE_CARDS"]
 	
@@ -152,3 +150,19 @@ func display_showdown(results: Array):
 	var out_tween = create_tween()
 	out_tween.tween_property(showdown_panel, "position", showdown_panel.position + (Vector2.RIGHT * 400), 0.5)
 #	await out_tween.finished
+
+@rpc("authority", "call_local", "reliable")
+func chip_zoom_anim(to_pot: bool):
+	var pot_loc = $PotText.get_global_transform_with_canvas().origin + ($PotText.size / 2)
+	var wager_loc = wager_text.get_global_transform_with_canvas().origin + (wager_text.size / 2)
+	var location_pair
+	
+	location_pair = [wager_loc, pot_loc] if to_pot else [pot_loc, wager_loc]
+	
+	chip_zoom.position = location_pair[0]
+	chip_zoom.visible = true
+	var tween = chip_zoom.create_tween()
+	tween.tween_property(chip_zoom, "position", location_pair[1], 0.5)\
+		.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
+	await tween.finished
+	chip_zoom.visible = false

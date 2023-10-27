@@ -22,6 +22,7 @@ const name_tooltip_combos =[
 var initial_bettor_index = 0
 var bet_to_match = 0
 var awaiting_player
+var DISPLAY
 
 func _ready():
 	check_call.pressed.connect(button_pressed.bind("CALL"))
@@ -186,6 +187,7 @@ func collect_all_bets():
 		if Netgame.players[id].current_bet > 0:
 			Netgame.game_state.pot += absi(Netgame.players[id].current_bet)
 			Netgame.players[id].current_bet = 0
+			DISPLAY.chip_zoom_anim.rpc_id(id, true)
 
 func player_disconnected(disconnected_id):
 	if awaiting_player == disconnected_id and multiplayer.is_server():

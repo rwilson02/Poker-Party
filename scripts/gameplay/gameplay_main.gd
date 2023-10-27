@@ -19,6 +19,7 @@ func _ready():
 	Netgame.server_disconnected.connect(MENU.okay_get_out)
 	MENU.do_it_again.connect(start_game)
 	MENU.request_restart.connect(func(): restart_requested = true)
+	BETTING.DISPLAY = DISPLAY
 
 @rpc("any_peer", "call_local", "reliable")
 func player_ready():
@@ -171,6 +172,7 @@ func credit_winners(winners: Array):
 				var value = roundi(original_pot * divisions[idx] * (1.0 / group.size()))
 				Netgame.players[winner].chips += value
 				Netgame.game_state.pot -= value
+				DISPLAY.chip_zoom_anim.rpc_id(winner, false)
 	# What to do with leftovers
 	if Netgame.game_state.pot > 0:
 		Netgame.players[players[-1]].chips += Netgame.game_state.pot
@@ -212,17 +214,3 @@ func get_ante(player_id):
 func clear_losers():
 	for id in Netgame.game_state.losers:
 		Netgame.game_state["active_players"].erase(id)
-
-#func do_showdown():
-#	var player_bests = []
-#
-#	for id in Netgame.game_state.active_players:
-#		if id not in Netgame.game_state.folded_players:
-#			player_bests.append([id, \
-#			Hand.get_best_hand(Netgame.players[id].cards + Netgame.game_state.comm_cards)])
-#	player_bests.sort_custom(func(a,b): return Hand.sort(a[1], b[1]))
-#
-#	for combi in player_bests:
-#		prints(combi[0], "had", combi[1].get_name())
-#
-#	return player_bests[0][0]
