@@ -4,8 +4,8 @@ signal option_selected(valid)
 
 # Delimiters of change types
 # All powers of two -1 because increases are odds
-const TWO_TIME_CHANGES = 3
-const ONE_TIME_CHANGES = 31 
+const TWO_TIME_CHANGES = 2 ** 2 - 1
+const ONE_TIME_CHANGES = 2 ** 5 - 1 
 
 # Other constants
 const CHANGE_INFO_PATH = "res://rules/change_info.txt"

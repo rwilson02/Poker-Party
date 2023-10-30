@@ -1,6 +1,6 @@
 extends Node
 
-@onready var player_display = $LobbyControls/PlayerDisplay/MarginContainer/RichTextLabel
+@onready var player_display = $LobbyControls/LobbyMenu/Players/RichTextLabel
 @onready var address_bar = $LobbyControls/Control/PreGame/VBoxContainer/Address
 @onready var lobby_controls = $LobbyControls/Control/PreGame
 @onready var start_controls = $LobbyControls/Control/InGame
@@ -12,7 +12,6 @@ func _ready():
 	Netgame.test_player_conditions.connect(update_player_display)
 	Netgame.test_player_conditions.connect(test_start)
 	Netgame.server_disconnected.connect(server_exploded)
-	Netgame.upnp_complete.connect(did_it_work)
 	timer.timeout.connect(timeout)
 	Netgame.players.clear()
 
@@ -121,16 +120,6 @@ func server_exploded():
 		player_display.push_color(Color.RED)
 		player_display.append_text("Server closed!")
 		player_display.pop()
-
-func did_it_work(notif):
-	player_display.clear()
-	if notif == OK:
-		player_display.append_text("UPNP OK!")
-	else:
-		player_display.push_color(Color.RED)
-		player_display.append_text("UPNP error: %s" % str(notif))
-		player_display.pop()
-	
 
 func timeout():
 	if not Netgame.players.has(1):
