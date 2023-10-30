@@ -21,7 +21,9 @@ func _ready():
 	if multiplayer.is_server():
 		Netgame.player_disconnected.connect(begone_thot)
 		end_screen.get_node("HBoxContainer/RestartButton").visible = true
-		end_screen.get_node("HBoxContainer/RestartButton").pressed.connect(func(): do_it_again.emit(false))
+		end_screen.get_node("HBoxContainer/RestartButton").pressed.connect(func(): do_it_again.emit(true))
+		end_screen.get_node("HBoxContainer/ContinueButton").visible = true
+		end_screen.get_node("HBoxContainer/ContinueButton").pressed.connect(func(): do_it_again.emit(false))
 		var pause_restart: Button = pause.get_node("VBoxContainer/Restart")
 		pause_restart.visible = true
 		pause_restart.pressed.connect(
