@@ -2,6 +2,7 @@ extends Node
 
 @onready var player_display = $LobbyControls/LobbyMenu/Players/RichTextLabel
 @onready var address_bar = $LobbyControls/Control/PreGame/VBoxContainer/Address
+@onready var options = $LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer
 @onready var lobby_controls = $LobbyControls/Control/PreGame
 @onready var start_controls = $LobbyControls/Control/InGame
 @onready var timer = $Timer
@@ -14,6 +15,7 @@ func _ready():
 	Netgame.server_disconnected.connect(server_exploded)
 	timer.timeout.connect(timeout)
 	Netgame.players.clear()
+	Rules.reset()
 
 func test_start(remaining_players):
 	start_controls.get_node("StartButton").disabled = false if remaining_players >= 2 else true
@@ -52,6 +54,7 @@ func create_game():
 		lobby_controls.visible = false
 		start_controls.visible = true
 		start_controls.get_node("StartButton").visible = true
+		$LobbyControls/LobbyMenu.tabs_visible = true
 	else:
 		player_display.clear()
 		player_display.push_color(Color.RED)
@@ -97,8 +100,10 @@ func on_cancel_button():
 	start_controls.visible = false
 	lobby_controls.visible = true
 	name_input.editable = true
+	$LobbyControls/LobbyMenu.tabs_visible = false
 
 func on_start_button():
+	set_lobby_rules()
 	start_game.rpc()
 
 @rpc("call_local", "reliable")
@@ -130,3 +135,30 @@ func timeout():
 		lobby_controls.visible = true
 		start_controls.visible = false
 		name_input.editable = true
+
+func set_lobby_rules():
+	for possible_rule in options.get_children():
+		if possible_rule is HBoxContainer:
+			var rule_name = possible_rule.name
+			var valid_change = get_rule_change(rule_name)
+			
+			if rule_name in Rules.RULES:
+				var box_value = possible_rule.get_node("SpinBox").value as int
+				var val_diff = (box_value - Rules.RULES[rule_name]) / possible_rule.get_node("SpinBox").step
+				
+				if val_diff != 0 and not valid_change.is_empty():
+					var modifier = "UP" if signi(val_diff) == 1 else "DOWN"
+					var change = "%s_%s" % [valid_change, modifier]
+					
+					for i in absi(val_diff):
+						Rules.add_change(change)
+				
+				Rules.set_rule(possible_rule.name, box_value)
+
+func get_rule_change(rule_name):
+	var change_file = FileAccess.open("res://rules/change_info.txt", FileAccess.READ)
+	while not change_file.eof_reached():
+		var line = change_file.get_csv_line()
+		if rule_name in line:
+			return line[0].get_slice("_", 0)
+	return ""

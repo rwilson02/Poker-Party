@@ -27,7 +27,7 @@ func player_ready():
 	player_responses += 1
 	if player_responses == Netgame.players.keys().size():
 		player_responses = 0
-		start_game(true)
+		start_game(false)
 
 func start_game(restart):
 	MENU.hide_end_screen.rpc()
@@ -143,11 +143,11 @@ func credit_winners(winners: Array):
 	var players = winners.map(func(c): return c[0])
 	var hands = winners.map(func(c): return c[1])
 	
-	var winning_players = Rules.RULES.CURRENT_CHANGES.count("TRICKLE_DOWN")
+	var winning_players = Rules.RULES.WINNERS
 	var winning_divisions = {
-		0: [1],
-		1: [0.7, 0.3],
-		2: [0.6, 0.3, 0.1]
+		1: [1],
+		2: [0.7, 0.3],
+		3: [0.6, 0.3, 0.1]
 	}
 	var divisions = winning_divisions[winning_players]
 	var original_pot = Netgame.game_state.pot

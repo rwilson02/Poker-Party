@@ -29,6 +29,7 @@ offset_left = 20.0
 offset_top = 20.0
 offset_right = 420.0
 offset_bottom = 520.0
+tabs_visible = false
 
 [node name="Players" type="MarginContainer" parent="LobbyControls/LobbyMenu"]
 layout_mode = 2
@@ -40,6 +41,204 @@ theme_override_constants/margin_bottom = 20
 [node name="RichTextLabel" type="RichTextLabel" parent="LobbyControls/LobbyMenu/Players"]
 layout_mode = 2
 bbcode_enabled = true
+
+[node name="Options" type="MarginContainer" parent="LobbyControls/LobbyMenu"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="ScrollContainer" type="ScrollContainer" parent="LobbyControls/LobbyMenu/Options"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CARDS" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "CARD OPTIONS"
+horizontal_alignment = 2
+
+[node name="HOLE_CARDS" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/HOLE_CARDS"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Hole Cards: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/HOLE_CARDS"]
+layout_mode = 2
+min_value = 1.0
+max_value = 3.0
+value = 2.0
+
+[node name="COMM_CARDS" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/COMM_CARDS"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Community Cards: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/COMM_CARDS"]
+layout_mode = 2
+min_value = 3.0
+max_value = 7.0
+value = 5.0
+
+[node name="CARDS_PER_HAND" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/CARDS_PER_HAND"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cards in a Hand: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/CARDS_PER_HAND"]
+layout_mode = 2
+min_value = 4.0
+max_value = 6.0
+value = 5.0
+
+[node name="DECK" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "
+DECK OPTIONS"
+horizontal_alignment = 2
+
+[node name="SUITS" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/SUITS"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Suits: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/SUITS"]
+layout_mode = 2
+min_value = 2.0
+max_value = 6.0
+value = 4.0
+
+[node name="VALS_PER_SUIT" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/VALS_PER_SUIT"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Cards per Suit: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/VALS_PER_SUIT"]
+layout_mode = 2
+min_value = 7.0
+max_value = 19.0
+step = 3.0
+value = 13.0
+
+[node name="GAMEPLAY" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+text = "
+GAMEPLAY OPTIONS"
+horizontal_alignment = 2
+
+[node name="INITIAL_CHIPS" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/INITIAL_CHIPS"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Initial Chips: 
+"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/INITIAL_CHIPS"]
+layout_mode = 2
+min_value = 50.0
+max_value = 5000.0
+step = 25.0
+value = 200.0
+allow_greater = true
+
+[node name="ANTE" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/ANTE"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ante: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/ANTE"]
+layout_mode = 2
+step = 5.0
+value = 20.0
+
+[node name="MIN_BET" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/MIN_BET"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Minimum Bet: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/MIN_BET"]
+layout_mode = 2
+min_value = 1.0
+value = 5.0
+allow_greater = true
+
+[node name="GAMEPLAY_ROUNDS" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/GAMEPLAY_ROUNDS"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Number of Rounds: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/GAMEPLAY_ROUNDS"]
+layout_mode = 2
+min_value = 3.0
+max_value = 30.0
+value = 30.0
+allow_greater = true
+
+[node name="WINNERS" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/WINNERS"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Winners per Round: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/WINNERS"]
+layout_mode = 2
+min_value = 1.0
+max_value = 3.0
+value = 1.0
 
 [node name="Control" type="Panel" parent="LobbyControls"]
 layout_mode = 1
