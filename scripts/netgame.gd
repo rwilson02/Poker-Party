@@ -47,12 +47,14 @@ func join_game(address = "", port = ""):
 	multiplayer.multiplayer_peer = peer
 
 func create_game(port = ""):
-	if port.is_empty():
+	if typeof(port) == TYPE_STRING:
+		port = DEFAULT_PORT if port.is_empty() else int(port)
+	elif typeof(port) != TYPE_INT:
 		port = DEFAULT_PORT
 	
 	var peer = ENetMultiplayerPeer.new()
 #	var peer = WebRTCMultiplayerPeer.new()
-	var error = peer.create_server(int(port), MAX_CONNECTIONS)
+	var error = peer.create_server(port, MAX_CONNECTIONS)
 #	var error = peer.create_server()
 	if error: return error
 	multiplayer.multiplayer_peer = peer

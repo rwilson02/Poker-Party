@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://3qprhn0jes4i"]
+[gd_scene load_steps=3 format=3 uid="uid://3qprhn0jes4i"]
 
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="1_vmmqq"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_br66n"]
 
 [node name="Lobby" type="Control"]
 layout_mode = 3
@@ -259,23 +261,39 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Create" type="Button" parent="LobbyControls/Control/PreGame"]
+[node name="Hosting" type="VBoxContainer" parent="LobbyControls/Control/PreGame"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/Control/PreGame/Hosting"]
+modulate = Color(0.709804, 0.709804, 0.709804, 1)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_icons/updown = SubResource("CompressedTexture2D_br66n")
+min_value = 1000.0
+max_value = 65535.0
+value = 17160.0
+alignment = 1
+prefix = "HOST PORT:"
+
+[node name="Create" type="Button" parent="LobbyControls/Control/PreGame/Hosting"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 text = "Create Game"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="LobbyControls/Control/PreGame"]
+[node name="Joining" type="VBoxContainer" parent="LobbyControls/Control/PreGame"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Address" type="LineEdit" parent="LobbyControls/Control/PreGame/VBoxContainer"]
+[node name="Address" type="LineEdit" parent="LobbyControls/Control/PreGame/Joining"]
 layout_mode = 2
 size_flags_vertical = 3
 placeholder_text = "127.0.0.1:17160"
 alignment = 1
 context_menu_enabled = false
 
-[node name="Join" type="Button" parent="LobbyControls/Control/PreGame/VBoxContainer"]
+[node name="Join" type="Button" parent="LobbyControls/Control/PreGame/Joining"]
 layout_mode = 2
 size_flags_vertical = 3
 text = "Join Game"
@@ -330,7 +348,7 @@ context_menu_enabled = false
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
 
-[connection signal="pressed" from="LobbyControls/Control/PreGame/Create" to="." method="create_game"]
-[connection signal="pressed" from="LobbyControls/Control/PreGame/VBoxContainer/Join" to="." method="on_join_button"]
+[connection signal="pressed" from="LobbyControls/Control/PreGame/Hosting/Create" to="." method="create_game"]
+[connection signal="pressed" from="LobbyControls/Control/PreGame/Joining/Join" to="." method="on_join_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/StartButton" to="." method="on_start_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/CancelButton" to="." method="on_cancel_button"]

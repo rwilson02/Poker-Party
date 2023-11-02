@@ -1,7 +1,8 @@
 extends Node
 
 @onready var player_display = $LobbyControls/LobbyMenu/Players/RichTextLabel
-@onready var address_bar = $LobbyControls/Control/PreGame/VBoxContainer/Address
+@onready var address_bar = $LobbyControls/Control/PreGame/Joining/Address
+@onready var port_input = $LobbyControls/Control/PreGame/Hosting/SpinBox
 @onready var options = $LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer
 @onready var lobby_controls = $LobbyControls/Control/PreGame
 @onready var start_controls = $LobbyControls/Control/InGame
@@ -44,10 +45,7 @@ func create_game():
 	if not name_input.text.is_empty():
 		Netgame.player_info["name"] = name_input.text
 	
-	var port = ""
-	if ":" in address_bar.text:
-		port = address_bar.text.get_slice(":",1)
-	
+	var port = port_input.value
 	var error = Netgame.create_game(port)
 	if not error:
 		name_input.editable = false
