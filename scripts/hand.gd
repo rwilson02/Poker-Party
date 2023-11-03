@@ -12,23 +12,57 @@ func _init(given_cards: Array):
 		classify()
 
 func classify():
-	self.cards.sort_custom(func(a,b): return Rules.get_value(a) > Rules.get_value(b))
+	var value_sort = func(a,b): return Rules.get_value(a) > Rules.get_value(b)
 	
-	var is_straight = true
-	var is_flush = false
+	self.cards.sort_custom(value_sort)
 	
 	var clean_values = cards.map(Rules.get_value)
-	var clean_suits = cards.map(Rules.get_suit)
 	var runs = []
-
-	is_straight = sequential(clean_values)
-	is_flush = all_equal(clean_suits)
+	
+	var wild_count = self.cards.reduce(
+		func(a,n): 
+			if n >= 1000: 
+				return a + 1
+			else:
+				return a
+	, 0)
+	
+	if wild_count == Rules.RULES.CARDS_PER_HAND:
+		self.rank = "AW"
+		return
+	
+	var is_straight = sequential(clean_values)
+	var is_flush = test_flush(cards.map(Rules.get_suit))
+	
+	# 5K > SF, always
+	if wild_count >= 4 and Rules.RULES.CARDS_PER_HAND >= 5:
+		is_straight = false
+		is_flush = false
+	
+	if is_straight:
+		for i in self.cards.size():
+			if clean_values[i] >= 1000:
+				self.cards[i] = clean_values[i]
+		self.cards.sort_custom(value_sort)
 	
 	for value in Rules.RULES["VALS_PER_SUIT"]:
 		var val_count = clean_values.count(value)
 		if val_count > 1:
 			runs.append([val_count, value])
 	
+	# Wild adjustments
+	if wild_count > 0:
+		match runs.size():
+			0:
+				runs.append([1 + wild_count, clean_values.filter(func(c): return c < 1000).max()])
+			1:
+				runs[0][0] += wild_count
+			2:
+				match [runs[0][0], runs[1][0]]:
+					[2,2], [2,3]:
+						runs[1][0] += wild_count
+					[3,2]:
+						runs[0][0] += wild_count
 	runs.sort_custom(func(a,b): return a[0] > b[0])
 	
 	match [is_straight, is_flush]:
@@ -80,6 +114,8 @@ func get_name():
 	var properB = Rules.get_proper_value(kickerB)
 	
 	match rank:
+		"AW":
+			hand_name = "ALL WILD!"
 		"6K":
 			hand_name = "6-of-a-kind (%ss)"
 			return hand_name % properA
@@ -106,7 +142,6 @@ func get_name():
 			return hand_name % [properA, properB]
 		"FL":
 			hand_name = "Flush"
-			return hand_name
 		"ST":
 			hand_name = "Straight (%s-high)"
 			return hand_name % properA
@@ -121,29 +156,95 @@ func get_name():
 			return hand_name % properA
 		"HC":
 			hand_name = "High card"
-			return hand_name
 		"":
 			hand_name = "Invalid hand"
 	return hand_name
 
 func sequential(array):
-	var is_sequential = true
-	for i in array.size() - 1:
-		is_sequential = is_sequential and (array[i] - 1 == array[i+1])
-		if not is_sequential: break
+	var full_mask = (1 << Rules.RULES.CARDS_PER_HAND) - 1
+	var ace_low_mask = (full_mask >> 1) | (1 << (Rules.RULES.VALS_PER_SUIT - 1))
+	var bitmask = 0
+	var wilds = 0
+	var wild_values = []
+#	var edge = false
 	
-	var ace_low_test = range(array.size() - 1)
-	ace_low_test.append(Rules.RULES["VALS_PER_SUIT"] - 1)
-	ace_low_test.reverse()
+	var straight_match = func(value):
+		var value_test = value / full_mask
+		return ((value % full_mask == 0) and (value_test & value_test - 1 == 0))\
+			or value ^ ace_low_mask == 0
 	
-	return is_sequential or (array == ace_low_test)
+	var compute_hamming_weight = func(value):
+		var weight = 0
+		var _value = value
+		while _value > 0:
+			_value &= (_value - 1)
+			weight += 1
+		return weight
+	
+	for val in array:
+		if val == 1000: wilds += 1
+		else: 
+			if bitmask & 1 << val == 1 << val: return false
+			else: bitmask |= 1 << val
+	
+	if straight_match.call(bitmask):
+		return true
+	elif wilds == 0:
+		return false
+	
+	# Calculate index of first one in bitmask
+	var shifts = bitmask & -bitmask
+	
+	# Step 1: Patch holes
+	var hole_patcher = bitmask
+	# XOR holes with nearest PO2 - 1 to highlight the gaps
+	hole_patcher ^= (nearest_po2(hole_patcher) - 1) - (shifts - 1)
+	# Calculate Hamming weight to see if wilds can even save this
+	var hamming_weight = compute_hamming_weight.call(hole_patcher)
+	if hamming_weight > wilds: return false
+	elif bitmask / shifts in [0b1, 0b11, 0b111, 0b1111, 0b11111]:
+		pass # Just an edge straight, skip this step
+	else:
+		while wilds > 0:
+			var NPO2 = nearest_po2(hole_patcher)
+			var highest_index = (NPO2 >> 1) if NPO2 > hole_patcher else hole_patcher
+			hole_patcher ^= highest_index
+			bitmask ^= highest_index
+			var new_weight = compute_hamming_weight.call(hole_patcher)
+			if new_weight < hamming_weight:
+				hamming_weight = new_weight
+				wild_values.append(roundi(log(highest_index) / log(2)))
+				wilds -= 1
+			else: break
+	# If straight, clock out
+	if straight_match.call(bitmask):
+		for i in array.size():
+			if array[i] == 1000:
+				array[i] += wild_values.pop_front()
+		return true
+	# Step 2: Build edges
+	var post_shifts = 0
+	for i in wilds:
+		var NPO2 = nearest_po2(bitmask)
+		if NPO2 == bitmask: NPO2 = (nearest_po2(bitmask + 1))
+		var highest_val = NPO2
+		if NPO2 > 2 ** Rules.RULES.VALS_PER_SUIT - 1: 
+			highest_val = shifts >> (1 + post_shifts)
+			post_shifts += 1
+		bitmask |= highest_val
+		wild_values.append(roundi(log(highest_val) / log(2)))
+	# If straight, clock out, else not a straight
+	if straight_match.call(bitmask):
+		for i in array.size():
+			if array[i] == 1000:
+				array[i] += wild_values.pop_front()
+		return true
+	
+	return false
 
-func all_equal(array):
-	var equal = true
-	for i in array.size() - 1:
-		equal = equal and (array[i] == array[i+1])
-		if not equal: break
-	return equal
+func test_flush(array):
+	var good_array = array.filter(func(c): return c < Rules.RULES.SUITS)
+	return good_array.all(func(i): return i == good_array[0])
 
 static func sort(a: Hand, b:Hand) -> bool:
 	if a.rank != b.rank:

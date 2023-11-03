@@ -54,7 +54,9 @@ func do_hand_test():
 	for i in input_cards.size():
 		if input_cards[i].is_valid_int():
 			input_cards[i] = input_cards[i].to_int()
-		else: 
+		elif input_cards[i] == "?":
+			input_cards[i] = 1000
+		else :
 			invalid = true # Something isn't an integer
 			break
 	
@@ -64,7 +66,7 @@ func do_hand_test():
 	elif input_cards.size() < Rules.RULES["CARDS_PER_HAND"]:
 		output_box.set_line(0, "Error (Too few cards to make a hand)")
 		return
-	elif input_cards.any(func(c): return c >= Rules.get_deck_size()):
+	elif input_cards.any(func(c): return c >= Rules.get_deck_size() and c != 1000):
 		output_box.set_line(0, "Error (Card index out of range of deck size)")
 		return
 	

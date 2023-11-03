@@ -5,7 +5,16 @@ var RULES
 func _ready():
 	reset()
 
-func get_value(card): return card % RULES["VALS_PER_SUIT"] if card is int else -1
+func get_value(card): 
+	if card is int:
+		if card > 1000:
+			return card % 1000
+		elif card == 1000:
+			return 1000
+		else:
+			return card % RULES["VALS_PER_SUIT"]
+	else:
+		return -1
 func get_suit(card): return card / RULES["VALS_PER_SUIT"] if card is int else -1
 func get_deck_size(): return RULES["SUITS"] * RULES["VALS_PER_SUIT"]
 
@@ -14,7 +23,9 @@ func get_proper_value(card):
 	var card_value = get_value(card) if card != null else -1
 	var end_diff = card_value - RULES["VALS_PER_SUIT"]
 	
-	if end_diff > -5:
+	if card == 1000:
+		return "WILD"
+	elif end_diff > -5:
 		return values[end_diff]
 	else:
 		return str(card_value + 2)
@@ -22,9 +33,11 @@ func get_proper_value(card):
 func get_proper_symbol(card: int):
 	if card == null:
 		return null
+	elif card == 1000:
+		return "??\U01F0CF"
 	
-	var suits = "\u2660\u2665\u2663\u2666\u2605\U01F6E1"
-	var card_suit = suits[get_suit(card)]
+	const suits = "\u2660\u2665\u2663\u2666\u2605\U01F6E1"
+	var card_suit = suits[get_suit(card)] if card < 1000 else "\U01F0CF"
 	
 	return get_proper_value(card) + card_suit
 
