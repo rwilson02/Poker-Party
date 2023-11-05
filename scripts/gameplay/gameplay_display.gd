@@ -7,6 +7,7 @@ extends Node
 @onready var change_icons = $ChangeIcons
 @onready var showdown_panel = $ShowdownPanel
 @onready var chip_zoom = $ChipZoom
+@onready var sfxer = $AudioStreamPlayer
 
 const CHIP_TEMPLATE = "[img=24]res://textures/ico_chips.png[/img] %d"
 const UI_CARD = preload("res://scenes/ui/ui_card.tscn")
@@ -164,5 +165,6 @@ func chip_zoom_anim(to_pot: bool):
 	var tween = chip_zoom.create_tween()
 	tween.tween_property(chip_zoom, "position", location_pair[1], 0.5)\
 		.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
+	sfxer.play()
 	await tween.finished
 	chip_zoom.visible = false

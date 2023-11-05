@@ -1,13 +1,15 @@
-[gd_scene load_steps=10 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=12 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
+[ext_resource type="Texture2D" uid="uid://d060cb4eiywnv" path="res://textures/table.png" id="3_e3pou"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_betting.gd" id="3_xwsyi"]
 [ext_resource type="PackedScene" uid="uid://cnd6j21isfrjj" path="res://scenes/ui/scorebug.tscn" id="4_otush"]
 [ext_resource type="Texture2D" uid="uid://d1vdkbk325lco" path="res://textures/ico_chips.png" id="4_rxcjr"]
 [ext_resource type="PackedScene" uid="uid://cl1k1vjj8jeil" path="res://scenes/ui/betting_bar.tscn" id="5_nnckb"]
 [ext_resource type="PackedScene" uid="uid://br8kujy37icgm" path="res://scenes/ui/rule_change_menu.tscn" id="6_5hbob"]
 [ext_resource type="Script" path="res://scripts/ui/menu_manager.gd" id="6_jl3ny"]
+[ext_resource type="AudioStream" uid="uid://b63l3kd6711y2" path="res://audio/sfx/chips shuffle.mp3" id="6_oplt0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dp35u"]
 bg_color = Color(0.27451, 0.145098, 0.145098, 1)
@@ -22,7 +24,21 @@ script = ExtResource("1_glytd")
 [node name="Display" type="Node" parent="."]
 script = ExtResource("2_lvqcw")
 
+[node name="Table" type="TextureRect" parent="Display"]
+modulate = Color(0.678431, 0.678431, 0.678431, 1)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_e3pou")
+expand_mode = 2
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Display"]
+stream = ExtResource("6_oplt0")
+
 [node name="Scorebug" parent="Display" instance=ExtResource("4_otush")]
+show_behind_parent = true
 
 [node name="CommCards" type="HBoxContainer" parent="Display"]
 anchors_preset = 8

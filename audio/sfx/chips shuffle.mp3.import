@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b63l3kd6711y2"
+path="res://.godot/imported/chips shuffle.mp3-0a99978f425e1b257497adbda9b2aa7e.mp3str"
+
+[deps]
+
+source_file="res://audio/sfx/chips shuffle.mp3"
+dest_files=["res://.godot/imported/chips shuffle.mp3-0a99978f425e1b257497adbda9b2aa7e.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
