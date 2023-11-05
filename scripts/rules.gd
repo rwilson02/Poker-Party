@@ -1,16 +1,21 @@
 extends Node
 
 var RULES
+var FREE_WILD = 0x2_0000
+var WILD = 0x1_0000
 
 func _ready():
 	reset()
 
 func get_value(card): 
 	if card is int:
-		if card > 1000:
-			return card % 1000
-		elif card == 1000:
-			return 1000
+		if card == FREE_WILD:
+			return FREE_WILD
+		elif card & WILD:
+			if card & FREE_WILD:
+				return card ^ (WILD | FREE_WILD)
+			else:
+				return card ^ WILD
 		else:
 			return card % RULES["VALS_PER_SUIT"]
 	else:
@@ -23,8 +28,8 @@ func get_proper_value(card):
 	var card_value = get_value(card) if card != null else -1
 	var end_diff = card_value - RULES["VALS_PER_SUIT"]
 	
-	if card == 1000:
-		return "WILD"
+	if card == FREE_WILD:
+		return "???"
 	elif end_diff > -5:
 		return values[end_diff]
 	else:
@@ -33,11 +38,12 @@ func get_proper_value(card):
 func get_proper_symbol(card: int):
 	if card == null:
 		return null
-	elif card == 1000:
+	elif card == FREE_WILD:
 		return "??\U01F0CF"
 	
-	const suits = "\u2660\u2665\u2663\u2666\u2605\U01F6E1"
-	var card_suit = suits[get_suit(card)] if card < 1000 else "\U01F0CF"
+	# Spades, Hearts, Clubs, Diamonds
+	const suits = "\u2660\u2665\u2663\u2666\u2605\U01F319"
+	var card_suit = suits[get_suit(card)] if card < WILD else "\U01F0CF"
 	
 	return get_proper_value(card) + card_suit
 
@@ -105,6 +111,7 @@ func get_changes():
 		var type = change.get_slice("_", 0)
 		var rule = ""
 		var value = RULES.CURRENT_CHANGES.count(change)
+		var dependent = false
 		
 		match type:
 			"SUITS":
@@ -118,9 +125,18 @@ func get_changes():
 				rule = "hole cards"
 			"HAND":
 				rule = "cards in a hand"
+			"WINNERS":
+				template = "%d additional players can win."
+				dependent = true
+			"WILD":
+				template = "There are %d wild cards in the deck."
+				value *= Rules.RULES.SUITS
+				dependent = true
 			_:
 				push_error("you fucked it")
-		
-		change_array.append(template % [mod, rule, value])
+		if dependent:
+			change_array.append(template % value)
+		else:
+			change_array.append(template % [mod, rule, value])
 	
 	return change_array

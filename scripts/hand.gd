@@ -10,40 +10,34 @@ func _init(given_cards: Array):
 	if not given_cards.is_empty():
 		self.cards = given_cards
 		classify()
+#		prints(self.rank, Hand.hand_to_string(self.cards))
 
 func classify():
 	var value_sort = func(a,b): return Rules.get_value(a) > Rules.get_value(b)
 	
 	self.cards.sort_custom(value_sort)
 	
-	var clean_values = cards.map(Rules.get_value)
+	var clean_values = self.cards.map(Rules.get_value)
 	var runs = []
 	
-	var wild_count = self.cards.reduce(
-		func(a,n): 
-			if n >= 1000: 
-				return a + 1
-			else:
-				return a
-	, 0)
+	var wild_count = self.cards.count(Rules.FREE_WILD)
 	
 	if wild_count == Rules.RULES.CARDS_PER_HAND:
 		self.rank = "AW"
 		return
 	
 	var is_straight = sequential(clean_values)
-	var is_flush = test_flush(cards.map(Rules.get_suit))
+	var is_flush = test_flush(self.cards.map(Rules.get_suit))
 	
 	# 5K > SF, always
-	if wild_count >= 4 and Rules.RULES.CARDS_PER_HAND >= 5:
-		is_straight = false
+	# 4K > FL and 4K > ST, always
+	if (wild_count >= 4 and Rules.RULES.CARDS_PER_HAND >= 5) or wild_count >= 3:
+		is_straight.clear()
 		is_flush = false
 	
-	if is_straight:
-		for i in self.cards.size():
-			if clean_values[i] >= 1000:
-				self.cards[i] = clean_values[i]
-		self.cards.sort_custom(value_sort)
+	if not is_straight.is_empty():
+		for i in is_straight.filter(func(c): return c & Rules.WILD):
+			set_wild(i)
 	
 	for value in Rules.RULES["VALS_PER_SUIT"]:
 		var val_count = clean_values.count(value)
@@ -51,21 +45,30 @@ func classify():
 			runs.append([val_count, value])
 	
 	# Wild adjustments
+	wild_count = self.cards.count(Rules.FREE_WILD)
 	if wild_count > 0:
 		match runs.size():
 			0:
-				runs.append([1 + wild_count, clean_values.filter(func(c): return c < 1000).max()])
+				var highest_card = clean_values.filter(func(c): return c < Rules.WILD).max()
+				runs.append([1 + wild_count, highest_card])
+				set_wild(highest_card, true)
 			1:
 				runs[0][0] += wild_count
+				set_wild(runs[0][1], true)
 			2:
 				match [runs[0][0], runs[1][0]]:
 					[2,2], [2,3]:
 						runs[1][0] += wild_count
+						set_wild(runs[1][1], true)
 					[3,2]:
 						runs[0][0] += wild_count
+						set_wild(runs[0][1], true)
 	runs.sort_custom(func(a,b): return a[0] > b[0])
 	
-	match [is_straight, is_flush]:
+	assert(runs.all(func(c): return c[0] <= self.cards.size()))
+	
+	self.cards.sort_custom(value_sort)
+	match [not is_straight.is_empty(), is_flush]:
 		[true, var also_flush]:
 			self.kickerA = self.cards.front()
 			if Rules.get_value(self.kickerA) == Rules.RULES["VALS_PER_SUIT"] - 1:
@@ -96,7 +99,7 @@ func classify():
 						[3, 3]:
 							self.rank = "2T"
 						[_, _]:
-							if groups[0] + groups[1] < cards.size():
+							if groups[0] + groups[1] < self.cards.size():
 								self.rank = "CR"
 							else: 
 								self.rank = "FH"
@@ -160,19 +163,17 @@ func get_name():
 			hand_name = "Invalid hand"
 	return hand_name
 
-func sequential(array):
+func sequential(array) -> Array:
 	var full_mask = (1 << Rules.RULES.CARDS_PER_HAND) - 1
 	var ace_low_mask = (full_mask >> 1) | (1 << (Rules.RULES.VALS_PER_SUIT - 1))
 	var bitmask = 0
 	var wilds = 0
 	var wild_values = []
-#	var edge = false
-	
+	var wild_toggle = Rules.WILD | Rules.FREE_WILD
 	var straight_match = func(value):
 		var value_test = value / full_mask
 		return ((value % full_mask == 0) and (value_test & value_test - 1 == 0))\
 			or value ^ ace_low_mask == 0
-	
 	var compute_hamming_weight = func(value):
 		var weight = 0
 		var _value = value
@@ -182,29 +183,39 @@ func sequential(array):
 		return weight
 	
 	for val in array:
-		if val == 1000: wilds += 1
+		if val & Rules.FREE_WILD: wilds += 1
 		else: 
-			if bitmask & 1 << val == 1 << val: return false
+			if bitmask & 1 << val == 1 << val: return []
 			else: bitmask |= 1 << val
 	
 	if straight_match.call(bitmask):
-		return true
+		return array
 	elif wilds == 0:
-		return false
+		return []
 	
 	# Calculate index of first one in bitmask
 	var shifts = bitmask & -bitmask
+	var had_two = bool(bitmask & 1)
 	
 	# Step 1: Patch holes
 	var hole_patcher = bitmask
+#	# Set the ace aside
+	var ace_holder = 0
+	var ace_test = 1 << (Rules.RULES.VALS_PER_SUIT - 1)
+	if hole_patcher & ace_test: 
+		hole_patcher ^= ace_test
+		bitmask ^= ace_test
+		ace_holder ^= ace_test
 	# XOR holes with nearest PO2 - 1 to highlight the gaps
 	hole_patcher ^= (nearest_po2(hole_patcher) - 1) - (shifts - 1)
+	
 	# Calculate Hamming weight to see if wilds can even save this
 	var hamming_weight = compute_hamming_weight.call(hole_patcher)
-	if hamming_weight > wilds: return false
+	if hamming_weight > wilds: return []
 	elif bitmask / shifts in [0b1, 0b11, 0b111, 0b1111, 0b11111]:
 		pass # Just an edge straight, skip this step
 	else:
+		# TODO: FSR this doesn't catch ace-low straights anymore?
 		while wilds > 0:
 			var NPO2 = nearest_po2(hole_patcher)
 			var highest_index = (NPO2 >> 1) if NPO2 > hole_patcher else hole_patcher
@@ -213,15 +224,18 @@ func sequential(array):
 			var new_weight = compute_hamming_weight.call(hole_patcher)
 			if new_weight < hamming_weight:
 				hamming_weight = new_weight
-				wild_values.append(roundi(log(highest_index) / log(2)))
+				wild_values.append(wild_toggle | roundi(log(highest_index) / log(2)))
 				wilds -= 1
 			else: break
 	# If straight, clock out
-	if straight_match.call(bitmask):
-		for i in array.size():
-			if array[i] == 1000:
-				array[i] += wild_values.pop_front()
-		return true
+	if straight_match.call(bitmask | ace_holder):
+		var results = []
+		for i in array:
+			if i & Rules.FREE_WILD:
+				results.append(i ^ wild_values.pop_front())
+			else:
+				results.append(i)
+		return results
 	# Step 2: Build edges
 	var post_shifts = 0
 	for i in wilds:
@@ -232,19 +246,52 @@ func sequential(array):
 			highest_val = shifts >> (1 + post_shifts)
 			post_shifts += 1
 		bitmask |= highest_val
-		wild_values.append(roundi(log(highest_val) / log(2)))
+		wild_values.append(wild_toggle | roundi(log(highest_val) / log(2)))
 	# If straight, clock out, else not a straight
-	if straight_match.call(bitmask):
-		for i in array.size():
-			if array[i] == 1000:
-				array[i] += wild_values.pop_front()
-		return true
+	if straight_match.call(bitmask | ace_holder):
+		var results = []
+		for i in array:
+			if i & Rules.FREE_WILD:
+				results.append(i ^ wild_values.pop_front())
+			else:
+				results.append(i)
+		return results
+	# Or maybe it was low?
+	if not had_two and straight_match.call((bitmask >> 1) | ace_holder):
+		# But was it really?
+		var results = []
+		for i in array:
+			if i & Rules.FREE_WILD:
+				results.append(i ^ wild_values.pop_front())
+			else:
+				results.append(i)
+		# If highest non-ace is wild, replace it with a wild 2
+		results.sort_custom(func(a,b): return Rules.get_value(a) > Rules.get_value(b))
+		if results[1] & Rules.WILD:
+			results[1] = Rules.WILD
+		
+		var true_test = 0
+		for i in results:
+			true_test |= 1 << Rules.get_value(i)
+
+		if true_test ^ ace_low_mask:
+			# Sike
+			return []
+		else:
+			# We gottem
+			return results
 	
-	return false
+	return []
 
 func test_flush(array):
 	var good_array = array.filter(func(c): return c < Rules.RULES.SUITS)
 	return good_array.all(func(i): return i == good_array[0])
+
+func set_wild(value: int, set_all: bool = false):
+	for i in self.cards.size():
+		if self.cards[i] & Rules.FREE_WILD:
+			self.cards[i] = (self.cards[i] >> 1) | value
+			if not set_all: return
 
 static func sort(a: Hand, b:Hand) -> bool:
 	if a.rank != b.rank:

@@ -4,8 +4,10 @@ signal option_selected(valid)
 
 # Delimiters of change types
 # All powers of two -1 because increases are odds
-const TWO_TIME_CHANGES = 2 ** 2 - 1
-const ONE_TIME_CHANGES = 2 ** 5 - 1 
+const ONE_TIME_CHANGES = 2 ** 2 - 1 
+const TWO_TIME_CHANGES = 2 ** 5 - 1
+const DEPENDENT_CHANGES = 2 ** 8 - 1
+const DEPENDENT_MAX_LIMIT = 3
 
 # Other constants
 const CHANGE_INFO_PATH = "res://rules/change_info.txt"
@@ -16,6 +18,11 @@ const TEXT_TEMPLATE = "[font_size=20][center]%s[/center][/font_size]"
 enum CHANGES {
 	# One-shot changes
 	FULL_RESET = 0,
+	# Applies once
+	HAND_UP = ONE_TIME_CHANGES,
+	HAND_DOWN,
+	HOLE_UP,
+	HOLE_DOWN,
 	# Applies twice
 	SUITS_UP = TWO_TIME_CHANGES, # Increases are odd
 	SUITS_DOWN, # Decreases are even
@@ -23,12 +30,11 @@ enum CHANGES {
 	CARDS_DOWN,
 	COMM_UP,
 	COMM_DOWN,
-	# Applies once
-	HAND_UP = ONE_TIME_CHANGES,
-	HAND_DOWN,
-	HOLE_UP,
-	HOLE_DOWN
-	
+	# Dependent changes, in which you can only have increases
+	WINNERS_UP = DEPENDENT_CHANGES,
+	WINNERS_DOWN,
+	WILD_UP,
+	WILD_DOWN,
 }
 
 @onready var option_container = $HBoxContainer
@@ -41,7 +47,7 @@ func compute_possible_changes():
 	var c = Rules.RULES["COMM_CARDS"]
 	var p = Netgame.game_state["active_players"].size()
 	var s = Rules.RULES["SUITS"]
-	var v = Rules.RULES["VALS_PER_SUIT"]
+	var v = Rules.RULES["VALS_PER_SUIT"] + Rules.RULES["WILDS"] # 1 wild per suit, per addition of wilds
 	var cpr = h * p + c # cards per round
 	
 	possible_changes.clear()
@@ -61,14 +67,21 @@ func compute_possible_changes():
 		possible_changes.erase("FULL_RESET")
 	
 	for change in CHANGES:
+#		# Eliminate one-time options
+		if CHANGES[change] < TWO_TIME_CHANGES:
+			if change in Rules.RULES.CURRENT_CHANGES:
+				possible_changes.erase(change)
 		# Eliminate changes which already happened twice
-		if CHANGES[change] >= TWO_TIME_CHANGES:
+		elif CHANGES[change] < DEPENDENT_CHANGES:
 			if Rules.RULES.CURRENT_CHANGES.count(change) == 2: 
 				possible_changes.erase(change)
-			
-			# Eliminate one-time options
-			if CHANGES[change] >= ONE_TIME_CHANGES:
-				if change in Rules.RULES.CURRENT_CHANGES: 
+		# Handle dependent changes
+		else:
+			if CHANGES[change] & 1 == 0:
+				if not (change.replace("DOWN", "UP") in Rules.RULES.CURRENT_CHANGES):
+					possible_changes.erase(change)
+			else:
+				if Rules.RULES.CURRENT_CHANGES.count(change) == DEPENDENT_MAX_LIMIT: 
 					possible_changes.erase(change)
 
 func get_options():

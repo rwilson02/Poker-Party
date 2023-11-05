@@ -24,5 +24,6 @@
 	"ANTE": 20,
 	"GAMEPLAY_ROUNDS": 5000,
 	"MIN_BET": 5,
-	"WINNERS": 1
+	"WINNERS": 1,
+	"WILDS": 0
 }

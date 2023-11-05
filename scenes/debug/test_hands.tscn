@@ -106,6 +106,20 @@ max_value = 19.0
 step = 3.0
 value = 13.0
 
+[node name="Wilds" type="HBoxContainer" parent="Config/Deck"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="Config/Deck/Wilds"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Wilds per Suit: "
+horizontal_alignment = 2
+
+[node name="SpinBox" type="SpinBox" parent="Config/Deck/Wilds"]
+layout_mode = 2
+max_value = 3.0
+
 [node name="Control2" type="Control" parent="Config/Deck"]
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2

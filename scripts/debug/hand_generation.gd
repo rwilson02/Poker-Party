@@ -5,6 +5,7 @@ extends Node
 @onready var hand_selection = $Config/Deck/Hand/SpinBox.get_line_edit()
 @onready var suit_selection = $Config/Deck/Suits/SpinBox.get_line_edit()
 @onready var vals_selection = $Config/Deck/Values/SpinBox.get_line_edit()
+@onready var wilds_selection = $Config/Deck/Wilds/SpinBox.get_line_edit()
 @onready var hand_explainer = $Config/Hand/Label
 @onready var hand_input = $Config/Hand/HandInput
 @onready var output_box = $Output/TextEdit
@@ -18,6 +19,8 @@ func do_generation_test():
 	set_rules()
 	
 	var deck = range(0, Rules.get_deck_size())
+	for i in Rules.RULES.SUITS * Rules.RULES.WILDS:
+		deck.append(Rules.FREE_WILD)
 	deck.shuffle()
 	var pull = Rules.RULES["HOLE_CARDS"] + Rules.RULES["COMM_CARDS"]
 	
@@ -42,6 +45,7 @@ func do_generation_test():
 		else:
 			output_box.set_line(current_line, "Error (Not enough cards to make a hand)")
 	
+	output_box.scroll_vertical = 0
 	Rules.reset()
 
 func do_hand_test():
@@ -55,8 +59,8 @@ func do_hand_test():
 		if input_cards[i].is_valid_int():
 			input_cards[i] = input_cards[i].to_int()
 		elif input_cards[i] == "?":
-			input_cards[i] = 1000
-		else :
+			input_cards[i] = Rules.FREE_WILD
+		else:
 			invalid = true # Something isn't an integer
 			break
 	
@@ -66,7 +70,7 @@ func do_hand_test():
 	elif input_cards.size() < Rules.RULES["CARDS_PER_HAND"]:
 		output_box.set_line(0, "Error (Too few cards to make a hand)")
 		return
-	elif input_cards.any(func(c): return c >= Rules.get_deck_size() and c != 1000):
+	elif input_cards.any(func(c): return c >= Rules.get_deck_size() and not c & Rules.FREE_WILD):
 		output_box.set_line(0, "Error (Card index out of range of deck size)")
 		return
 	
@@ -85,6 +89,7 @@ func set_rules():
 	Rules.set_rule("HOLE_CARDS", hole_selection.text.to_int())
 	Rules.set_rule("COMM_CARDS", comm_selection.text.to_int())
 	Rules.set_rule("CARDS_PER_HAND", hand_selection.text.to_int())
+	Rules.set_rule("WILDS", wilds_selection.text.to_int())
 
 func on_tab_changed(tab):
 	if tab == 1:

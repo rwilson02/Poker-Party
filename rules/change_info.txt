@@ -10,3 +10,7 @@ HOLE_UP,,1,Bigger Pockets,Increase the number of cards given to players to [colo
 HOLE_DOWN,,1,Empty Pockets,Decrease the number of cards given to players to [color=RED]%d[/color].,HOLE_CARDS,-1
 HAND_UP,,1,Polydactyly,Increase the number of cards required to make a hand to [color=GREEN]%d[/color].,CARDS_PER_HAND,1
 HAND_DOWN,,1,Oligodactyly,Decrease the number of cards required to make a hand to [color=RED]%d[/color].,CARDS_PER_HAND,-1
+WINNERS_UP,,1,Trickle Down,Allow [color=GREEN]%d players[/color] to share the pot.,WINNERS,1
+WINNERS_DOWN,,1,Bottom Up,Lower the number of winners to [color=RED]%d[/color].,WINNERS,-1
+WILD_UP,,0,Wild Out,Add [color=GREEN]one wild card per suit[/color] to the deck.,WILDS,1
+WILD_DOWN,,0,Cool Off,Remove [color=RED]one wild card per suit[/color] from the deck.,WILDS,-1

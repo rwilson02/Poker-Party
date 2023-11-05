@@ -109,6 +109,8 @@ func gameplay_loop():
 func initial_round_tasks():
 	round_start_index += 1
 	deck = range(0, Rules.get_deck_size())
+	for i in (Rules.RULES.SUITS * Rules.RULES.WILDS):
+		deck.append(Rules.FREE_WILD)
 	deck.shuffle()
 	
 	Netgame.game_state["folded_players"].clear()
@@ -132,8 +134,12 @@ func get_winners() -> Array:
 	
 	for id in Netgame.game_state.active_players:
 		if id not in Netgame.game_state.folded_players:
-			winners.append([id, \
-			Hand.get_best_hand(Netgame.players[id].cards + Netgame.game_state.comm_cards)])
+#			prints("All possible hands from", id)
+			var combined_cards = Netgame.players[id].cards.duplicate() + Netgame.game_state.comm_cards.duplicate()
+#			print(Hand.hand_to_string(combined_cards))
+			var best = Hand.get_best_hand(combined_cards)
+#			prints("Best hand:", Hand.hand_to_string(best.cards))
+			winners.append([id, best])
 	winners.sort_custom(func(a,b): return Hand.sort(a[1], b[1]))
 	winners = winners.map(func(c): return [c[0], c[1].cards])
 	
@@ -147,7 +153,9 @@ func credit_winners(winners: Array):
 	var winning_divisions = {
 		1: [1],
 		2: [0.7, 0.3],
-		3: [0.6, 0.3, 0.1]
+		3: [0.55, 0.3, 0.15],
+		4: [0.5, 0.25, 0.15, 0.1],
+		5: [0.3, 0.25, 0.2, 0.15, 0.1]
 	}
 	var divisions = winning_divisions[winning_players]
 	var original_pot = Netgame.game_state.pot

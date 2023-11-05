@@ -32,6 +32,7 @@ custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+expand_mode = 1
 
 [node name="Description" type="RichTextLabel" parent="HBoxContainer/Option1"]
 layout_mode = 2
@@ -62,6 +63,7 @@ custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+expand_mode = 1
 
 [node name="Description" type="RichTextLabel" parent="HBoxContainer/Option2"]
 layout_mode = 2
