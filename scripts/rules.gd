@@ -41,7 +41,7 @@ func get_proper_symbol(card: int):
 	elif card == FREE_WILD:
 		return "??\U01F0CF"
 	
-	# Spades, Hearts, Clubs, Diamonds
+	# Spades, Hearts, Clubs, Diamonds, Stars, Moons
 	const suits = "\u2660\u2665\u2663\u2666\u2605\U01F319"
 	var card_suit = suits[get_suit(card)] if card < WILD else "\U01F0CF"
 	
@@ -84,6 +84,9 @@ func add_change(change: String):
 		counter_change = change.left(-2) + "DOWN"
 	elif change.ends_with("DOWN"):
 		counter_change = change.left(-4) + "UP"
+	else:
+		counter_change = change
+	
 	if RULES.CURRENT_CHANGES.has(counter_change):
 		RULES.CURRENT_CHANGES.erase(counter_change)
 	else:

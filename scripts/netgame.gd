@@ -40,9 +40,7 @@ func join_game(address = "", port = ""):
 		port = DEFAULT_PORT
 	
 	var peer = ENetMultiplayerPeer.new()
-#	var peer = WebRTCMultiplayerPeer.new()
 	var error = peer.create_client(address, int(port))
-#	var error = peer.create_client(randi() / 2)
 	if error: return error
 	multiplayer.multiplayer_peer = peer
 
@@ -53,9 +51,7 @@ func create_game(port = ""):
 		port = DEFAULT_PORT
 	
 	var peer = ENetMultiplayerPeer.new()
-#	var peer = WebRTCMultiplayerPeer.new()
 	var error = peer.create_server(port, MAX_CONNECTIONS)
-#	var error = peer.create_server()
 	if error: return error
 	multiplayer.multiplayer_peer = peer
 	
@@ -110,7 +106,6 @@ func sync_data(player_data, rules, state):
 	Netgame.players = player_data
 	Rules.RULES = rules
 	Netgame.game_state = state
-#	prints(multiplayer.get_unique_id(), "data received")
 	state_updated.emit()
 
 func reset():

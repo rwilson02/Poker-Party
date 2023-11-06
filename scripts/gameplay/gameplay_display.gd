@@ -134,7 +134,9 @@ func create_new_card(card: int):
 
 @rpc("authority","call_local","reliable")
 func display_showdown(results: Array):
-	var showdown_text: RichTextLabel = showdown_panel.get_node("RichTextLabel")
+	showdown_panel.size = Vector2(50 * Rules.RULES.CARDS_PER_HAND + 50, 400)
+	
+	var showdown_text: RichTextLabel = showdown_panel.find_child("RichTextLabel")
 	showdown_text.clear()
 	
 	for pair in results:
@@ -150,7 +152,6 @@ func display_showdown(results: Array):
 	await get_tree().create_timer(3 + results.size()).timeout
 	var out_tween = create_tween()
 	out_tween.tween_property(showdown_panel, "position", showdown_panel.position + (Vector2.RIGHT * 400), 0.5)
-#	await out_tween.finished
 
 @rpc("authority", "call_local", "reliable")
 func chip_zoom_anim(to_pot: bool):
