@@ -13,7 +13,7 @@ func setup(card: int):
 	set_meta("card", card)
 	var value = Rules.get_proper_value(card)
 	var suit = Rules.get_suit(card)
-	var wild = value == "???"
+	var wild = value == "??"
 	
 	for i in icons:
 		i.texture.region = Rect2i(\

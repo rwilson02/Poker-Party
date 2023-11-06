@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=13 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://d1vdkbk325lco" path="res://textures/ico_chips.png" id="4_rxcjr"]
 [ext_resource type="PackedScene" uid="uid://cl1k1vjj8jeil" path="res://scenes/ui/betting_bar.tscn" id="5_nnckb"]
 [ext_resource type="PackedScene" uid="uid://br8kujy37icgm" path="res://scenes/ui/rule_change_menu.tscn" id="6_5hbob"]
+[ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="6_b6hf0"]
 [ext_resource type="Script" path="res://scripts/ui/menu_manager.gd" id="6_jl3ny"]
 [ext_resource type="AudioStream" uid="uid://b63l3kd6711y2" path="res://audio/sfx/chips shuffle.mp3" id="6_oplt0"]
 
@@ -39,6 +40,8 @@ stream = ExtResource("6_oplt0")
 
 [node name="Scorebug" parent="Display" instance=ExtResource("4_otush")]
 show_behind_parent = true
+offset_left = 20.0
+offset_right = 325.0
 
 [node name="CommCards" type="HBoxContainer" parent="Display"]
 anchors_preset = 8
@@ -90,6 +93,7 @@ offset_right = 50.0
 offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("6_b6hf0")
 bbcode_enabled = true
 text = "[center][img=24]res://textures/ico_chips.png[/img] 5000[/center]"
 
@@ -105,7 +109,7 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = 120.0
+offset_left = 57.0
 offset_top = -200.0
 offset_right = 370.0
 offset_bottom = 200.0
@@ -117,8 +121,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 2.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("6_b6hf0")
 bbcode_enabled = true
 
 [node name="ChipZoom" type="TextureRect" parent="Display"]
@@ -133,15 +139,17 @@ script = ExtResource("3_xwsyi")
 
 [node name="BetBar" parent="Betting" instance=ExtResource("5_nnckb")]
 visible = false
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 340.0
-offset_top = 615.0
-offset_right = -340.0
-offset_bottom = -30.0
+offset_left = -300.0
+offset_top = -120.0
+offset_right = 300.0
+offset_bottom = -20.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 
 [node name="Menus" type="Node" parent="."]
 script = ExtResource("6_jl3ny")
@@ -182,6 +190,7 @@ offset_right = 215.0
 offset_bottom = -595.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("6_b6hf0")
 
 [node name="BigText" type="Label" parent="Menus/End"]
 layout_mode = 1
@@ -256,6 +265,7 @@ offset_top = -50.0
 offset_right = -100.0
 offset_bottom = 50.0
 grow_vertical = 2
+theme = ExtResource("6_b6hf0")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Menus/Pause"]
 layout_mode = 1

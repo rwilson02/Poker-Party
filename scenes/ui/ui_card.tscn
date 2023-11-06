@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://bci8qpa7y3464"]
+[gd_scene load_steps=5 format=3 uid="uid://bci8qpa7y3464"]
 
 [ext_resource type="Script" path="res://scripts/ui/card_setup.gd" id="1_hdb8b"]
 [ext_resource type="Texture2D" uid="uid://cl00gjptu5w6e" path="res://textures/cards/suit_selector.tres" id="1_lfkq7"]
+[ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_y2g7m"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_22ryu"]
 bg_color = Color(1, 1, 1, 1)
@@ -23,6 +24,7 @@ offset_top = -176.0
 offset_right = 120.0
 offset_bottom = 176.0
 pivot_offset = Vector2(120, 176)
+theme = ExtResource("1_y2g7m")
 theme_override_styles/panel = SubResource("StyleBoxFlat_22ryu")
 script = ExtResource("1_hdb8b")
 metadata/card = 0
@@ -57,7 +59,7 @@ offset_right = 40.0
 offset_bottom = 23.0
 mouse_filter = 1
 theme_override_font_sizes/font_size = 27
-text = "???"
+text = "??"
 horizontal_alignment = 1
 
 [node name="Icon" type="TextureRect" parent="TopLeft"]
@@ -92,7 +94,7 @@ offset_right = 40.0
 offset_bottom = 23.0
 mouse_filter = 1
 theme_override_font_sizes/font_size = 27
-text = "???"
+text = "??"
 horizontal_alignment = 1
 
 [node name="Icon" type="TextureRect" parent="BottomRight"]

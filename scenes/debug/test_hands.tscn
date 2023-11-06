@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://b3yuf6tmomn1"]
+[gd_scene load_steps=3 format=3 uid="uid://b3yuf6tmomn1"]
 
+[ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_mfcjg"]
 [ext_resource type="Script" path="res://scripts/debug/hand_generation.gd" id="1_yr0r1"]
 
 [node name="test_hands" type="Control"]
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_mfcjg")
 script = ExtResource("1_yr0r1")
 
 [node name="Config" type="TabContainer" parent="."]
@@ -115,6 +117,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Wilds per Suit: "
 horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="SpinBox" type="SpinBox" parent="Config/Deck/Wilds"]
 layout_mode = 2

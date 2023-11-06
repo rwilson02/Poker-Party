@@ -1,8 +1,11 @@
-[gd_scene format=3 uid="uid://cl1k1vjj8jeil"]
+[gd_scene load_steps=2 format=3 uid="uid://cl1k1vjj8jeil"]
+
+[ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_md358"]
 
 [node name="BetBar" type="Panel"]
-offset_right = 634.0
-offset_bottom = 108.0
+offset_right = 600.0
+offset_bottom = 100.0
+theme = ExtResource("1_md358")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1

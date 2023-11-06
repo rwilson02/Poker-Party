@@ -29,7 +29,7 @@ func get_proper_value(card):
 	var end_diff = card_value - RULES["VALS_PER_SUIT"]
 	
 	if card == FREE_WILD:
-		return "???"
+		return "??"
 	elif end_diff > -5:
 		return values[end_diff]
 	else:

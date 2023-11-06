@@ -1,6 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://3qprhn0jes4i"]
+[gd_scene load_steps=5 format=3 uid="uid://3qprhn0jes4i"]
 
+[ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_6mw0b"]
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="1_vmmqq"]
+
+[sub_resource type="Theme" id="Theme_fld4m"]
+LineEdit/colors/font_color = Color(0.576471, 0.576471, 0.576471, 1)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_br66n"]
 
@@ -9,6 +13,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 1280.0
 offset_bottom = 720.0
+theme = ExtResource("1_6mw0b")
 script = ExtResource("1_vmmqq")
 
 [node name="LobbyControls" type="ReferenceRect" parent="."]
@@ -18,7 +23,7 @@ anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -540.0
+offset_left = -570.0
 offset_top = -320.0
 offset_right = -100.0
 offset_bottom = 320.0
@@ -27,18 +32,19 @@ grow_vertical = 2
 
 [node name="LobbyMenu" type="TabContainer" parent="LobbyControls"]
 layout_mode = 1
-offset_left = 20.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -210.0
 offset_top = 20.0
-offset_right = 420.0
+offset_right = 210.0
 offset_bottom = 520.0
+grow_horizontal = 2
+tab_alignment = 1
 tabs_visible = false
 
 [node name="Players" type="MarginContainer" parent="LobbyControls/LobbyMenu"]
 layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
 
 [node name="RichTextLabel" type="RichTextLabel" parent="LobbyControls/LobbyMenu/Players"]
 layout_mode = 2
@@ -47,10 +53,6 @@ bbcode_enabled = true
 [node name="Options" type="MarginContainer" parent="LobbyControls/LobbyMenu"]
 visible = false
 layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 20
 
 [node name="ScrollContainer" type="ScrollContainer" parent="LobbyControls/LobbyMenu/Options"]
 layout_mode = 2
@@ -253,18 +255,35 @@ vertical_alignment = 1
 [node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/WINNERS"]
 layout_mode = 2
 min_value = 1.0
-max_value = 3.0
+max_value = 4.0
 value = 1.0
+
+[node name="WILDS2" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/WILDS2"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Wilds per Suit: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/WILDS2"]
+layout_mode = 2
+max_value = 3.0
 
 [node name="Control" type="Panel" parent="LobbyControls"]
 layout_mode = 1
-anchors_preset = 2
+anchors_preset = 7
+anchor_left = 0.5
 anchor_top = 1.0
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 20.0
+offset_left = -210.0
 offset_top = -100.0
-offset_right = 420.0
+offset_right = 210.0
 offset_bottom = -20.0
+grow_horizontal = 2
 grow_vertical = 0
 
 [node name="PreGame" type="HBoxContainer" parent="LobbyControls/Control"]
@@ -280,9 +299,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="SpinBox" type="SpinBox" parent="LobbyControls/Control/PreGame/Hosting"]
-modulate = Color(0.709804, 0.709804, 0.709804, 1)
 layout_mode = 2
 size_flags_vertical = 3
+theme = SubResource("Theme_fld4m")
 theme_override_icons/updown = SubResource("CompressedTexture2D_br66n")
 min_value = 1000.0
 max_value = 65535.0
@@ -338,7 +357,7 @@ anchor_top = 0.5
 anchor_bottom = 0.5
 offset_left = 100.0
 offset_top = -320.0
-offset_right = 540.0
+offset_right = 570.0
 offset_bottom = 320.0
 grow_vertical = 2
 
@@ -349,9 +368,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -80.0
+offset_left = -110.0
 offset_top = -20.0
-offset_right = 80.0
+offset_right = 110.0
 offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
