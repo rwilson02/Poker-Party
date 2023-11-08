@@ -1,7 +1,10 @@
-[gd_resource type="Theme" load_steps=3 format=3 uid="uid://b4yajy8yajabe"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://b4yajy8yajabe"]
 
 [ext_resource type="FontFile" uid="uid://15waa33347nr" path="res://theming/DejaVuSerifCondensed-Bold.ttf" id="1_f3cvj"]
 [ext_resource type="FontFile" uid="uid://ce2om7nbymu5y" path="res://theming/CLARE___.TTF" id="1_otx58"]
+[ext_resource type="FontFile" uid="uid://dd1ma1gdrfl3o" path="res://theming/DejaVuSerif-Bold.ttf" id="2_cgxm4"]
+[ext_resource type="FontFile" uid="uid://fpxuvi6onk36" path="res://theming/DejaVuSerif-BoldItalic.ttf" id="3_4u075"]
+[ext_resource type="FontFile" uid="uid://oe0qxnan3v06" path="res://theming/DejaVuSerifCondensed-BoldItalic.ttf" id="4_st5ll"]
 
 [resource]
 default_font = ExtResource("1_otx58")
@@ -10,4 +13,7 @@ MarginContainer/constants/margin_bottom = 20
 MarginContainer/constants/margin_left = 20
 MarginContainer/constants/margin_right = 20
 MarginContainer/constants/margin_top = 20
+RichTextLabel/fonts/bold_font = ExtResource("2_cgxm4")
+RichTextLabel/fonts/bold_italics_font = ExtResource("3_4u075")
+RichTextLabel/fonts/italics_font = ExtResource("4_st5ll")
 RichTextLabel/fonts/normal_font = ExtResource("1_f3cvj")
