@@ -31,7 +31,7 @@ func classify():
 	
 	# 5K > SF, always
 	# 4K > FL and 4K > ST, always
-	if (wild_count >= 4 and Rules.RULES.CARDS_PER_HAND >= 5) or wild_count >= 3:
+	if Rules.RULES.BALL == 1 and ((wild_count >= 4 and Rules.RULES.CARDS_PER_HAND >= 5) or wild_count >= 3):
 		is_straight.clear()
 		is_flush = false
 	
@@ -39,7 +39,22 @@ func classify():
 		for i in is_straight.filter(func(c): return c & Rules.WILD):
 			set_wild(i)
 	
-	for value in Rules.RULES["VALS_PER_SUIT"]:
+	# Lowball poker ignores flushes and straights except in the case of wheels
+	if Rules.RULES.BALL == -1:
+		if not is_straight.is_empty():
+			var clean_straight = is_straight.map(func(c): return Rules.get_value(c))
+			clean_straight.sort_custom(value_sort)
+			
+			if clean_straight[0] == Rules.RULES.VALS_PER_SUIT - 1 and \
+			clean_straight[1] == Rules.RULES.CARDS_PER_HAND - 2:
+				self.rank = "SW" if is_flush else "WH"
+				self.cards.sort_custom(value_sort)
+				return
+		# If it hasn't returned by now, clear it all
+		is_straight.clear()
+		is_flush = false
+	
+	for value in Rules.RULES.VALS_PER_SUIT:
 		var val_count = clean_values.count(value)
 		if val_count > 1:
 			runs.append([val_count, value])
@@ -47,22 +62,30 @@ func classify():
 	# Wild adjustments
 	wild_count = self.cards.count(Rules.FREE_WILD)
 	if wild_count > 0:
-		match runs.size():
-			0:
-				var highest_card = clean_values.filter(func(c): return c < Rules.WILD).max()
-				runs.append([1 + wild_count, highest_card])
-				set_wild(highest_card, true)
-			1:
-				runs[0][0] += wild_count
-				set_wild(runs[0][1], true)
-			2:
-				match [runs[0][0], runs[1][0]]:
-					[2,2], [2,3]:
-						runs[1][0] += wild_count
-						set_wild(runs[1][1], true)
-					[3,2]:
-						runs[0][0] += wild_count
-						set_wild(runs[0][1], true)
+		if Rules.RULES.BALL == 1:
+			# Highball: Focus on improving runs of cards
+			match runs.size():
+				0:
+					var highest_card = clean_values.filter(func(c): return c < Rules.WILD).max()
+					runs.append([1 + wild_count, highest_card])
+					set_wild(highest_card, true)
+				1:
+					runs[0][0] += wild_count
+					set_wild(runs[0][1], true)
+				2:
+					match [runs[0][0], runs[1][0]]:
+						[2,2], [2,3]:
+							runs[1][0] += wild_count
+							set_wild(runs[1][1], true)
+						[3,2]:
+							runs[0][0] += wild_count
+							set_wild(runs[0][1], true)
+		else:
+			# Lowball: Just add the lowest values that aren't already in the hand
+			for i in Rules.RULES.VALS_PER_SUIT:
+				if wild_count > 0 and not i in self.cards.map(Rules.get_value):
+					set_wild(i)
+					wild_count -= 1
 	runs.sort_custom(func(a,b): return a[0] > b[0])
 	
 	assert(runs.all(func(c): return c[0] <= self.cards.size()))
@@ -71,9 +94,10 @@ func classify():
 	match [not is_straight.is_empty(), is_flush]:
 		[true, var also_flush]:
 			self.kickerA = self.cards.front()
-			if Rules.get_value(self.kickerA) == Rules.RULES["VALS_PER_SUIT"] - 1:
-				if Rules.get_value(self.cards[1]) == Rules.RULES["CARDS_PER_HAND"] - 2:
+			if Rules.get_value(self.kickerA) == Rules.RULES.VALS_PER_SUIT - 1 and \
+				Rules.get_value(self.cards[1]) == Rules.RULES.CARDS_PER_HAND - 2:
 					self.kickerA = self.cards[1]
+			
 			self.rank = "SF" if also_flush else "ST"
 		[false, true]:
 			self.rank = "FL"
@@ -128,6 +152,8 @@ func get_name():
 		"SF":
 			hand_name = "Straight flush (%s-high)"
 			return hand_name % properA
+		"SW":
+			hand_name = "Steel wheel"
 		"4K":
 			hand_name = "4-of-a-kind (%ss)"
 			return hand_name % properA
@@ -148,6 +174,8 @@ func get_name():
 		"ST":
 			hand_name = "Straight (%s-high)"
 			return hand_name % properA
+		"WH":
+			hand_name = "Wheel"
 		"3K":
 			hand_name = "3-of-a-kind (%ss)"
 			return hand_name % properA
@@ -164,12 +192,15 @@ func get_name():
 	return hand_name
 
 func sequential(array) -> Array:
+	# Main variables
 	var full_mask = (1 << Rules.RULES.CARDS_PER_HAND) - 1
 	var ace_low_mask = (full_mask >> 1) | (1 << (Rules.RULES.VALS_PER_SUIT - 1))
 	var bitmask = 0
 	var wilds = 0
 	var wild_values = []
 	var wild_toggle = Rules.WILD | Rules.FREE_WILD
+	var do_lowball_test = false
+	# Functions
 	var straight_match = func(value):
 		var value_test = value / full_mask
 		return ((value % full_mask == 0) and (value_test & value_test - 1 == 0))\
@@ -181,7 +212,16 @@ func sequential(array) -> Array:
 			_value &= (_value - 1)
 			weight += 1
 		return weight
+	var clean_up_and_return = func():
+		var results = []
+		for i in array:
+			if i & Rules.FREE_WILD:
+				results.append(i ^ wild_values.pop_front())
+			else:
+				results.append(i)
+		return results
 	
+	# Step 1: Index all the cards in the hand by value
 	for val in array:
 		if val & Rules.FREE_WILD: wilds += 1
 		else: 
@@ -189,17 +229,22 @@ func sequential(array) -> Array:
 			else: bitmask |= 1 << val
 	
 	if straight_match.call(bitmask):
-		return array
+		return array # This is already a straight! Nice
 	elif wilds == 0:
-		return []
+		return [] # We can't fix this one chief
+	elif Rules.RULES.BALL == -1:
+		if compute_hamming_weight.call(ace_low_mask ^ bitmask) <= wilds:
+			do_lowball_test = true
+		else:
+			return [] # Don't even bother.
 	
 	# Calculate index of first one in bitmask
 	var shifts = bitmask & -bitmask
 	var had_two = bool(bitmask & 1)
 	
-	# Step 1: Patch holes
+	# Step 2: Patch holes
 	var hole_patcher = bitmask
-#	# Set the ace aside
+	# Set the ace aside
 	var ace_holder = 0
 	var ace_test = 1 << (Rules.RULES.VALS_PER_SUIT - 1)
 	if hole_patcher & ace_test: 
@@ -215,7 +260,6 @@ func sequential(array) -> Array:
 	elif bitmask / shifts in [0b1, 0b11, 0b111, 0b1111, 0b11111]:
 		pass # Just an edge straight, skip this step
 	else:
-		# TODO: FSR this doesn't catch ace-low straights anymore?
 		while wilds > 0:
 			var NPO2 = nearest_po2(hole_patcher)
 			var highest_index = (NPO2 >> 1) if NPO2 > hole_patcher else hole_patcher
@@ -228,15 +272,36 @@ func sequential(array) -> Array:
 				wilds -= 1
 			else: break
 	# If straight, clock out
-	if straight_match.call(bitmask | ace_holder):
-		var results = []
-		for i in array:
-			if i & Rules.FREE_WILD:
-				results.append(i ^ wild_values.pop_front())
-			else:
-				results.append(i)
-		return results
-	# Step 2: Build edges
+	if straight_match.call(bitmask | ace_holder): return clean_up_and_return.call()
+	
+	# Step 2.5: If this is a lowball game, specifically try to build an ace-low straight
+	if do_lowball_test:
+		var lowball_mask = ace_low_mask ^ (bitmask | ace_holder)
+		if not ace_holder:
+			wild_values.append(wild_toggle | (Rules.RULES.VALS_PER_SUIT - 1))
+			wilds -= 1
+			ace_holder ^= ace_test
+			lowball_mask ^= ace_test # Since I have it
+		
+		hamming_weight = compute_hamming_weight.call(lowball_mask)
+		while wilds > 0:
+			var NPO2 = nearest_po2(lowball_mask)
+			var highest_index = (NPO2 >> 1) if NPO2 > lowball_mask else lowball_mask
+			lowball_mask ^= highest_index
+			bitmask ^= highest_index
+			var new_weight = compute_hamming_weight.call(lowball_mask)
+			if new_weight < hamming_weight:
+				hamming_weight = new_weight
+				wild_values.append(wild_toggle | roundi(log(highest_index) / log(2)))
+				wilds -= 1
+			else: break
+		
+		if straight_match.call(bitmask | ace_holder): 
+			return clean_up_and_return.call()
+		else:
+			return [] # If you can't wheel, you can't deal
+	
+	# Step 3: Build edges
 	var post_shifts = 0
 	for i in wilds:
 		var NPO2 = nearest_po2(bitmask)
@@ -248,14 +313,7 @@ func sequential(array) -> Array:
 		bitmask |= highest_val
 		wild_values.append(wild_toggle | roundi(log(highest_val) / log(2)))
 	# If straight, clock out, else not a straight
-	if straight_match.call(bitmask | ace_holder):
-		var results = []
-		for i in array:
-			if i & Rules.FREE_WILD:
-				results.append(i ^ wild_values.pop_front())
-			else:
-				results.append(i)
-		return results
+	if straight_match.call(bitmask | ace_holder): return clean_up_and_return.call()
 	# Or maybe it was low?
 	if not had_two and straight_match.call((bitmask >> 1) | ace_holder):
 		# But was it really?
@@ -294,16 +352,33 @@ func set_wild(value: int, set_all: bool = false):
 			if not set_all: return
 
 static func sort(a: Hand, b:Hand) -> bool:
-	if a.rank != b.rank:
-		return Rules.RULES["HAND_RANKS"][a.rank] > Rules.RULES["HAND_RANKS"][b.rank]
-	elif Rules.get_value(a.kickerA) != Rules.get_value(b.kickerA):
-		return Rules.get_value(a.kickerA) > Rules.get_value(b.kickerA)
-	elif Rules.get_value(a.kickerB) != Rules.get_value(b.kickerB):
-		return Rules.get_value(a.kickerB) > Rules.get_value(b.kickerB)
-	elif Rules.get_value(a.kickerC) != Rules.get_value(b.kickerC):
-		return Rules.get_value(a.kickerC) > Rules.get_value(b.kickerC)
+	if a.rank.is_empty(): return false
+	if b.rank.is_empty(): return true
+	
+	if Rules.RULES.BALL == 1:
+		# Highball
+		if a.rank != b.rank:
+			return Rules.RULES.HAND_RANKS[a.rank] > Rules.RULES.HAND_RANKS[b.rank]
+		elif Rules.get_value(a.kickerA) != Rules.get_value(b.kickerA):
+			return Rules.get_value(a.kickerA) > Rules.get_value(b.kickerA)
+		elif Rules.get_value(a.kickerB) != Rules.get_value(b.kickerB):
+			return Rules.get_value(a.kickerB) > Rules.get_value(b.kickerB)
+		elif Rules.get_value(a.kickerC) != Rules.get_value(b.kickerC):
+			return Rules.get_value(a.kickerC) > Rules.get_value(b.kickerC)
+		else:
+			return a.cards.map(Rules.get_value) > b.cards.map(Rules.get_value)
 	else:
-		return a.cards.map(Rules.get_value) > b.cards.map(Rules.get_value)
+		# Lowball
+		if a.rank != b.rank:
+			return Rules.RULES.HAND_RANKS[a.rank] < Rules.RULES.HAND_RANKS[b.rank]
+		elif Rules.get_value(a.kickerA) != Rules.get_value(b.kickerA):
+			return Rules.get_value(a.kickerA) < Rules.get_value(b.kickerA)
+		elif Rules.get_value(a.kickerB) != Rules.get_value(b.kickerB):
+			return Rules.get_value(a.kickerB) < Rules.get_value(b.kickerB)
+		elif Rules.get_value(a.kickerC) != Rules.get_value(b.kickerC):
+			return Rules.get_value(a.kickerC) < Rules.get_value(b.kickerC)
+		else:
+			return a.cards.map(Rules.get_value) < b.cards.map(Rules.get_value)
 
 static func is_equal(a, b) -> bool:
 	if typeof(a) == typeof(Hand) and typeof(b) == typeof(Hand):
@@ -316,7 +391,7 @@ static func is_equal(a, b) -> bool:
 
 static func get_best_hand(given_cards: Array):
 	var best_hand: Hand = Hand.new([])
-	var possible_hands = get_combinations(given_cards, Rules.RULES["CARDS_PER_HAND"])
+	var possible_hands = get_combinations(given_cards, Rules.RULES.CARDS_PER_HAND)
 	
 	for hand in possible_hands:
 		var new_hand = Hand.new(hand)
@@ -347,9 +422,9 @@ static func hand_to_string(hand: Array):
 		hand_string += " "
 	hand_string[-1] = "]"
 	
-	if Rules.get_value(hand.front()) == Rules.RULES["VALS_PER_SUIT"] - 1 \
-		and Rules.get_value(hand[1]) == Rules.RULES["CARDS_PER_HAND"] - 2:
-		var slices = hand_string.split(" ", false, 1)
-		hand_string = "[%s %s]" % [slices[1].left(-1), slices[0].right(2)]
+	if Rules.get_value(hand[0]) == Rules.RULES.VALS_PER_SUIT - 1 \
+		and Rules.get_value(hand[1]) == Rules.RULES.CARDS_PER_HAND - 2:
+			var slices = hand_string.split(" ", false, 1)
+			hand_string = "[%s %s]" % [slices[1].left(-1), slices[0].right(2)]
 	
 	return hand_string

@@ -17,16 +17,16 @@ func get_value(card):
 			else:
 				return card ^ WILD
 		else:
-			return card % RULES["VALS_PER_SUIT"]
+			return card % RULES.VALS_PER_SUIT
 	else:
 		return -1
-func get_suit(card): return card / RULES["VALS_PER_SUIT"] if card is int else -1
-func get_deck_size(): return RULES["SUITS"] * RULES["VALS_PER_SUIT"]
+func get_suit(card): return card / RULES.VALS_PER_SUIT if card is int else -1
+func get_deck_size(): return RULES.SUITS * RULES.VALS_PER_SUIT
 
 func get_proper_value(card):
 	var values = "JQKA"
 	var card_value = get_value(card) if card != null else -1
-	var end_diff = card_value - RULES["VALS_PER_SUIT"]
+	var end_diff = card_value - RULES.VALS_PER_SUIT
 	
 	if card == FREE_WILD:
 		return "??"
@@ -67,16 +67,19 @@ func set_rule(rule: String, value: Variant):
 			match value:
 				4:
 					card_rules = load_json_at(path % "four_cards")
-					RULES["HAND_RANKS"].merge(card_rules, true)
+					RULES.HAND_RANKS.merge(card_rules, true)
 				5:
 					card_rules = load_json_at(path % "base_rules")
-					RULES["HAND_RANKS"] = card_rules["HAND_RANKS"]
+					RULES.HAND_RANKS = card_rules.HAND_RANKS
 				6:
 					card_rules = load_json_at(path % "six_cards")
-					RULES["HAND_RANKS"].merge(card_rules, true)
+					RULES.HAND_RANKS.merge(card_rules, true)
 				_: 
 					push_error("wait you can't have that many")
 			integerize(RULES)
+		"BALL":
+			if value == 0:
+				RULES.BALL *= -1
 
 func add_change(change: String):
 	var counter_change
@@ -134,6 +137,10 @@ func get_changes():
 			"WILD":
 				template = "There are %d wild cards in the deck."
 				value *= Rules.RULES.SUITS
+				dependent = true
+			"BALL":
+				template = "Play by %sball poker rules."
+				value = "low"
 				dependent = true
 			_:
 				push_error("you fucked it")

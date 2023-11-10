@@ -1,5 +1,6 @@
 extends Node
 
+@onready var game_selection = $Config/Deck/Gametype/SpinBox
 @onready var hole_selection = $Config/Deck/Hole/SpinBox.get_line_edit()
 @onready var comm_selection = $Config/Deck/Comm/SpinBox.get_line_edit()
 @onready var hand_selection = $Config/Deck/Hand/SpinBox.get_line_edit()
@@ -22,7 +23,7 @@ func do_generation_test():
 	for i in Rules.RULES.SUITS * Rules.RULES.WILDS:
 		deck.append(Rules.FREE_WILD)
 	deck.shuffle()
-	var pull = Rules.RULES["HOLE_CARDS"] + Rules.RULES["COMM_CARDS"]
+	var pull = Rules.RULES.HOLE_CARDS + Rules.RULES.COMM_CARDS
 	
 	var current_line = 0
 	while deck.size() >= pull:
@@ -67,7 +68,7 @@ func do_hand_test():
 	if invalid:
 		output_box.set_line(0, "Error (Noninteger or nonspace in text box)")
 		return
-	elif input_cards.size() < Rules.RULES["CARDS_PER_HAND"]:
+	elif input_cards.size() < Rules.RULES.CARDS_PER_HAND:
 		output_box.set_line(0, "Error (Too few cards to make a hand)")
 		return
 	elif input_cards.any(func(c): return c >= Rules.get_deck_size() and not c & Rules.FREE_WILD):
@@ -84,6 +85,7 @@ func do_hand_test():
 	Rules.reset()
 
 func set_rules():
+	Rules.set_rule("BALL", 1 - game_selection.get_selected_id())
 	Rules.set_rule("SUITS", suit_selection.text.to_int())
 	Rules.set_rule("VALS_PER_SUIT", vals_selection.text.to_int())
 	Rules.set_rule("HOLE_CARDS", hole_selection.text.to_int())

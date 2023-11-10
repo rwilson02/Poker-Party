@@ -36,20 +36,22 @@ func do_betting_round(start_index):
 	
 	# Initial round of bets
 	print("Begin betting round.")
-	for i in Netgame.game_state["active_players"].size():
+	for i in Netgame.game_state.active_players.size():
 		if Netgame.get_live_players() == 1: break
 		
 		var got_bet
-		var next_up = (i + start_index) % Netgame.game_state["active_players"].size()
+		var next_up = (i + start_index) % Netgame.game_state.active_players.size()
 		awaiting_player = Netgame.game_state.active_players[next_up]
 		if awaiting_player not in Netgame.game_state.folded_players:
 #			prints("paging", awaiting_player)
+			Netgame.players[awaiting_player].awaiting = true
 			get_bet_option.rpc_id(awaiting_player, 0)
 			got_bet = await input_received
+			Netgame.players[awaiting_player].awaiting = false
 			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		if got_bet: 
-			initial_bettor_index = Netgame.game_state["active_players"].find(awaiting_player)
+			initial_bettor_index = Netgame.game_state.active_players.find(awaiting_player)
 			break
 	
 	# If nobody bet, leave
@@ -63,12 +65,14 @@ func do_betting_round(start_index):
 	var index = initial_bettor_index
 	while not all_bets_equal(true) and Netgame.get_live_players() > 1:
 		index += 1
-		var next_up = index % Netgame.game_state["active_players"].size()
+		var next_up = index % Netgame.game_state.active_players.size()
 		awaiting_player = Netgame.game_state.active_players[next_up]
 		if awaiting_player not in Netgame.game_state.folded_players:
-			prints("paging", awaiting_player)
+#			prints("paging", awaiting_player)
+			Netgame.players[awaiting_player].awaiting = true
 			get_bet_option.rpc_id(awaiting_player, get_max_bet())
 			await input_received
+			Netgame.players[awaiting_player].awaiting = false
 			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 	
 	# End of betting round
@@ -93,8 +97,8 @@ func get_bet_option(current_bet):
 	bet_to_match = current_bet
 #	var bet_difference = bet_to_match - Netgame.me().current_bet
 #	var check_or_call = true if bet_to_match == 0 else Netgame.me().chips >= bet_difference
-	var bet_or_raise = Netgame.me().chips >= Rules.RULES["MIN_BET"] if bet_to_match == 0 \
-		else Netgame.me().chips >= (bet_to_match + Rules.RULES["MIN_BET"])
+	var bet_or_raise = Netgame.me().chips >= Rules.RULES.MIN_BET if bet_to_match == 0 \
+		else Netgame.me().chips >= (bet_to_match + Rules.RULES.MIN_BET)
 	
 	# Those are positive checks, so invert to set disabled status
 #	check_call.disabled = not check_or_call # Should always be enabled?
@@ -102,8 +106,8 @@ func get_bet_option(current_bet):
 	bet_raise_input.editable = bet_or_raise # should be true when you can bet or raise
 	
 	# Set the min and max for the input
-	bet_raise_input.min_value = Rules.RULES["MIN_BET"] if bet_to_match == 0 \
-		else bet_to_match + Rules.RULES["MIN_BET"]
+	bet_raise_input.min_value = Rules.RULES.MIN_BET if bet_to_match == 0 \
+		else bet_to_match + Rules.RULES.MIN_BET
 	bet_raise_input.max_value = Netgame.me().chips
 	bet_raise_input.value = bet_raise_input.min_value
 	
@@ -139,7 +143,7 @@ func send_option(option, value):
 				Netgame.players[sender].current_bet += bet_difference
 				prints(sender, "raises to %d." % value)
 		"FOLD":
-			Netgame.game_state["folded_players"].append(sender)
+			Netgame.game_state.folded_players.append(sender)
 			prints(sender, "folds.")
 		"DISCONNECT":
 			prints(sender, "disconnected.")
@@ -196,7 +200,7 @@ func player_disconnected(disconnected_id):
 
 func redistribute_wealth(from):
 	var free_money = Netgame.players[from].chips
-	var redistributed = free_money / Netgame.game_state["active_players"].size()
+	var redistributed = free_money / Netgame.game_state.active_players.size()
 	
 	for id in Netgame.game_state.active_players:
 		Netgame.players[id].chips += redistributed

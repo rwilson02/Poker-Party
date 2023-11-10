@@ -81,14 +81,14 @@ func done_here(valid):
 
 func begone_thot(id):
 	prints(id, "gone")
-	if id in Netgame.game_state["losers"]:
+	if Netgame.players[id].awaiting and id in Netgame.game_state.losers:
 		done_here(false)
 
 @rpc("authority", "call_local", "reliable")
 func show_end_screen():
 	toggle_shadow()
 	await animation_complete
-	if Netgame.game_state["active_players"].has(multiplayer.get_unique_id()):
+	if Netgame.game_state.active_players.has(multiplayer.get_unique_id()):
 		end_screen.get_node("BigText").text = "YOU WIN"
 	if multiplayer.is_server():
 		end_screen.get_node("Message").text = "You decide what's next!"

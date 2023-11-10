@@ -46,11 +46,11 @@ func start_game(restart):
 	}
 	
 	for id in Netgame.players:
-		Netgame.game_state["active_players"].append(id)
-		Netgame.players[id].chips = Rules.RULES["INITIAL_CHIPS"]
-	Netgame.game_state["active_players"].shuffle()
+		Netgame.game_state.active_players.append(id)
+		Netgame.players[id].chips = Rules.RULES.INITIAL_CHIPS
+	Netgame.game_state.active_players.shuffle()
 	
-	while Netgame.game_state["active_players"].size() > 1 and round_start_index < Rules.RULES["GAMEPLAY_ROUNDS"]:
+	while Netgame.game_state.active_players.size() > 1 and round_start_index < Rules.RULES.GAMEPLAY_ROUNDS:
 		await gameplay_loop()
 		if restart_requested: break
 	
@@ -72,8 +72,8 @@ func gameplay_loop():
 	# Other betting rounds may be able to be skipped
 	# (Live players = Players who are active (haven't lost) and haven't folded)
 	if Netgame.get_live_players() > 1 and not restart_requested:
-		while Netgame.game_state["comm_cards"].size() < Rules.RULES["COMM_CARDS"]:
-			Netgame.game_state["comm_cards"].append(deck.pop_back())
+		while Netgame.game_state.comm_cards.size() < Rules.RULES.COMM_CARDS:
+			Netgame.game_state.comm_cards.append(deck.pop_back())
 			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 			TIMER.start(1)
 			await TIMER.timeout
@@ -94,15 +94,16 @@ func gameplay_loop():
 		# Anyone with no chips by now has lost the game
 		# Also remove player cards because we're going to the next round
 		for id in Netgame.game_state.active_players:
-			Netgame.players[id]["cards"].clear()
-			if Netgame.players[id]["chips"] <= 0:
-				Netgame.game_state["losers"].append(id)
+			Netgame.players[id].cards.clear()
+			if Netgame.players[id].chips <= 0:
+				Netgame.game_state.losers.append(id)
 		clear_losers()
 		
 		await do_rule_change()
 	
 	TIMER.start(1)
 	await TIMER.timeout
+	clear_losers() # Just to make sure
 	Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 	next_round.emit()
 
@@ -113,17 +114,17 @@ func initial_round_tasks():
 		deck.append(Rules.FREE_WILD)
 	deck.shuffle()
 	
-	Netgame.game_state["folded_players"].clear()
-	Netgame.game_state["comm_cards"].clear()
+	Netgame.game_state.folded_players.clear()
+	Netgame.game_state.comm_cards.clear()
 	for id in Netgame.game_state.active_players:
 		get_ante(id)
 
 func deal_cards():
-	for i in (Rules.RULES["CARDS_PER_HAND"] - Rules.RULES["HOLE_CARDS"]):
-		if i >= Rules.RULES["COMM_CARDS"]: break
-		Netgame.game_state["comm_cards"].append(deck.pop_back())
+	for i in (Rules.RULES.CARDS_PER_HAND - Rules.RULES.HOLE_CARDS):
+		if i >= Rules.RULES.COMM_CARDS: break
+		Netgame.game_state.comm_cards.append(deck.pop_back())
 #		print("given comm card")
-	for i in Rules.RULES["HOLE_CARDS"]:
+	for i in Rules.RULES.HOLE_CARDS:
 		for id in Netgame.game_state.active_players:
 #			prints("given hole card to", id)
 			Netgame.players[id].cards.append(deck.pop_back())
@@ -141,6 +142,13 @@ func get_winners() -> Array:
 #			prints("Best hand:", Hand.hand_to_string(best.cards))
 			winners.append([id, best])
 	winners.sort_custom(func(a,b): return Hand.sort(a[1], b[1]))
+	
+	# All wild should still win in lowball
+	if Rules.RULES.BALL == -1:
+		while winners.back()[1].rank == "AW":
+			var back = winners.pop_back()
+			winners.push_front(back)
+	
 	winners = winners.map(func(c): return [c[0], c[1].cards])
 	
 	return winners
@@ -203,22 +211,27 @@ func do_rule_change():
 		var potential_player = player_chips.pop_back()
 		if potential_player != null:
 			var losingest_player = potential_player[0]
-			if losingest_player in Netgame.game_state["active_players"]:
+			if losingest_player in Netgame.game_state.active_players \
+			and not losingest_player in Netgame.game_state.losers:
+				Netgame.players[losingest_player].awaiting = true
 				MENU.show_rule_changer.rpc_id(losingest_player)
 				valid = await MENU.okay_continue
+				
+				if valid: Netgame.players[losingest_player].awaiting = false
 		else: break
+	
 
 func get_ante(player_id):
 	var me = Netgame.players[player_id]
 	if me.chips <= 0:
 		if player_id not in Netgame.game_state.losers:
-			Netgame.game_state["losers"].append(player_id)
+			Netgame.game_state.losers.append(player_id)
 	else:
-		var ante = mini(me.chips, Rules.RULES["ANTE"])
+		var ante = mini(me.chips, Rules.RULES.ANTE)
 		me.chips -= ante
 		Netgame.game_state.pot += ante
 		prints("took", ante, "chips from", player_id)
 
 func clear_losers():
 	for id in Netgame.game_state.losers:
-		Netgame.game_state["active_players"].erase(id)
+		Netgame.game_state.active_players.erase(id)

@@ -15,7 +15,8 @@ var player_info = {
 	"name": "Player",
 	"cards": [],
 	"chips": 0,
-	"current_bet": 0
+	"current_bet": 0,
+	"awaiting": false
 }
 var game_state = {
 	"pot": 0,
@@ -74,9 +75,9 @@ func _register_player(new_player_info):
 
 func _on_player_disconnected(id):
 	if id in players:
-		if game_state["active_players"].size() > 0:
-			game_state["losers"].append(id)
-			game_state["folded_players"].append(id)
+		if game_state.active_players.size() > 0:
+			game_state.losers.append(id)
+			game_state.folded_players.append(id)
 			game_state.pot += players[id].chips
 			if multiplayer.is_server():
 				sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
@@ -99,7 +100,7 @@ func me():
 	return players[multiplayer.get_unique_id()]
 
 func get_live_players():
-	return game_state["active_players"].size() - game_state["folded_players"].size()
+	return game_state.active_players.size() - game_state.folded_players.size()
 
 @rpc("authority", "call_local", "reliable", 2)
 func sync_data(player_data, rules, state):

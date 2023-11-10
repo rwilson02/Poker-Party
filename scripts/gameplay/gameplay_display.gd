@@ -39,23 +39,23 @@ func update_display():
 #	prints(multiplayer.get_unique_id(), "has", Netgame.game_state.comm_cards)
 
 func adjust_cards():
-	var comm_difference = comm_card_holder.get_child_count() - Rules.RULES["COMM_CARDS"]
-	var hole_difference = hole_card_holder.get_child_count() - Rules.RULES["HOLE_CARDS"]
+	var comm_difference = comm_card_holder.get_child_count() - Rules.RULES.COMM_CARDS
+	var hole_difference = hole_card_holder.get_child_count() - Rules.RULES.HOLE_CARDS
 	
 	while comm_difference != 0:
 		if comm_difference > 0:
 			comm_card_holder.get_children()[-1].free()
 		elif comm_difference < 0:
 			comm_card_holder.add_child(comm_card_holder.get_child(0).duplicate())
-		comm_difference = comm_card_holder.get_child_count() - Rules.RULES["COMM_CARDS"]
+		comm_difference = comm_card_holder.get_child_count() - Rules.RULES.COMM_CARDS
 	while hole_difference != 0:
 		if hole_difference > 0:
 			hole_card_holder.get_children()[-1].free()
 		elif hole_difference < 0:
 			hole_card_holder.add_child(hole_card_holder.get_child(0).duplicate())
-		hole_difference = hole_card_holder.get_child_count() - Rules.RULES["HOLE_CARDS"]
+		hole_difference = hole_card_holder.get_child_count() - Rules.RULES.HOLE_CARDS
 	
-	if Netgame.game_state["comm_cards"].size() == 0: return
+	if Netgame.game_state.comm_cards.size() == 0: return
 	
 	for id in comm_card_holder.get_child_count():
 		determine_card("comm", comm_card_holder, id)
@@ -65,7 +65,7 @@ func adjust_cards():
 func adjust_comm_holder():
 	var viewport_size = get_viewport().get_visible_rect().size
 	
-	comm_card_holder.size.x = HOLDER_BASE_WIDTH + (75 * (Rules.RULES["COMM_CARDS"] - 5))
+	comm_card_holder.size.x = HOLDER_BASE_WIDTH + (75 * (Rules.RULES.COMM_CARDS - 5))
 	
 	comm_card_holder.position = Vector2i(
 		(viewport_size.x - comm_card_holder.size.x) / 2,
@@ -96,12 +96,12 @@ func determine_card(flavor: String, holder: Node, id: int):
 	
 	match flavor:
 		"comm":
-			known_cards = Netgame.game_state["comm_cards"].size()
+			known_cards = Netgame.game_state.comm_cards.size()
 			corresponding_card = Netgame.game_state.comm_cards[id] \
 				if id < known_cards else null
 		"hole":
 			var player = Netgame.me()
-			known_cards = player["cards"].size()
+			known_cards = player.cards.size()
 			corresponding_card = player.cards[id] \
 				if id < known_cards else null
 	

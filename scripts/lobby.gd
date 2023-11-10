@@ -31,7 +31,7 @@ func update_player_display(_remaining = null):
 	for player_id in Netgame.players:
 		if player_id == 1:
 			player_display.push_color(Color.GOLD)
-			player_display.add_text(template_string % Netgame.players[player_id].name)
+			player_display.add_text(template_string % (Netgame.players[player_id].name + " [HOST]"))
 			player_display.pop()
 		elif player_id == multiplayer.get_unique_id():
 			player_display.push_color(Color.LIGHT_BLUE)
@@ -43,7 +43,7 @@ func update_player_display(_remaining = null):
 
 func create_game():
 	if not name_input.text.is_empty():
-		Netgame.player_info["name"] = name_input.text
+		Netgame.player_info.name = name_input.text
 	
 	var port = port_input.value
 	var error = Netgame.create_game(port)
@@ -65,7 +65,7 @@ func create_game():
 
 func on_join_button():
 	if not name_input.text.is_empty():
-		Netgame.player_info["name"] = name_input.text
+		Netgame.player_info.name = name_input.text
 	
 	var error
 	if ":" in address_bar.text:
@@ -139,19 +139,27 @@ func set_lobby_rules():
 		if possible_rule is HBoxContainer:
 			var rule_name = possible_rule.name
 			var valid_change = get_rule_change(rule_name)
+			var value
 			
 			if rule_name in Rules.RULES:
-				var box_value = possible_rule.get_node("SpinBox").value as int
-				var val_diff = (box_value - Rules.RULES[rule_name]) / possible_rule.get_node("SpinBox").step
+				var possible_value = possible_rule.get_child(1)
 				
-				if val_diff != 0 and not valid_change.is_empty():
-					var modifier = "UP" if signi(val_diff) == 1 else "DOWN"
-					var change = "%s_%s" % [valid_change, modifier]
-					
-					for i in absi(val_diff):
-						Rules.add_change(change)
+				if possible_value is SpinBox:
+					value = possible_rule.get_node("SpinBox").value as int
+					var val_diff = (value - Rules.RULES[rule_name]) / possible_rule.get_node("SpinBox").step
 				
-				Rules.set_rule(possible_rule.name, box_value)
+					if val_diff != 0 and not valid_change.is_empty():
+						var modifier = "UP" if signi(val_diff) == 1 else "DOWN"
+						var change = "%s_%s" % [valid_change, modifier]
+						
+						for i in absi(val_diff):
+							Rules.add_change(change)
+				elif possible_value is OptionButton:
+					if rule_name == "BALL" and possible_value.selected > 0:
+						value = -1
+						Rules.add_change("BALL_FLIP")
+				
+				Rules.set_rule(rule_name, value)
 
 func get_rule_change(rule_name):
 	var change_file = FileAccess.open("res://rules/change_info.txt", FileAccess.READ)

@@ -30,6 +30,7 @@ enum CHANGES {
 	CARDS_DOWN,
 	COMM_UP,
 	COMM_DOWN,
+	BALL_FLIP, # This isn't a two-time change technically but it works in the appearance code
 	# Dependent changes, in which you can only have increases
 	WINNERS_UP = DEPENDENT_CHANGES,
 	WINNERS_DOWN,
@@ -43,11 +44,11 @@ var possible_changes = []
 var buttons = []
 
 func compute_possible_changes():
-	var h = Rules.RULES["HOLE_CARDS"]
-	var c = Rules.RULES["COMM_CARDS"]
-	var p = Netgame.game_state["active_players"].size()
-	var s = Rules.RULES["SUITS"]
-	var v = Rules.RULES["VALS_PER_SUIT"] + Rules.RULES["WILDS"] # 1 wild per suit, per addition of wilds
+	var h = Rules.RULES.HOLE_CARDS
+	var c = Rules.RULES.COMM_CARDS
+	var p = Netgame.game_state.active_players.size()
+	var s = Rules.RULES.SUITS
+	var v = Rules.RULES.VALS_PER_SUIT + Rules.RULES.WILDS # 1 wild per suit, per addition of wilds
 	var cpr = h * p + c # cards per round
 	
 	possible_changes.clear()
@@ -58,9 +59,9 @@ func compute_possible_changes():
 	if cpr > (s - 1) * v: possible_changes.erase("SUITS_DOWN")
 	if cpr > s * (v - 3): possible_changes.erase("CARDS_DOWN")
 	# Eliminate changes which would make hands unable to be completed
-	if (h - 1) + c < Rules.RULES["CARDS_PER_HAND"]: possible_changes.erase("HOLE_DOWN")
-	if h + (c - 1) < Rules.RULES["CARDS_PER_HAND"]: possible_changes.erase("COMM_DOWN")
-	if h + c < (Rules.RULES["CARDS_PER_HAND"] + 1): possible_changes.erase("HAND_UP")
+	if (h - 1) + c < Rules.RULES.CARDS_PER_HAND: possible_changes.erase("HOLE_DOWN")
+	if h + (c - 1) < Rules.RULES.CARDS_PER_HAND: possible_changes.erase("COMM_DOWN")
+	if h + c < (Rules.RULES.CARDS_PER_HAND + 1): possible_changes.erase("HAND_UP")
 	
 	# Don't offer a full reset if the game isn't spicy enough
 	if Rules.RULES.CURRENT_CHANGES.size() < 5: 
@@ -110,15 +111,22 @@ func setup_menu():
 					if Rules.RULES.has(raw_info[5]) else (raw_info[6] as int)
 			}
 		
+		if info.RULE == "BALL":
+			info.VALUE = ["high", "low"] if Rules.RULES.BALL == 1 else ["low", "high"]
+		
 		var option_box: Node = option_container.get_child(i)
 		option_box.get_node("Title").text = TEXT_TEMPLATE % info.TITLE
 		option_box.get_node("Image").texture = load(CHANGE_ICON_TEMPLATE % info.ICON)
+		
+		option_box.get_node("Image").flip_v = (info.RULE == "BALL" and Rules.RULES.BALL == 1)
+		
 		option_box.get_node("Description").text = TEXT_TEMPLATE % (info.DESC % info.VALUE) \
 			if info.FORMATTED else TEXT_TEMPLATE % info.DESC
 		var option_button = option_box.get_node("Select")
 		option_button.disabled = false
 		if option_button.pressed.is_connected(on_button_pressed):
 			option_button.pressed.disconnect(on_button_pressed)
+		if not info.VALUE is int: info.VALUE = 0
 		option_button.pressed.connect(on_button_pressed.bind(info.RULE, info.VALUE, both_options[i]))
 		buttons.append(option_button)
 
