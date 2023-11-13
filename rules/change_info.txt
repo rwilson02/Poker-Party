@@ -14,4 +14,4 @@ WINNERS_UP,,1,Trickle Down,Allow [color=GREEN]%d players[/color] to share the po
 WINNERS_DOWN,,1,Bottom Up,Lower the number of winners to [color=RED]%d[/color].,WINNERS,-1
 WILD_UP,,0,Wild Out,[color=GREEN]Add one wild card per suit[/color] to the deck.,WILDS,1
 WILD_DOWN,,0,Cool Off,[color=RED]Remove one wild card per suit[/color] from the deck.,WILDS,-1
-BALL_FLIP,,1,Topsy-Turvy,Flip from %sball poker to %sball poker.,BALL,2
+BALL_FLIP,,1,Topsy-Turvy,Flip from %sball poker to %sball poker.,BALL,0
