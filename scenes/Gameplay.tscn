@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=14 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
@@ -11,6 +11,7 @@
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="6_b6hf0"]
 [ext_resource type="Script" path="res://scripts/ui/menu_manager.gd" id="6_jl3ny"]
 [ext_resource type="AudioStream" uid="uid://b63l3kd6711y2" path="res://audio/sfx/chips shuffle.mp3" id="6_oplt0"]
+[ext_resource type="PackedScene" uid="uid://ct2nwwuqvympr" path="res://scenes/ui/pause_menu.tscn" id="12_d8vuc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dp35u"]
 bg_color = Color(0.27451, 0.145098, 0.145098, 1)
@@ -192,9 +193,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -215.0
+offset_left = -250.0
 offset_top = -845.0
-offset_right = 215.0
+offset_right = 250.0
 offset_bottom = -595.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -214,6 +215,22 @@ text = "GAME OVER"
 horizontal_alignment = 1
 vertical_alignment = 1
 uppercase = true
+
+[node name="Ranking" type="RichTextLabel" parent="Menus/End"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -140.0
+offset_top = -47.0
+offset_right = 140.0
+offset_bottom = 28.0001
+grow_horizontal = 2
+grow_vertical = 2
+bbcode_enabled = true
+scroll_active = false
 
 [node name="Message" type="Label" parent="Menus/End"]
 layout_mode = 1
@@ -264,33 +281,8 @@ layout_mode = 2
 tooltip_text = "Exit this lobby."
 text = "EXIT LOBBY"
 
-[node name="Pause" type="Panel" parent="Menus"]
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = -50.0
-offset_right = -100.0
-offset_bottom = 50.0
-grow_vertical = 2
-theme = ExtResource("6_b6hf0")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Menus/Pause"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-alignment = 1
-
-[node name="Restart" type="Button" parent="Menus/Pause/VBoxContainer"]
-visible = false
-layout_mode = 2
-text = "RESTART"
-
-[node name="Exit" type="Button" parent="Menus/Pause/VBoxContainer"]
-layout_mode = 2
-text = "EXIT LOBBY"
+[node name="Pause" parent="Menus" instance=ExtResource("12_d8vuc")]
+offset_left = -350.0
+offset_right = -50.0
 
 [node name="Timer" type="Timer" parent="."]

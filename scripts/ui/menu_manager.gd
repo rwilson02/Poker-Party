@@ -24,7 +24,7 @@ func _ready():
 		end_screen.get_node("HBoxContainer/RestartButton").pressed.connect(func(): do_it_again.emit(true))
 		end_screen.get_node("HBoxContainer/ContinueButton").visible = true
 		end_screen.get_node("HBoxContainer/ContinueButton").pressed.connect(func(): do_it_again.emit(false))
-		var pause_restart: Button = pause.get_node("VBoxContainer/Restart")
+		var pause_restart: Button = pause.get_node("%Restart")
 		pause_restart.visible = true
 		pause_restart.pressed.connect(
 			func(): 
@@ -34,7 +34,7 @@ func _ready():
 		)
 	
 	end_screen.get_node("HBoxContainer/ExitButton").pressed.connect(okay_get_out)
-	pause.get_node("VBoxContainer/Exit").pressed.connect(okay_get_out)
+	pause.get_node("%Exit").pressed.connect(okay_get_out)
 
 func _input(event):
 	if event is InputEventKey:
@@ -86,6 +86,22 @@ func begone_thot(id):
 
 @rpc("authority", "call_local", "reliable")
 func show_end_screen():
+	const TEMPLATE = "[center][font_size=24]🥇 %s[/font_size]\n🥈 %s"
+	const THIRD = "\n🥉 %s"
+	
+	var players = []
+	
+	var get_name = func(id: int):
+		return Netgame.players[id].name
+	
+	players.append(get_name.call(Netgame.game_state.active_players[0]))
+	players.append(get_name.call(Netgame.game_state.losers[-1]))
+	
+	var end_text = TEMPLATE % [players[0], players[1]]
+	if Netgame.game_state.losers.size() >= 2:
+		end_text += THIRD % get_name.call(Netgame.game_state.losers[-2])
+	end_screen.get_node("Ranking").text = end_text
+	
 	toggle_shadow()
 	await animation_complete
 	if Netgame.game_state.active_players.has(multiplayer.get_unique_id()):
@@ -112,7 +128,11 @@ func hide_end_screen():
 
 func toggle_pause():
 	if pause_tween == null:
-		var dir = Vector2.RIGHT if not paused else Vector2.LEFT
+		var dir
+		if paused:
+			dir = Vector2.LEFT
+		else:
+			dir = Vector2.RIGHT
 		pause_tween = create_tween()
 		pause_tween.tween_property(pause, "position", pause.position + (400 * dir), 0.5).set_ease(Tween.EASE_OUT)
 		await pause_tween.finished
