@@ -418,13 +418,13 @@ static func get_combinations(n: Array, k: int):
 static func hand_to_string(hand: Array):
 	var hand_string = "["
 	for card in hand:
-		hand_string += Rules.get_proper_symbol(card)
+		hand_string += Rules.get_card_string(card)
 		hand_string += " "
 	hand_string[-1] = "]"
 	
-	if Rules.get_value(hand[0]) == Rules.RULES.VALS_PER_SUIT - 1 \
-		and Rules.get_value(hand[1]) == Rules.RULES.CARDS_PER_HAND - 2:
-			var slices = hand_string.split(" ", false, 1)
-			hand_string = "[%s %s]" % [slices[1].left(-1), slices[0].right(2)]
+#	if Rules.get_value(hand[0]) == Rules.RULES.VALS_PER_SUIT - 1 \
+#		and Rules.get_value(hand[1]) == Rules.RULES.CARDS_PER_HAND - 2:
+#			var slices = hand_string.split(" ", false, 1)
+#			hand_string = "[%s %s]" % [slices[1].left(-1), slices[0].right(2)]
 	
 	return hand_string

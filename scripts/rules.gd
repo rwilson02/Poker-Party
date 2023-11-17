@@ -3,8 +3,16 @@ extends Node
 var RULES
 var FREE_WILD = 0x2_0000
 var WILD = 0x1_0000
+# Spades, Hearts, Clubs, Diamonds, Stars, Moons
+var SUIT_COLORS = [Color.SLATE_BLUE, Color.RED, Color.SLATE_BLUE, Color.RED, \
+	Color.GOLDENROD, Color.GOLDENROD]
+
+var regex
 
 func _ready():
+	regex = RegEx.new()
+	regex.compile("[() ]")
+	
 	reset()
 
 func get_value(card): 
@@ -21,6 +29,17 @@ func get_value(card):
 	else:
 		return -1
 func get_suit(card): return card / RULES.VALS_PER_SUIT if card is int else -1
+func get_suit_loc(suit):
+	const SUITS_PER_ROW = 4
+	const ROWS = 2
+	const SUIT_SIZE = 256
+	
+	var pos: Vector2
+	if suit > RULES.SUITS: pos = Vector2(SUITS_PER_ROW - 1, ROWS - 1)
+	else: pos = Vector2(suit % SUITS_PER_ROW, suit / SUITS_PER_ROW)
+	
+	return Rect2(pos * SUIT_SIZE, Vector2.ONE * SUIT_SIZE)
+
 func get_deck_size(): return RULES.SUITS * RULES.VALS_PER_SUIT
 
 func get_proper_value(card):
@@ -46,6 +65,21 @@ func get_proper_symbol(card: int):
 	var card_suit = suits[get_suit(card)] if card < WILD else "\U01F0CF"
 	
 	return get_proper_value(card) + card_suit
+
+func get_card_string(card):
+	const TEMPLATE = "%s[img=16 region=%s color=%s]%s[/img]"
+	const SUITS_PATH = "res://textures/cards/suit_atlas.png"
+	
+	var value = get_proper_value(card)
+	var suit = get_suit(card)
+	var icon_loc = get_suit_loc(suit)
+	var loc_str = regex.sub("%s,%s" % [str(icon_loc.position), str(icon_loc.size)], "", true)
+	
+	if suit > RULES.SUITS:
+		return value + "\U01F0CF"
+	else:
+		var color = SUIT_COLORS[suit]
+		return TEMPLATE % [value, loc_str, color.to_html(false), SUITS_PATH]
 
 func reset():
 	RULES = load_json_at("res://rules/base_rules.json")

@@ -37,16 +37,16 @@ func do_generation_test():
 		var end_time = Time.get_ticks_msec() - start_time
 		
 		if best_hand.rank != "":
-			output_box.set_line(current_line, "%s\n" % Hand.hand_to_string(cards))
-			output_box.set_line(current_line + 1, "%s\n" % Hand.hand_to_string(best_hand.cards))
-			output_box.set_line(current_line + 2, best_hand.get_name() + "\n")
-			output_box.set_line(current_line + 3, ("%dms" % end_time) + "\n\n")
+			output_box.append_text("%s\n" % Hand.hand_to_string(cards))
+			output_box.append_text("%s\n" % Hand.hand_to_string(best_hand.cards))
+			output_box.append_text(best_hand.get_name() + "\n")
+			output_box.append_text(("%dms" % end_time) + "\n\n")
 	#		output_box.grab_focus()
 			current_line += 5
 		else:
-			output_box.set_line(current_line, "Error (Not enough cards to make a hand)")
+			output_box.append_text("Error (Not enough cards to make a hand)")
 	
-	output_box.scroll_vertical = 0
+#	output_box.scroll_vertical = 0
 	Rules.reset()
 
 func do_hand_test():
@@ -66,21 +66,21 @@ func do_hand_test():
 			break
 	
 	if invalid:
-		output_box.set_line(0, "Error (Noninteger or nonspace in text box)")
+		output_box.append_text("Error (Noninteger or nonspace in text box)")
 		return
 	elif input_cards.size() < Rules.RULES.CARDS_PER_HAND:
-		output_box.set_line(0, "Error (Too few cards to make a hand)")
+		output_box.append_text("Error (Too few cards to make a hand)")
 		return
 	elif input_cards.any(func(c): return c >= Rules.get_deck_size() and not c & Rules.FREE_WILD):
-		output_box.set_line(0, "Error (Card index out of range of deck size)")
+		output_box.append_text("Error (Card index out of range of deck size)")
 		return
 	
 	var best_hand = Hand.get_best_hand(input_cards)
 	
 	if best_hand.rank != "":
-		output_box.set_line(0, "%s\n" % Hand.hand_to_string(input_cards))
-		output_box.set_line(1, "%s\n" % Hand.hand_to_string(best_hand.cards))
-		output_box.set_line(2, best_hand.get_name() + "\n")
+		output_box.append_text("%s\n" % Hand.hand_to_string(input_cards))
+		output_box.append_text("%s\n" % Hand.hand_to_string(best_hand.cards))
+		output_box.append_text(best_hand.get_name() + "\n")
 	
 	Rules.reset()
 

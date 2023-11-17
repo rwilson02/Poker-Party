@@ -55,7 +55,7 @@ func set_up_rankings():
 	if suits < 3:
 		rank_names.erase("FH")
 		rank_names.erase("CR")
-	if suits < 4 and cph == 6:
+	if (suits < 4 and cph == 6) or cph == 4:
 		rank_names.erase("FH")
 	
 	# Gametype-dependent

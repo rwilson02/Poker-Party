@@ -91,15 +91,15 @@ func show_end_screen():
 	
 	var players = []
 	
-	var get_name = func(id: int):
+	var get_player_name = func(id: int):
 		return Netgame.players[id].name
 	
-	players.append(get_name.call(Netgame.game_state.active_players[0]))
-	players.append(get_name.call(Netgame.game_state.losers[-1]))
+	players.append(get_player_name.call(Netgame.game_state.active_players[0]))
+	players.append(get_player_name.call(Netgame.game_state.losers[-1]))
 	
 	var end_text = TEMPLATE % [players[0], players[1]]
 	if Netgame.game_state.losers.size() >= 2:
-		end_text += THIRD % get_name.call(Netgame.game_state.losers[-2])
+		end_text += THIRD % get_player_name.call(Netgame.game_state.losers[-2])
 	end_screen.get_node("Ranking").text = end_text
 	
 	toggle_shadow()
