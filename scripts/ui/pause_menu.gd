@@ -48,14 +48,17 @@ func set_up_rankings():
 	rank_names.erase("AW")
 	
 	# Remove changes which are not possible
-	for i in range(cph + 1, 7):
-		rank_names.erase(str(i) + "K")
-	for i in range(suits + 1, 7):
-		rank_names.erase(str(i) + "K")
-	if suits < 3:
-		rank_names.erase("FH")
-		rank_names.erase("CR")
-	if (suits < 4 and cph == 6) or cph == 4:
+	if Rules.RULES.WILDS == 0:
+		for i in range(cph + 1, 7):
+			rank_names.erase(str(i) + "K")
+		for i in range(suits + 1, 7):
+			rank_names.erase(str(i) + "K")
+		if suits < 3:
+			rank_names.erase("FH")
+			rank_names.erase("CR")
+		if (suits < 4 and cph == 6):
+			rank_names.erase("FH")
+	if cph == 4:
 		rank_names.erase("FH")
 	
 	# Gametype-dependent

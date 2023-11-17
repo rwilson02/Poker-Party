@@ -6,6 +6,13 @@ const SUITS_PER_ROW = 4
 const ROWS = 2
 const SUIT_SIZE = 256
 
+@export var auto: bool
+
+func _ready():
+	if auto:
+		var value = get_meta("card")
+		if value < Rules.RULES.SUITS * Rules.RULES.VALS_PER_SUIT: setup(value)
+
 func setup(card: int):
 	var indices = [$TopLeft, $BottomRight]
 	var icons = [$TopLeft/Icon, $BottomRight/Icon]

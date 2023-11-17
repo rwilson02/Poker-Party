@@ -8,6 +8,8 @@ extends Node
 @onready var start_controls = $LobbyControls/Control/InGame
 @onready var timer = $Timer
 
+const HOW_TO_PLAY = preload("res://scenes/HowToPlay.tscn")
+
 @onready var name_input = $PlayerSetup/LineEdit
 
 func _ready():
@@ -168,3 +170,6 @@ func get_rule_change(rule_name):
 		if rule_name in line:
 			return line[0].get_slice("_", 0)
 	return ""
+
+func show_how_to_play():
+	add_child(HOW_TO_PLAY.instantiate())

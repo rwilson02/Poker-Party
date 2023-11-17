@@ -384,6 +384,20 @@ placeholder_text = "Player Name"
 alignment = 1
 context_menu_enabled = false
 
+[node name="HowToPlay" type="Button" parent="PlayerSetup"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -85.0
+offset_top = -30.0
+offset_right = 85.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "HOW TO PLAY"
+
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
 
@@ -391,3 +405,4 @@ one_shot = true
 [connection signal="pressed" from="LobbyControls/Control/PreGame/Joining/Join" to="." method="on_join_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/StartButton" to="." method="on_start_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/CancelButton" to="." method="on_cancel_button"]
+[connection signal="pressed" from="PlayerSetup/HowToPlay" to="." method="show_how_to_play"]
