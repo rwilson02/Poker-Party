@@ -13,6 +13,14 @@ func _ready():
 		var value = get_meta("card")
 		if value < Rules.RULES.SUITS * Rules.RULES.VALS_PER_SUIT: setup(value)
 
+func _make_custom_tooltip(for_text: String):
+	var tooltip = RichTextLabel.new()
+	tooltip.text = for_text
+	tooltip.bbcode_enabled = true
+	tooltip.fit_content = true
+	tooltip.autowrap_mode = TextServer.AUTOWRAP_OFF
+	return tooltip
+
 func setup(card: int):
 	var indices = [$TopLeft, $BottomRight]
 	var icons = [$TopLeft/Icon, $BottomRight/Icon]
@@ -34,4 +42,4 @@ func setup(card: int):
 	for idx in indices:
 		idx.modulate = Rules.SUIT_COLORS[suit] if not wild else Color.BLACK
 		
-	self.tooltip_text = Rules.get_proper_symbol(card)
+	self.tooltip_text = Rules.get_card_string(card)
