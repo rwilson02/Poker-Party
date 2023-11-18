@@ -49,8 +49,6 @@ func set_up_rankings():
 	
 	# Remove changes which are not possible
 	if Rules.RULES.WILDS == 0:
-		for i in range(cph + 1, 7):
-			rank_names.erase(str(i) + "K")
 		for i in range(suits + 1, 7):
 			rank_names.erase(str(i) + "K")
 		if suits < 3:
@@ -58,6 +56,8 @@ func set_up_rankings():
 			rank_names.erase("CR")
 		if (suits < 4 and cph == 6):
 			rank_names.erase("FH")
+	for i in range(cph + 1, 7):
+			rank_names.erase(str(i) + "K")
 	if cph == 4:
 		rank_names.erase("FH")
 	
