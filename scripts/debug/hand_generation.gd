@@ -47,7 +47,7 @@ func do_generation_test():
 			output_box.append_text("Error (Not enough cards to make a hand)")
 	
 #	output_box.scroll_vertical = 0
-	Rules.reset()
+	Rules.reset(true)
 
 func do_hand_test():
 	output_box.clear()
@@ -82,7 +82,7 @@ func do_hand_test():
 		output_box.append_text("%s\n" % Hand.hand_to_string(best_hand.cards))
 		output_box.append_text(best_hand.get_name() + "\n")
 	
-	Rules.reset()
+	Rules.reset(true)
 
 func set_rules():
 	Rules.set_rule("BALL", 1 - game_selection.get_selected_id())

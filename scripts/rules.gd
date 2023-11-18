@@ -13,7 +13,7 @@ func _ready():
 	regex = RegEx.new()
 	regex.compile("[() ]")
 	
-	reset()
+	reset(true)
 
 func get_value(card): 
 	if card is int:
@@ -81,11 +81,25 @@ func get_card_string(card):
 		var color = SUIT_COLORS[suit]
 		return TEMPLATE % [value, loc_str, color.to_html(false), SUITS_PATH]
 
-func reset():
+func reset(full: bool = false):
+	var holdover
+	
+	if RULES:
+		holdover = [RULES.INITIAL_CHIPS, RULES.ANTE, RULES.GAMEPLAY_ROUNDS]
+	
 	RULES = load_json_at("res://rules/base_rules.json")
 	integerize(RULES)
+	
+	if not full:
+		RULES.INITIAL_CHIPS = holdover[0]
+		RULES.ANTE = holdover[1]
+		RULES.GAMEPLAY_ROUNDS = holdover[2]
 
 func set_rule(rule: String, value: Variant):
+	if rule == "BALL" and value == 0:
+		RULES.BALL *= -1
+		return
+	
 	if RULES.has(rule) and typeof(RULES[rule]) == typeof(value):
 		RULES[rule] = value
 	
@@ -111,9 +125,6 @@ func set_rule(rule: String, value: Variant):
 				_: 
 					push_error("wait you can't have that many")
 			integerize(RULES)
-		"BALL":
-			if value == 0:
-				RULES.BALL *= -1
 
 func add_change(change: String):
 	var counter_change
