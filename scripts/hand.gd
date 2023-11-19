@@ -257,25 +257,26 @@ func sequential(array) -> Array:
 	# Calculate Hamming weight to see if wilds can even save this
 	var hamming_weight = compute_hamming_weight.call(hole_patcher)
 	if hamming_weight > wilds: return []
-	elif bitmask / shifts in [0b1, 0b11, 0b111, 0b1111, 0b11111]:
-		pass # Just an edge straight, skip this step
-	else:
-		while wilds > 0:
-			var NPO2 = nearest_po2(hole_patcher)
-			var highest_index = (NPO2 >> 1) if NPO2 > hole_patcher else hole_patcher
-			hole_patcher ^= highest_index
-			bitmask ^= highest_index
-			var new_weight = compute_hamming_weight.call(hole_patcher)
-			if new_weight < hamming_weight:
-				hamming_weight = new_weight
-				wild_values.append(wild_toggle | roundi(log(highest_index) / log(2)))
-				wilds -= 1
-			else: break
-	# If straight, clock out
-	if straight_match.call(bitmask | ace_holder): return clean_up_and_return.call()
+	elif not do_lowball_test:
+		if bitmask / shifts in [0b1, 0b11, 0b111, 0b1111, 0b11111]:
+			pass # Just an edge straight, skip this step
+		else:
+			while wilds > 0:
+				var NPO2 = nearest_po2(hole_patcher)
+				var highest_index = (NPO2 >> 1) if NPO2 > hole_patcher else hole_patcher
+				hole_patcher ^= highest_index
+				bitmask ^= highest_index
+				var new_weight = compute_hamming_weight.call(hole_patcher)
+				if new_weight < hamming_weight:
+					hamming_weight = new_weight
+					wild_values.append(wild_toggle | roundi(log(highest_index) / log(2)))
+					wilds -= 1
+				else: break
+			# If straight, clock out
+		if straight_match.call(bitmask | ace_holder): return clean_up_and_return.call()
 	
 	# Step 2.5: If this is a lowball game, specifically try to build an ace-low straight
-	if do_lowball_test:
+	else:
 		var lowball_mask = ace_low_mask ^ (bitmask | ace_holder)
 		if not ace_holder:
 			wild_values.append(wild_toggle | (Rules.RULES.VALS_PER_SUIT - 1))
