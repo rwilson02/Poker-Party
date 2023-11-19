@@ -8,7 +8,7 @@ extends Node
 @onready var start_controls = $LobbyControls/Control/InGame
 @onready var timer = $Timer
 
-const HOW_TO_PLAY = preload("res://scenes/HowToPlay.tscn")
+const POKERPEDIA = preload("res://scenes/Pokerpedia.tscn")
 
 @onready var name_input = $PlayerSetup/LineEdit
 
@@ -172,4 +172,4 @@ func get_rule_change(rule_name):
 	return ""
 
 func show_how_to_play():
-	add_child(HOW_TO_PLAY.instantiate())
+	add_child(POKERPEDIA.instantiate())

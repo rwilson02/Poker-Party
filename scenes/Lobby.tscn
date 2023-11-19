@@ -384,7 +384,7 @@ placeholder_text = "Player Name"
 alignment = 1
 context_menu_enabled = false
 
-[node name="HowToPlay" type="Button" parent="PlayerSetup"]
+[node name="OpenPokerpedia" type="Button" parent="PlayerSetup"]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -405,4 +405,4 @@ one_shot = true
 [connection signal="pressed" from="LobbyControls/Control/PreGame/Joining/Join" to="." method="on_join_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/StartButton" to="." method="on_start_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/CancelButton" to="." method="on_cancel_button"]
-[connection signal="pressed" from="PlayerSetup/HowToPlay" to="." method="show_how_to_play"]
+[connection signal="pressed" from="PlayerSetup/OpenPokerpedia" to="." method="show_how_to_play"]

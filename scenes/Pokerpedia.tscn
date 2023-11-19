@@ -1,0 +1,412 @@
+[gd_scene load_steps=9 format=3 uid="uid://dml4kr48m8imv"]
+
+[ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_k7rdw"]
+[ext_resource type="Script" path="res://scripts/ui/pokerpedia.gd" id="2_vu4td"]
+[ext_resource type="Theme" uid="uid://do0gxw8cx220d" path="res://theming/pokerpedia.tres" id="3_466j1"]
+[ext_resource type="Texture2D" uid="uid://dk0rcm57vix5s" path="res://textures/barb_arrow.png" id="4_5v4uy"]
+[ext_resource type="Texture2D" uid="uid://cyb58hglrd1im" path="res://textures/barb_arrow_empty.png" id="5_opqm8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ojsam"]
+bg_color = Color(0.223529, 0, 0, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bbuxl"]
+bg_color = Color(1, 0.94902, 0.823529, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iahhu"]
+bg_color = Color(1, 0.948887, 0.822917, 1)
+
+[node name="Pokerpedia" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_k7rdw")
+script = ExtResource("2_vu4td")
+
+[node name="CLOSE" type="Button" parent="."]
+custom_minimum_size = Vector2(100, 30)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 50.0
+grow_horizontal = 0
+text = " CLOSE "
+
+[node name="PokerpediaBack" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -300.0
+offset_right = 500.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("3_466j1")
+theme_override_styles/panel = SubResource("StyleBoxFlat_ojsam")
+
+[node name="PageSep" type="HBoxContainer" parent="PokerpediaBack"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -475.0
+offset_top = -275.0
+offset_right = 475.0
+offset_bottom = 275.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PageL" type="Panel" parent="PokerpediaBack/PageSep"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_bbuxl")
+
+[node name="PageNum" type="Label" parent="PokerpediaBack/PageSep/PageL"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -34.0
+offset_right = 50.0
+offset_bottom = -10.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+text = "1"
+horizontal_alignment = 1
+
+[node name="Page1" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="PokerpediaBack/PageSep/PageL/Page1"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "POKERPEDIA"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="PokerpediaBack/PageSep/PageL/Page1/Title"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -177.5
+offset_top = -18.0
+offset_right = 177.5
+offset_bottom = 6.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Contains all the information you need!"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageL/Page1"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page1/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]Welcome to the [i]Pokerpedia.[/i] In this book, you will find all the information you need to play Poker Party. Click a section on the table of contents on the next page or any of the tabs to either side of the book to go to that section. The arrow buttons on the bottom near the page numbers will flip the pages.
+
+Poker Party is a variant of Texas Hold 'em poker: Players get a certain amount of cards dealt to them that they get to know in secret (\"hole cards\") and see a certain amount of cards in the center of the table (\"community cards\"). Players use both sets of cards to create the best hand that they can (though it is put together for you)."
+fit_content = true
+
+[node name="Page3" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PokerpediaBack/PageSep/PageL/Page3"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "HOW DO I PLAY POKER?"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageL/Page3"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page3/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]The goal of poker is to be the player with the best hand by the end of the round (Hand rankings can be found on the pause menu, or in the back of this book). In Poker Party, you win by having the most chips by the end of all the rounds.
+
+Players will get a certain amount of hole cards and enough community cards will be dealt to the table in order to complete a hand. Players will then make bets going clockwise around the table. Once the bets of all the remaining players match, the round continues. If there are still community cards left to deal, the next community card is dealt to the table and the next round of betting begins. If not, then all remaining players participate in the [i]showdown[/i], in which their best hands are compared and the winner recieves the chips in the pot. 
+
+In Poker Party, after the chips are given to the winner(s), a Rule Change is enacted which can range from adding or removing cards from the deck to flipping the game on its head!"
+fit_content = true
+
+[node name="Page5" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PokerpediaBack/PageSep/PageL/Page5"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "BETTING ROUNDS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageL/Page5"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page5/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "After the initial reveal of community cards, and each reveal after, players will take turns betting until the bets of all remaining players match, or nobody can bet any more chips. 
+
+[font_size=24]Pre-Bet[/font_size]
+Before any player has placed a bet:
+[ul] You may [i]check[/i], which is to not place a bet yet.
+ You may [i]bet[/i], opening the pot and setting the first limit for other players to match.
+ You may [i]fold[/i], which is to give up your stake in the round and be exempt from further betting.[/ul]
+
+[font_size=24]Post-Bet[/font_size]
+After some player has bet, your options change, though you reserve the right to fold at any time:
+[ul] You can [i]call[/i], adding as many chips to your bet as it takes to match the highest bet so far.
+ You can [i]raise[/i], increasing the bet to match by some number of chips."
+fit_content = true
+
+[node name="PageR" type="Panel" parent="PokerpediaBack/PageSep"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_iahhu")
+
+[node name="PageNum" type="Label" parent="PokerpediaBack/PageSep/PageR"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = -34.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+text = "2"
+horizontal_alignment = 1
+
+[node name="Page2" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="PokerpediaBack/PageSep/PageR/Page2"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "TABLE OF CONTENTS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageR/Page2"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PokerpediaBack/PageSep/PageR/Page2/MarginContainer"]
+layout_mode = 2
+
+[node name="Sections" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page2/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 4.0
+theme_override_font_sizes/normal_font_size = 24
+bbcode_enabled = true
+text = "[url={\"page\":3}]How to Play[/url]
+[url={\"page\":4}]Gameplay Overview[/url]
+[indent][url={\"page\":4}]Initial Round Setup[/url]
+[url={\"page\":5}]Betting Rounds[/url]
+[url={\"page\":6}]Showdown[/url]
+[url={\"page\":6}]Rule Change[/url][/indent]"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/normal_font_size = 24
+bbcode_enabled = true
+text = "[center]3
+4
+4
+5
+6
+6"
+
+[node name="Page4" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PokerpediaBack/PageSep/PageR/Page4"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "GAMEPLAY OVERVIEW"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageR/Page4"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page4/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "Each round of Poker Party follows this format:
+[ol] Initial Round Setup
+ Betting Rounds
+ Showdown
+ Rule Change
+[/ol]"
+fit_content = true
+
+[node name="Label2" type="Label" parent="PokerpediaBack/PageSep/PageR/Page4"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "INITIAL ROUND SETUP"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer2" type="MarginContainer" parent="PokerpediaBack/PageSep/PageR/Page4"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page4/MarginContainer2"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[i]Initial Round Setup[/i] is where each round is prepared before being played. The deck is shuffled with its appropriate amount of cards, and an [i]ante[/i], a forced bet to build the pot, is taken from each player. If you happen to have [i]less[/i] chips than the ante, you'll be left with zero for the round, so watch out!"
+fit_content = true
+
+[node name="Page6" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="PokerpediaBack/PageSep/PageR/Page6"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "SHOWDOWN"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageR/Page6"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page6/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "In the [i]showdown[/i], all remaining players get to see the best possible hand that everyone has. The showdown does not occur when all but one player has folded; That player is directly awarded all the chips in the pot. A player's best possible hand is found automatically, so all their focus can be on strategizing."
+fit_content = true
+
+[node name="Title2" type="Label" parent="PokerpediaBack/PageSep/PageR/Page6"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "RULE CHANGE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer2" type="MarginContainer" parent="PokerpediaBack/PageSep/PageR/Page6"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page6/MarginContainer2"]
+layout_mode = 2
+bbcode_enabled = true
+text = "Whichever player has the [i]least[/i] chips at the end of a round gets the choice between two Rule Changes to enact to alter the game. Most Rule Changes can apply up to twice, and some are dependent on the number of players in the game. Rule Changes tend to come in pairs. A gallery of all the Rule Changes can be found in the back of this book."
+fit_content = true
+
+[node name="ButtonBACK" type="TextureButton" parent="PokerpediaBack"]
+unique_name_in_owner = true
+modulate = Color(0, 0, 0.188235, 1)
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 80.0
+offset_top = -70.0
+offset_right = 144.0
+offset_bottom = -30.0
+grow_vertical = 0
+disabled = true
+texture_normal = ExtResource("4_5v4uy")
+texture_disabled = ExtResource("5_opqm8")
+ignore_texture_size = true
+stretch_mode = 5
+flip_h = true
+
+[node name="ButtonFWD" type="TextureButton" parent="PokerpediaBack"]
+unique_name_in_owner = true
+modulate = Color(0, 0, 0.188235, 1)
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -144.0
+offset_top = -70.0
+offset_right = -80.0
+offset_bottom = -30.0
+grow_horizontal = 0
+grow_vertical = 0
+texture_normal = ExtResource("4_5v4uy")
+texture_disabled = ExtResource("5_opqm8")
+ignore_texture_size = true
+stretch_mode = 5
+
+[connection signal="pressed" from="CLOSE" to="." method="close"]
+[connection signal="pressed" from="PokerpediaBack/ButtonBACK" to="." method="go_back"]
+[connection signal="pressed" from="PokerpediaBack/ButtonFWD" to="." method="go_forward"]
