@@ -1,24 +1,7 @@
 extends Panel
 
 const RANKING_BAR = preload("res://scenes/ui/pause_ranking_bar.tscn")
-const RANK_TOOLTIPS = {
-	"5K": "Five cards of the same rank.",
-	"SF": "%s consecutive cards of the same suit.",
-	"4K": "Four cards of the same rank.",
-	"FH": "%s cards of one rank, and two of another.",
-	"FL": "%s cards of the same suit.",
-	"ST": "%s consecutive cards.",
-	"3K": "Three cards of the same rank.",
-	"2P": "Two cards on one rank, and two of another.",
-	"1P": "Two cards of the same rank.",
-	"HC": "The single highest card.",
-	"WH": "The %s lowest cards.",
-	"SW": "The %s lowest cards, all of the same suit.",
-	"CR": "Three cards of one rank, and two of another.",
-	"3P": "Two cards each of three separate ranks.",
-	"2T": "Three cards of one rank, and three of another.",
-	"6K": "Six cards of the same rank."
-}
+const POKERPEDIA = preload("res://scenes/Pokerpedia.tscn")
 const NUM_TO_WORD = {
 #	1: "One",
 #	2: "Two",
@@ -29,9 +12,11 @@ const NUM_TO_WORD = {
 }
 @onready var rank_holder = %Ranks
 
+var RANK_TOOLTIPS = JSON.parse_string(FileAccess.get_file_as_string("res://rules/hand_descriptions.json"))
 
 func _ready():
 	Netgame.state_updated.connect(set_up_rankings)
+	%Pokerpedia.pressed.connect(func(): get_parent().add_child(POKERPEDIA.instantiate()))
 	
 	set_up_rankings()
 

@@ -35,7 +35,7 @@ func get_suit_loc(suit):
 	const SUIT_SIZE = 256
 	
 	var pos: Vector2
-	if suit > RULES.SUITS: pos = Vector2(SUITS_PER_ROW - 1, ROWS - 1)
+	if suit > SUITS_PER_ROW * ROWS: pos = Vector2(SUITS_PER_ROW - 1, ROWS - 1)
 	else: pos = Vector2(suit % SUITS_PER_ROW, suit / SUITS_PER_ROW)
 	
 	return Rect2(pos * SUIT_SIZE, Vector2.ONE * SUIT_SIZE)

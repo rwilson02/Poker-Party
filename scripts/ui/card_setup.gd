@@ -15,7 +15,7 @@ func _ready():
 
 func _make_custom_tooltip(for_text: String):
 	var tooltip = RichTextLabel.new()
-	tooltip.text = for_text
+	tooltip.text = "[color=WHITE]%s[/color]" % for_text
 	tooltip.bbcode_enabled = true
 	tooltip.fit_content = true
 	tooltip.autowrap_mode = TextServer.AUTOWRAP_OFF

@@ -1,0 +1,49 @@
+[gd_scene load_steps=3 format=3 uid="uid://5cdi7jndpifb"]
+
+[ext_resource type="Script" path="res://scripts/ui/example_hand.gd" id="2_vch8l"]
+[ext_resource type="Theme" uid="uid://do0gxw8cx220d" path="res://theming/pokerpedia.tres" id="2_y0rh7"]
+
+[node name="example_hand" type="VBoxContainer"]
+offset_right = 420.0
+offset_bottom = 180.0
+size_flags_horizontal = 3
+script = ExtResource("2_vch8l")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 2
+theme = ExtResource("2_y0rh7")
+bbcode_enabled = true
+text = "[center][font_size=24]Hand Name[/font_size]
+Description"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
+[node name="Hand" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 125)
+layout_mode = 2
+
+[node name="Marker1" type="Control" parent="Hand"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+
+[node name="Marker2" type="Control" parent="Hand"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+
+[node name="Marker3" type="Control" parent="Hand"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+
+[node name="Marker4" type="Control" parent="Hand"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+
+[node name="Marker5" type="Control" parent="Hand"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4

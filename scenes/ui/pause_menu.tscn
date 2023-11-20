@@ -46,6 +46,12 @@ layout_mode = 2
 size_flags_vertical = 3
 text = "RESTART GAME"
 
+[node name="Pokerpedia" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "POKERPEDIA"
+
 [node name="Exit" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2

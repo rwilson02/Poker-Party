@@ -38,7 +38,9 @@ func set_page(page_num, internal = false):
 	
 	page = page_num
 	var newL = left_page.get_child(page)
-	var newR = right_page.get_child(page)
+	var newR = null
+	if right_page.get_child_count() > page:
+		newR = right_page.get_child(page)
 	left_page.get_child(0).text = str(page * 2 - 1)
 	right_page.get_child(0).text = str(page * 2)
 	var has_right = newR != null

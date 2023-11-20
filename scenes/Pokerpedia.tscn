@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://dml4kr48m8imv"]
+[gd_scene load_steps=11 format=3 uid="uid://dml4kr48m8imv"]
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_k7rdw"]
 [ext_resource type="Script" path="res://scripts/ui/pokerpedia.gd" id="2_vu4td"]
 [ext_resource type="Theme" uid="uid://do0gxw8cx220d" path="res://theming/pokerpedia.tres" id="3_466j1"]
 [ext_resource type="Texture2D" uid="uid://dk0rcm57vix5s" path="res://textures/barb_arrow.png" id="4_5v4uy"]
+[ext_resource type="PackedScene" uid="uid://5cdi7jndpifb" path="res://scenes/ui/example_hand.tscn" id="4_em2on"]
 [ext_resource type="Texture2D" uid="uid://cyb58hglrd1im" path="res://textures/barb_arrow_empty.png" id="5_opqm8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ojsam"]
@@ -227,6 +228,116 @@ After some player has bet, your options change, though you reserve the right to 
  You can [i]raise[/i], increasing the bet to match by some number of chips."
 fit_content = true
 
+[node name="Page7" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PokerpediaBack/PageSep/PageL/Page7"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "HAND RANKINGS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page7"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]Each ranking will be listed from highest to lowest. If these relative rankings change under certain rules, this will be listed at the top of the section."
+fit_content = true
+scroll_active = false
+
+[node name="example_hand" parent="PokerpediaBack/PageSep/PageL/Page7" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_type = "5K"
+
+[node name="example_hand2" parent="PokerpediaBack/PageSep/PageL/Page7" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_type = "SF"
+
+[node name="Page9" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="example_hand" parent="PokerpediaBack/PageSep/PageL/Page9" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_type = "FL"
+
+[node name="example_hand2" parent="PokerpediaBack/PageSep/PageL/Page9" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_type = "ST"
+
+[node name="Page11" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="example_hand" parent="PokerpediaBack/PageSep/PageL/Page11" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_type = "1P"
+
+[node name="example_hand2" parent="PokerpediaBack/PageSep/PageL/Page11" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_type = "HC"
+
+[node name="Page13" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page13"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]Between Full House and 4-of-a-kind"
+fit_content = true
+
+[node name="example_hand" parent="PokerpediaBack/PageSep/PageL/Page13" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_size = 6
+hand_type = "2T"
+scale = 0.31
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page13"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]Between Straight and Crowd"
+fit_content = true
+
+[node name="example_hand2" parent="PokerpediaBack/PageSep/PageL/Page13" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_size = 6
+hand_type = "3P"
+scale = 0.31
+
 [node name="PageR" type="Panel" parent="PokerpediaBack/PageSep"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -285,7 +396,10 @@ text = "[url={\"page\":3}]How to Play[/url]
 [indent][url={\"page\":4}]Initial Round Setup[/url]
 [url={\"page\":5}]Betting Rounds[/url]
 [url={\"page\":6}]Showdown[/url]
-[url={\"page\":6}]Rule Change[/url][/indent]"
+[url={\"page\":6}]Rule Change[/url][/indent]
+[url={\"page\":7}]Hand Rankings[/url]
+[indent][url={\"page\":12}]With Six Cards[/url]
+[url={\"page\":14}]With Four Cards[/url]"
 
 [node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page2/MarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -297,7 +411,10 @@ text = "[center]3
 4
 5
 6
-6"
+6
+7
+12
+14"
 
 [node name="Page4" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
 visible = false
@@ -388,6 +505,119 @@ layout_mode = 2
 layout_mode = 2
 bbcode_enabled = true
 text = "Whichever player has the [i]least[/i] chips at the end of a round gets the choice between two Rule Changes to enact to alter the game. Most Rule Changes can apply up to twice, and some are dependent on the number of players in the game. Rule Changes tend to come in pairs. A gallery of all the Rule Changes can be found in the back of this book."
+fit_content = true
+
+[node name="Page8" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="example_hand" parent="PokerpediaBack/PageSep/PageR/Page8" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_type = "4K"
+
+[node name="example_hand2" parent="PokerpediaBack/PageSep/PageR/Page8" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_type = "FH"
+
+[node name="Page10" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="example_hand" parent="PokerpediaBack/PageSep/PageR/Page10" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_type = "3K"
+
+[node name="example_hand2" parent="PokerpediaBack/PageSep/PageR/Page10" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_type = "2P"
+
+[node name="Page12" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PokerpediaBack/PageSep/PageR/Page12"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "WITH SIX CARDS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page12"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]With six hards per hand, Full House rises above 
+4-of-a-kind, and four more kinds of hand emerge."
+fit_content = true
+
+[node name="example_hand" parent="PokerpediaBack/PageSep/PageR/Page12" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_size = 6
+hand_type = "6K"
+scale = 0.31
+
+[node name="example_hand2" parent="PokerpediaBack/PageSep/PageR/Page12" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_size = 6
+hand_type = "FH"
+scale = 0.31
+
+[node name="Page14" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page14"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]Between 3 pair and 3-of-a-kind"
+fit_content = true
+
+[node name="example_hand" parent="PokerpediaBack/PageSep/PageR/Page14" instance=ExtResource("4_em2on")]
+layout_mode = 2
+auto = true
+hand_size = 6
+hand_type = "CR"
+scale = 0.31
+
+[node name="Label" type="Label" parent="PokerpediaBack/PageSep/PageR/Page14"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "WITH FOUR CARDS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page14"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]With four cards per hand, 4-of-a-kind rises above Straight Flush and 3-of-a-kind rises above Full House."
 fit_content = true
 
 [node name="ButtonBACK" type="TextureButton" parent="PokerpediaBack"]
