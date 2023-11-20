@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dml4kr48m8imv"]
+[gd_scene load_steps=10 format=3 uid="uid://dml4kr48m8imv"]
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_k7rdw"]
 [ext_resource type="Script" path="res://scripts/ui/pokerpedia.gd" id="2_vu4td"]
@@ -12,6 +12,9 @@ corner_radius_top_left = 30
 corner_radius_top_right = 30
 corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kol8b"]
+bg_color = Color(0.141176, 0.317647, 0.6, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bbuxl"]
 bg_color = Color(1, 0.94902, 0.823529, 1)
@@ -56,6 +59,27 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("3_466j1")
 theme_override_styles/panel = SubResource("StyleBoxFlat_ojsam")
+
+[node name="TOCTab" type="Button" parent="PokerpediaBack"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = 15.0
+offset_top = 50.0
+offset_right = 107.0
+offset_bottom = 121.0
+grow_horizontal = 0
+rotation = 1.5708
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_kol8b")
+theme_override_styles/hover = SubResource("StyleBoxFlat_kol8b")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_kol8b")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_kol8b")
+theme_override_styles/focus = SubResource("StyleBoxFlat_kol8b")
+text = "ToC
+
+."
 
 [node name="PageSep" type="HBoxContainer" parent="PokerpediaBack"]
 layout_mode = 1
@@ -131,7 +155,7 @@ size_flags_vertical = 3
 [node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page1/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[center]Welcome to the [i]Pokerpedia.[/i] In this book, you will find all the information you need to play Poker Party. Click a section on the table of contents on the next page or any of the tabs to either side of the book to go to that section. The arrow buttons on the bottom near the page numbers will flip the pages.
+text = "[center]Welcome to the [i]Pokerpedia.[/i] In this book, you will find all the information you need to play Poker Party. Click a section on the table of contents on the next page to go to that section, or click the tab on either side of the book to come back to the table of contents. The arrow buttons on the bottom near the page numbers will flip the pages.
 
 Poker Party is a variant of Texas Hold 'em poker: Players get a certain amount of cards dealt to them that they get to know in secret (\"hole cards\") and see a certain amount of cards in the center of the table (\"community cards\"). Players use both sets of cards to create the best hand that they can (though it is put together for you)."
 fit_content = true
@@ -408,5 +432,6 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [connection signal="pressed" from="CLOSE" to="." method="close"]
+[connection signal="pressed" from="PokerpediaBack/TOCTab" to="." method="set_page" binds= [1, true]]
 [connection signal="pressed" from="PokerpediaBack/ButtonBACK" to="." method="go_back"]
 [connection signal="pressed" from="PokerpediaBack/ButtonFWD" to="." method="go_forward"]

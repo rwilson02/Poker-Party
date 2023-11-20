@@ -33,6 +33,9 @@ func set_page(page_num, internal = false):
 	if not internal:
 		page_num = ceili(page_num / 2.0)
 	
+	if page_num == page:
+		return
+	
 	page = page_num
 	var newL = left_page.get_child(page)
 	var newR = right_page.get_child(page)
