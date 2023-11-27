@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=17 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
@@ -12,12 +12,16 @@
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="6_b6hf0"]
 [ext_resource type="Script" path="res://scripts/ui/menu_manager.gd" id="6_jl3ny"]
 [ext_resource type="AudioStream" uid="uid://b63l3kd6711y2" path="res://audio/sfx/chips shuffle.mp3" id="6_oplt0"]
+[ext_resource type="Script" path="res://scripts/ui/chat.gd" id="9_nl5ow"]
 [ext_resource type="PackedScene" uid="uid://ct2nwwuqvympr" path="res://scenes/ui/pause_menu.tscn" id="12_d8vuc"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_k628p"]
 properties/0/path = NodePath("PotText:text")
 properties/0/spawn = true
 properties/0/sync = true
+properties/1/path = NodePath("Chat/MarginContainer/RichTextLabel:text")
+properties/1/spawn = true
+properties/1/sync = true
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dp35u"]
 bg_color = Color(0.27451, 0.145098, 0.145098, 1)
@@ -129,7 +133,9 @@ stream = ExtResource("6_oplt0")
 [node name="Scorebug" parent="Display" instance=ExtResource("4_otush")]
 show_behind_parent = true
 offset_left = 20.0
+offset_top = -95.0
 offset_right = 325.0
+offset_bottom = -20.0
 
 [node name="CommCards" type="HBoxContainer" parent="Display"]
 anchors_preset = 8
@@ -192,17 +198,14 @@ offset_right = 70.0
 offset_bottom = 70.0
 
 [node name="ShowdownPanel" type="Panel" parent="Display"]
-anchors_preset = 6
+anchors_preset = 1
 anchor_left = 1.0
-anchor_top = 0.5
 anchor_right = 1.0
-anchor_bottom = 0.5
 offset_left = 57.0
-offset_top = -200.0
+offset_top = 60.0
 offset_right = 357.0
-offset_bottom = 200.0
+offset_bottom = 460.0
 grow_horizontal = 0
-grow_vertical = 2
 theme = ExtResource("6_b6hf0")
 
 [node name="MarginContainer" type="MarginContainer" parent="Display/ShowdownPanel"]
@@ -230,9 +233,41 @@ offset_bottom = 24.0
 texture = ExtResource("4_rxcjr")
 expand_mode = 1
 
+[node name="Chat" type="Panel" parent="Display"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -200.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("9_nl5ow")
+
+[node name="MarginContainer" type="MarginContainer" parent="Display/Chat"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Display/Chat/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+scroll_following = true
+
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="Display"]
 replication_interval = 0.25
 replication_config = SubResource("SceneReplicationConfig_k628p")
+public_visibility = false
 
 [node name="Betting" type="Node" parent="."]
 script = ExtResource("3_xwsyi")

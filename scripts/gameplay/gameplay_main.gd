@@ -14,12 +14,12 @@ var restart_requested = false
 var deck: Array
 
 func _ready():
-	rpc_id(1, "player_ready")
-	
 	Netgame.server_disconnected.connect(MENU.okay_get_out)
 	MENU.do_it_again.connect(start_game)
 	MENU.request_restart.connect(func(): restart_requested = true)
 	BETTING.DISPLAY = DISPLAY
+	
+	rpc_id(1, "player_ready")
 
 @rpc("any_peer", "call_local", "reliable")
 func player_ready():
@@ -27,6 +27,9 @@ func player_ready():
 	player_responses += 1
 	if player_responses == Netgame.players.keys().size():
 		player_responses = 0
+		
+		DISPLAY.get_node("MultiplayerSynchronizer").set_visibility_for(0, true)
+		
 		start_game(false)
 
 func start_game(restart):
@@ -109,6 +112,7 @@ func gameplay_loop():
 
 func initial_round_tasks():
 	round_start_index += 1
+	DISPLAY.log_to_chat("Round %d beginning." % (round_start_index + 1))
 	deck = range(0, Rules.get_deck_size())
 	for i in (Rules.RULES.SUITS * Rules.RULES.WILDS):
 		deck.append(Rules.FREE_WILD)
@@ -196,6 +200,25 @@ func credit_winners(winners: Array):
 		Netgame.players[players[0]].chips += Netgame.game_state.pot
 	
 	Netgame.game_state.pot = 0
+	
+	# Print to chat
+	var printed_group = winner_groups[0]
+	var print_this = "Round %d over! " % (round_start_index + 1)
+	match printed_group.size():
+		1:
+			print_this += ("player(%d) won." % printed_group[0])
+		2:
+			print_this += ("player(%d) and player(%d) won." % [printed_group[0], printed_group[1]])
+		_:
+			if printed_group.size() == Netgame.players.size():
+				print_this += ("Everyone won.")
+			else:
+				var name_str = ""
+				for id in printed_group:
+					name_str += ("player(%d), " % id)
+				var halves = name_str.rsplit(", ", false, 2)
+				print_this += ", and ".join(halves)
+	DISPLAY.log_to_chat(print_this)
 
 func get_players_by_chips() -> Array:
 	var players = []
@@ -229,7 +252,7 @@ func get_ante(player_id):
 		var ante = mini(me.chips, Rules.RULES.ANTE)
 		me.chips -= ante
 		Netgame.game_state.pot += ante
-		prints("took", ante, "chips from", player_id)
+#		prints("took", ante, "chips from", player_id)
 
 func clear_losers():
 	for id in Netgame.game_state.losers:

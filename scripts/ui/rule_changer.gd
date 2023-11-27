@@ -97,7 +97,7 @@ func setup_menu():
 		var raw_info = get_option_information(both_options[i])
 		var info
 		
-		if raw_info == null:
+		if raw_info.is_empty():
 			push_error("wait there's no information on this one (%s) chief" % both_options[i])
 			return
 		else:
@@ -136,7 +136,7 @@ func get_option_information(option):
 		var line = change_file.get_csv_line()
 		if line[0] == option:
 			return line
-	return null
+	return []
 
 func on_button_pressed(rule, value, change):
 	for button in buttons: button.disabled = true
@@ -146,6 +146,12 @@ func on_button_pressed(rule, value, change):
 @rpc("any_peer", "call_local", "reliable")
 func on_receive_button_press(rule, value, change):
 	if change != "DISCONNECT":
+		# really hacky, but good enough
+		var change_title = get_option_information(change)
+		if not change_title.is_empty():
+			change_title = change_title[3]
+			$"../../Display".log_to_chat("player(%d) chose %s." % [multiplayer.get_remote_sender_id(), change_title])
+		
 		Rules.add_change(change)
 		Rules.set_rule(rule, value)
 	

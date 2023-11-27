@@ -8,6 +8,7 @@ extends Node
 @onready var showdown_panel = $ShowdownPanel
 @onready var chip_zoom = $ChipZoom
 @onready var sfxer = $AudioStreamPlayer
+@onready var chat = $Chat
 
 const CHIP_TEMPLATE = "[img=24]res://textures/ico_chips.png[/img] %d"
 const UI_CARD = preload("res://scenes/ui/ui_card.tscn")
@@ -25,7 +26,7 @@ func _ready():
 		display_timer.one_shot = false
 		display_timer.timeout.connect(update_display)
 		add_child(display_timer)
-		display_timer.start(0.25)
+		display_timer.start($MultiplayerSynchronizer.replication_interval)
 
 #@rpc("authority", "call_local", "unreliable", 2)
 func update_display():
@@ -41,7 +42,6 @@ func update_display():
 	adjust_comm_holder()
 	if change_icons.get_child_count() != Rules.RULES.CURRENT_CHANGES.size():
 		adjust_change_icons()
-#	prints(multiplayer.get_unique_id(), "has", Netgame.game_state.comm_cards)
 
 func adjust_scorebug():
 	hud_text.text = "[center]%s\n%s[/center]" % [Netgame.me().name, CHIP_TEMPLATE % Netgame.me().chips]
@@ -187,5 +187,5 @@ func chip_zoom_anim(to_pot: bool):
 	await tween.finished
 	chip_zoom.visible = false
 
-func please():
-	$PotText.text = CHIP_TEMPLATE % Netgame.game_state.pot
+func log_to_chat(this: String):
+	chat.add_message(this)

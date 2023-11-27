@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3 uid="uid://de2s5vw6wxn1u"]
+
+[ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_toyqu"]
+
+[node name="player_icon" type="ReferenceRect"]
+offset_right = 128.0
+offset_bottom = 180.0
+theme = ExtResource("1_toyqu")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -64.0
+offset_right = 64.0
+offset_bottom = 128.0
+grow_horizontal = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+bbcode_enabled = true
+text = "[center]Player Name
+[img=24]res://textures/ico_chips.png[/img] ????"
+fit_content = true

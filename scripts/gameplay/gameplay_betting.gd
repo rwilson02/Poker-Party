@@ -122,31 +122,29 @@ func send_option(option, value):
 	match option:
 		"CALL":
 			if bet_to_match == 0:
-				prints(sender, "checks.")
+				DISPLAY.log_to_chat("player(%d) checks." % sender)
 			elif Netgame.players[sender].chips == 0:
-#				Netgame.players[sender].current_bet = \
-#					mini(Netgame.players[sender].current_bet, Netgame.players[sender].current_bet * -1)
-				prints(sender, "cannot make the bet.")
+				DISPLAY.log_to_chat("player(%d) cannot make the bet." % sender)
 			else:
 				var min_val = mini(Netgame.players[sender].chips, value)
 				Netgame.players[sender].chips -= min_val
 				Netgame.players[sender].current_bet += min_val
-				prints(sender, "calls.")
+				DISPLAY.log_to_chat("player(%d) calls." % sender)
 		"RAISE":
 			if bet_to_match == 0:
 				Netgame.players[sender].chips -= value
 				Netgame.players[sender].current_bet += value
-				prints(sender, "opens with %d." % value)
+				DISPLAY.log_to_chat("player(%d) opens with %d." % [sender, value])
 			else:
 				var bet_difference = value - Netgame.players[sender].current_bet
 				Netgame.players[sender].chips -= bet_difference
 				Netgame.players[sender].current_bet += bet_difference
-				prints(sender, "raises to %d." % value)
+				DISPLAY.log_to_chat("player(%d) raises to %d." % [sender, value])
 		"FOLD":
 			Netgame.game_state.folded_players.append(sender)
-			prints(sender, "folds.")
+			DISPLAY.log_to_chat("player(%d) folds." % sender)
 		"DISCONNECT":
-			prints(sender, "disconnected.")
+			DISPLAY.log_to_chat("player(%d) disconnected." % sender)
 	
 	input_received.emit(option == "RAISE")
 
@@ -160,7 +158,6 @@ func button_pressed(option):
 			value = bet_raise_input.value
 	
 	bet_bar.visible = false
-#	prints("bet bar for", multiplayer.get_unique_id(), "deactivated")
 	send_option.rpc_id(1, option, value)
 
 func all_bets_equal(_ignore_broke = false):
