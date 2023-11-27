@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://cfxdic4c1bhkj"]
+
+[ext_resource type="Script" path="res://scripts/netgame.gd" id="1_1yymn"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_tqooc"]
+properties/0/path = NodePath(".:players")
+properties/0/spawn = true
+properties/0/sync = true
+properties/1/path = NodePath(".:game_state")
+properties/1/spawn = true
+properties/1/sync = true
+
+[node name="Netgame" type="Node"]
+script = ExtResource("1_1yymn")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_tqooc")

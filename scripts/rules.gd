@@ -1,6 +1,6 @@
 extends Node
 
-var RULES
+@export var RULES: Dictionary
 var FREE_WILD = 0x2_0000
 var WILD = 0x1_0000
 # Spades, Hearts, Clubs, Diamonds, Stars, Moons

@@ -10,7 +10,7 @@ const DEFAULT_PORT = 17160 # 13! / 9!, AKQJ
 const DEFAULT_IP = "127.0.0.1"
 const MAX_CONNECTIONS = 10
 
-var players = {}
+@export var players = {}
 var player_info = {
 	"name": "Player",
 	"cards": [],
@@ -18,7 +18,7 @@ var player_info = {
 	"current_bet": 0,
 	"awaiting": false
 }
-var game_state = {
+@export var game_state = {
 	"pot": 0,
 	"comm_cards": [],
 	"active_players": [],
@@ -79,8 +79,8 @@ func _on_player_disconnected(id):
 			game_state.losers.append(id)
 			game_state.folded_players.append(id)
 			game_state.pot += players[id].chips
-			if multiplayer.is_server():
-				sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
+#			if multiplayer.is_server():
+#				sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		else:
 			players.erase(id)
 		
@@ -105,12 +105,12 @@ func me():
 func get_live_players():
 	return game_state.active_players.size() - game_state.folded_players.size()
 
-@rpc("authority", "call_local", "reliable", 2)
-func sync_data(player_data, rules, state):
-	Netgame.players = player_data
-	Rules.RULES = rules
-	Netgame.game_state = state
-	state_updated.emit()
+#@rpc("authority", "call_local", "reliable", 2)
+#func sync_data(player_data, rules, state):
+#	Netgame.players = player_data
+#	Rules.RULES = rules
+#	Netgame.game_state = state
+#	state_updated.emit()
 
 func reset():
 	game_state = {

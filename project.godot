@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Rules="*res://scripts/rules.gd"
-Netgame="*res://scripts/netgame.gd"
+Rules="*res://scenes/Rules.tscn"
+Netgame="*res://scenes/Netgame.tscn"
 
 [display]
 

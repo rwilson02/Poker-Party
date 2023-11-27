@@ -16,27 +16,40 @@ const HOLDER_BASE_WIDTH = 600
 const ICON_SIZE = 40
 
 func _ready():
-	Netgame.state_updated.connect(update_display)
+#	Netgame.state_updated.connect(update_display)
+#	$MultiplayerSynchronizer.synchronized.connect(please)
+	$MultiplayerSynchronizer.synchronized.connect(update_display)
+	
+	if(multiplayer.get_unique_id() == 1):
+		var display_timer = Timer.new()
+		display_timer.one_shot = false
+		display_timer.timeout.connect(update_display)
+		add_child(display_timer)
+		display_timer.start(0.25)
 
 #@rpc("authority", "call_local", "unreliable", 2)
 func update_display():
 	# Handle scorebug
+	adjust_scorebug()
+	
+	# Handle pot
+	$PotText.text = CHIP_TEMPLATE % Netgame.game_state.pot
+	
+	# Handle community and hole cards
+#	await get_tree().create_timer(0.1).timeout
+	adjust_cards()
+	adjust_comm_holder()
+	if change_icons.get_child_count() != Rules.RULES.CURRENT_CHANGES.size():
+		adjust_change_icons()
+#	prints(multiplayer.get_unique_id(), "has", Netgame.game_state.comm_cards)
+
+func adjust_scorebug():
 	hud_text.text = "[center]%s\n%s[/center]" % [Netgame.me().name, CHIP_TEMPLATE % Netgame.me().chips]
 	var betted = absi(Netgame.me().current_bet)
 	if betted > 0:
 		wager_text.visible = true
 		wager_text.text = "[center]%s[/center]" % (CHIP_TEMPLATE % betted)
 	else: wager_text.visible = false
-	
-	# Handle pot
-	$PotText.text = CHIP_TEMPLATE % Netgame.game_state.pot
-	
-	# Handle community and hole cards
-	await get_tree().create_timer(0.1).timeout
-	adjust_cards()
-	adjust_comm_holder()
-	adjust_change_icons()
-#	prints(multiplayer.get_unique_id(), "has", Netgame.game_state.comm_cards)
 
 func adjust_cards():
 	var comm_difference = comm_card_holder.get_child_count() - Rules.RULES.COMM_CARDS
@@ -64,14 +77,18 @@ func adjust_cards():
 
 func adjust_comm_holder():
 	var viewport_size = get_viewport().get_visible_rect().size
+	var required_size = HOLDER_BASE_WIDTH + (75 * (Rules.RULES.COMM_CARDS - 5))
 	
-	comm_card_holder.size.x = HOLDER_BASE_WIDTH + (75 * (Rules.RULES.COMM_CARDS - 5))
+	if comm_card_holder.size.x == required_size: return
+	
+	comm_card_holder.size.x = required_size
 	
 	comm_card_holder.position = Vector2i(
 		(viewport_size.x - comm_card_holder.size.x) / 2,
 		(viewport_size.y - comm_card_holder.size.y) / 2
 	)
 
+@rpc("call_local", "authority", "reliable")
 func adjust_change_icons():
 	const ICON_TEMPLATE = "res://textures/rule_changes/%s.png"
 	var CHANGE_DESCS = Rules.get_changes()
@@ -169,3 +186,6 @@ func chip_zoom_anim(to_pot: bool):
 	sfxer.play()
 	await tween.finished
 	chip_zoom.visible = false
+
+func please():
+	$PotText.text = CHIP_TEMPLATE % Netgame.game_state.pot

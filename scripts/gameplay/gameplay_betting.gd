@@ -48,7 +48,7 @@ func do_betting_round(start_index):
 			get_bet_option.rpc_id(awaiting_player, 0)
 			got_bet = await input_received
 			Netgame.players[awaiting_player].awaiting = false
-			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
+#			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		if got_bet: 
 			initial_bettor_index = Netgame.game_state.active_players.find(awaiting_player)
@@ -58,7 +58,7 @@ func do_betting_round(start_index):
 	if all_bets_equal():
 		print("Everyone checked.")
 		collect_all_bets()
-		Netgame.sync_data(Netgame.players, Rules.RULES, Netgame.game_state)
+#		Netgame.sync_data(Netgame.players, Rules.RULES, Netgame.game_state)
 		return
 	
 	# Keep it rolling around if people are there
@@ -73,11 +73,11 @@ func do_betting_round(start_index):
 			get_bet_option.rpc_id(awaiting_player, get_max_bet())
 			await input_received
 			Netgame.players[awaiting_player].awaiting = false
-			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
+#			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 	
 	# End of betting round
 	collect_all_bets()
-	Netgame.sync_data(Netgame.players, Rules.RULES, Netgame.game_state)
+#	Netgame.sync_data(Netgame.players, Rules.RULES, Netgame.game_state)
 
 @rpc("authority","call_local","reliable")
 func get_bet_option(current_bet):
