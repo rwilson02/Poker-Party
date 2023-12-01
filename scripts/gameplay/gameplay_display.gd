@@ -20,6 +20,7 @@ func _ready():
 #	Netgame.state_updated.connect(update_display)
 #	$MultiplayerSynchronizer.synchronized.connect(please)
 	$MultiplayerSynchronizer.synchronized.connect(update_display)
+#	$MultiplayerSynchronizer.synchronized.connect(chat.scroll_handling)
 	
 	if(multiplayer.get_unique_id() == 1):
 		var display_timer = Timer.new()
