@@ -1,6 +1,8 @@
 extends Node
 
-@onready var chat = $MarginContainer/RichTextLabel
+@onready var chat = $MarginContainer/VBoxContainer/RichTextLabel
+@onready var textbox = $MarginContainer/VBoxContainer/HBoxContainer/LineEdit
+@onready var send_button = $MarginContainer/VBoxContainer/HBoxContainer/Button
 var chat_scroll
 
 #const MESSAGE_LIMIT = 50
@@ -14,9 +16,12 @@ func _ready():
 	regex = RegEx.new()
 	regex.compile(REGEX_TEMPLATE)
 	
+	send_button.pressed.connect(send_chat_message)
+	
 	chat_scroll = chat.get_v_scroll_bar()
 	chat_scroll.value_changed.connect(func(c): scroll_val = c)
 
+@rpc("any_peer", "call_local", "reliable")
 func add_message(msg: String):
 	var final_msg = msg
 	var matches = regex.search_all(msg)
@@ -32,15 +37,18 @@ func add_message(msg: String):
 				final_msg = final_msg.replace(mtch.get_string(), Netgame.players[id].name + ": ")
 				italicize = false
 	
+	var colored_msg = ""
 	if italicize:
 		final_msg = "[i]%s[/i]" % final_msg
+	elif final_msg.begins_with("%s: " % Netgame.me().name):
+		colored_msg = "[color=LIGHT_BLUE]%s[/color]" % final_msg
 	
 #	if messages >= MESSAGE_LIMIT:
 ##		print("waoh message limit reached")
 #		chat.text = chat.text.split("\n", false, 1)[1]
 #		messages -= 1
 	
-	chat.text += "%s\n" % final_msg
+	chat.text += ("%s\n" % final_msg if colored_msg.is_empty() else "%s\n" % colored_msg)
 	messages += 1
 	
 	fake_add_message.rpc("%s\n" % final_msg)
@@ -48,14 +56,18 @@ func add_message(msg: String):
 	scroll_handling()
 
 @rpc("call_remote", "authority", "reliable")
-func fake_add_message(msg):
-#	while messages >= MESSAGE_LIMIT:
-#		chat.remove_paragraph(0)
-#		messages -= 1
+func fake_add_message(msg: String):
+	if msg.begins_with("%s: " % Netgame.me().name):
+		msg = "[color=LIGHT_BLUE]%s[/color]" % msg
 	
 	chat.append_text(msg)
 	messages += 1
 	scroll_handling()
+
+func send_chat_message():
+	var message = "chat(%d) %s" % [multiplayer.get_unique_id(), textbox.text]
+	add_message.rpc_id(1, message)
+	textbox.clear()
 
 func scroll_handling():
 	if chat_scroll.max_value - (chat_scroll.page + scroll_val) <= 10:
