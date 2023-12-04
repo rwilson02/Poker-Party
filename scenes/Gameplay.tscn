@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=19 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
@@ -13,6 +13,8 @@
 [ext_resource type="Script" path="res://scripts/ui/menu_manager.gd" id="6_jl3ny"]
 [ext_resource type="AudioStream" uid="uid://b63l3kd6711y2" path="res://audio/sfx/chips shuffle.mp3" id="6_oplt0"]
 [ext_resource type="Script" path="res://scripts/ui/chat.gd" id="9_nl5ow"]
+[ext_resource type="FontFile" uid="uid://15waa33347nr" path="res://theming/DejaVuSerifCondensed-Bold.ttf" id="10_jh3m0"]
+[ext_resource type="Texture2D" uid="uid://dafgvxe851s1m" path="res://textures/double-arrow.png" id="11_bwsl0"]
 [ext_resource type="PackedScene" uid="uid://ct2nwwuqvympr" path="res://scenes/ui/pause_menu.tscn" id="12_d8vuc"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_k628p"]
@@ -273,7 +275,29 @@ size_flags_horizontal = 3
 
 [node name="Button" type="Button" parent="Display/Chat/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("10_jh3m0")
 text = "SEND"
+
+[node name="Panel" type="Panel" parent="Display/Chat"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+
+[node name="TextureButton" type="TextureButton" parent="Display/Chat/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(20, 20)
+texture_normal = ExtResource("11_bwsl0")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="Display"]
 replication_interval = 0.25

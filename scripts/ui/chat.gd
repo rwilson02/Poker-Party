@@ -12,11 +12,15 @@ var regex: RegEx
 var messages = 0
 var scroll_val = 0.0
 
+var collapsed = false
+var is_moving = false
+
 func _ready():
 	regex = RegEx.new()
 	regex.compile(REGEX_TEMPLATE)
 	
 	send_button.pressed.connect(send_chat_message)
+	$Panel/TextureButton.pressed.connect(move)
 	
 	chat_scroll = chat.get_v_scroll_bar()
 	chat_scroll.value_changed.connect(func(c): scroll_val = c)
@@ -31,7 +35,8 @@ func add_message(msg: String):
 		for mtch in matches:
 			if mtch.get_string(1) == "player":
 				var id = int(mtch.get_string(2))
-				final_msg = final_msg.replace(mtch.get_string(), Netgame.players[id].name)
+				if Netgame.players.has(id):
+					final_msg = final_msg.replace(mtch.get_string(), Netgame.players[id].name)
 			elif mtch.get_string(1) == "chat" and mtch.get_start(1) == 0:
 				var id = int(mtch.get_string(2))
 				final_msg = final_msg.replace(mtch.get_string(), Netgame.players[id].name + ": ")
@@ -39,7 +44,7 @@ func add_message(msg: String):
 	
 	var colored_msg = ""
 	if italicize:
-		final_msg = "[i]%s[/i]" % final_msg
+		final_msg = "[i][color=GRAY]%s[/color][/i]" % final_msg
 	elif final_msg.begins_with("%s: " % Netgame.me().name):
 		colored_msg = "[color=LIGHT_BLUE]%s[/color]" % final_msg
 	
@@ -72,3 +77,18 @@ func send_chat_message():
 func scroll_handling():
 	if chat_scroll.max_value - (chat_scroll.page + scroll_val) <= 10:
 		chat.scroll_to_line(chat.get_line_count() - 1)
+
+func move():
+	if not is_moving:
+		is_moving = true
+		
+		var tween1 = create_tween()
+		tween1.tween_property(self, "position", self.position + Vector2.DOWN * (-200 if collapsed else 200), 0.5)\
+			.set_trans(Tween.TRANS_CUBIC)
+		var tween2 = create_tween()
+		tween2.tween_property($Panel/TextureButton, "rotation", $Panel/TextureButton.rotation + PI, 0.5)
+		await tween1.finished
+		
+		$Panel/TextureButton.rotation = fmod($Panel/TextureButton.rotation, TAU)
+		collapsed = not collapsed
+		is_moving = false

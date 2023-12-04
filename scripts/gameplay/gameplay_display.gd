@@ -17,10 +17,7 @@ const HOLDER_BASE_WIDTH = 600
 const ICON_SIZE = 40
 
 func _ready():
-#	Netgame.state_updated.connect(update_display)
-#	$MultiplayerSynchronizer.synchronized.connect(please)
 	$MultiplayerSynchronizer.synchronized.connect(update_display)
-#	$MultiplayerSynchronizer.synchronized.connect(chat.scroll_handling)
 	
 	if(multiplayer.get_unique_id() == 1):
 		var display_timer = Timer.new()
@@ -29,7 +26,6 @@ func _ready():
 		add_child(display_timer)
 		display_timer.start($MultiplayerSynchronizer.replication_interval)
 
-#@rpc("authority", "call_local", "unreliable", 2)
 func update_display():
 	# Handle scorebug
 	adjust_scorebug()
@@ -38,7 +34,6 @@ func update_display():
 	$PotText.text = CHIP_TEMPLATE % Netgame.game_state.pot
 	
 	# Handle community and hole cards
-#	await get_tree().create_timer(0.1).timeout
 	adjust_cards()
 	adjust_comm_holder()
 	if change_icons.get_child_count() != Rules.RULES.CURRENT_CHANGES.size():
