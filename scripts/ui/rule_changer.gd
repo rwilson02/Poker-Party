@@ -1,3 +1,4 @@
+class_name RuleChanger
 extends Node
 
 signal option_selected(valid)
@@ -31,7 +32,7 @@ enum CHANGES {
 	COMM_UP,
 	COMM_DOWN,
 	BALL_FLIP, # This isn't a two-time change technically but it works in the appearance code
-	# Dependent changes, in which you can only have increases
+	# Dependent changes, in which you can only have increases first
 	WINNERS_UP = DEPENDENT_CHANGES,
 	WINNERS_DOWN,
 	WILD_UP,
@@ -94,25 +95,8 @@ func setup_menu():
 	# Set variables for both options
 	var both_options = get_options()
 	for i in both_options.size():
-		var raw_info = get_option_information(both_options[i])
-		var info
-		
-		if raw_info.is_empty():
-			push_error("wait there's no information on this one (%s) chief" % both_options[i])
-			return
-		else:
-			info = {
-				"TITLE": raw_info[3],
-				"ICON": raw_info[1] if not raw_info[1].is_empty() else raw_info[0],
-				"DESC": raw_info[4],
-				"FORMATTED": raw_info[2] as int as bool,
-				"RULE": raw_info[5],
-				"VALUE": Rules.RULES[raw_info[5]] + (raw_info[6] as int) \
-					if Rules.RULES.has(raw_info[5]) else (raw_info[6] as int)
-			}
-		
-		if info.RULE == "BALL":
-			info.VALUE = ["high", "low"] if Rules.RULES.BALL == 1 else ["low", "high"]
+		var raw_info = RuleChanger.get_option_information(both_options[i])
+		var info = RuleChanger.get_info_dict(raw_info)
 		
 		var option_box: Node = option_container.get_child(i)
 		option_box.get_node("Title").text = TEXT_TEMPLATE % info.TITLE
@@ -130,13 +114,35 @@ func setup_menu():
 		option_button.pressed.connect(on_button_pressed.bind(info.RULE, info.VALUE, both_options[i]))
 		buttons.append(option_button)
 
-func get_option_information(option):
+static func get_option_information(option):
 	var change_file = FileAccess.open(CHANGE_INFO_PATH, FileAccess.READ)
 	while not change_file.eof_reached():
 		var line = change_file.get_csv_line()
 		if line[0] == option:
 			return line
 	return []
+
+static func get_info_dict(raw_info):
+	var info
+		
+	if raw_info.is_empty():
+		push_error("wait there's no information on this one (%s) chief" % raw_info[0])
+		return
+	else:
+		info = {
+			"TITLE": raw_info[3],
+			"ICON": raw_info[1] if not raw_info[1].is_empty() else raw_info[0],
+			"DESC": raw_info[4],
+			"FORMATTED": raw_info[2] as int as bool,
+			"RULE": raw_info[5],
+			"VALUE": Rules.RULES[raw_info[5]] + (raw_info[6] as int) \
+				if Rules.RULES.has(raw_info[5]) else (raw_info[6] as int)
+		}
+	
+	if info.RULE == "BALL":
+		info.VALUE = ["high", "low"] if Rules.RULES.BALL == 1 else ["low", "high"]
+	
+	return info
 
 func on_button_pressed(rule, value, change):
 	for button in buttons: button.disabled = true
@@ -147,7 +153,7 @@ func on_button_pressed(rule, value, change):
 func on_receive_button_press(rule, value, change):
 	if change != "DISCONNECT":
 		# really hacky, but good enough
-		var change_title = get_option_information(change)
+		var change_title = RuleChanger.get_option_information(change)
 		if not change_title.is_empty():
 			change_title = change_title[3]
 			$"../../Display".log_to_chat("player(%d) chose %s." % [multiplayer.get_remote_sender_id(), change_title])

@@ -195,3 +195,5 @@ func get_changes():
 			change_array.append(template % [mod, rule, value])
 	
 	return change_array
+
+func basic_rules(): return integerize(load_json_at("res://rules/base_rules.json"))

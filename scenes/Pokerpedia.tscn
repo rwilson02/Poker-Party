@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://dml4kr48m8imv"]
+[gd_scene load_steps=12 format=3 uid="uid://dml4kr48m8imv"]
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_k7rdw"]
 [ext_resource type="Script" path="res://scripts/ui/pokerpedia.gd" id="2_vu4td"]
 [ext_resource type="Theme" uid="uid://do0gxw8cx220d" path="res://theming/pokerpedia.tres" id="3_466j1"]
 [ext_resource type="Texture2D" uid="uid://dk0rcm57vix5s" path="res://textures/barb_arrow.png" id="4_5v4uy"]
 [ext_resource type="PackedScene" uid="uid://5cdi7jndpifb" path="res://scenes/ui/example_hand.tscn" id="4_em2on"]
+[ext_resource type="PackedScene" uid="uid://cqw0rxakdrpdv" path="res://scenes/ui/example_rule_change.tscn" id="5_2yr7j"]
 [ext_resource type="Texture2D" uid="uid://cyb58hglrd1im" path="res://textures/barb_arrow_empty.png" id="5_opqm8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ojsam"]
@@ -156,9 +157,9 @@ size_flags_vertical = 3
 [node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page1/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[center]Welcome to the [i]Pokerpedia.[/i] In this book, you will find all the information you need to play Poker Party. Click a section on the table of contents on the next page to go to that section, or click the tab on either side of the book to come back to the table of contents. The arrow buttons on the bottom near the page numbers will flip the pages.
+text = "	Welcome to the [i]Pokerpedia.[/i] In this book, you will find all the information you need to play Poker Party. Click a section on the table of contents on the next page to go to that section, or click the tab on either side of the book to come back to the table of contents. The arrow buttons on the bottom near the page numbers will flip the pages.
 
-Poker Party is a variant of Texas Hold 'em poker: Players get a certain amount of cards dealt to them that they get to know in secret (\"hole cards\") and see a certain amount of cards in the center of the table (\"community cards\"). Players use both sets of cards to create the best hand that they can (though it is put together for you)."
+	Poker Party is a variant of Texas Hold 'em poker: Players get a certain amount of cards dealt to them that they get to know in secret (\"hole cards\") and see a certain amount of cards in the center of the table (\"community cards\"). Players use both sets of cards to create the best hand that they can (though it is put together for you)."
 fit_content = true
 
 [node name="Page3" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
@@ -180,15 +181,16 @@ vertical_alignment = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageL/Page3"]
 layout_mode = 2
+theme_override_constants/margin_top = 10
 
 [node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page3/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[center]The goal of poker is to be the player with the best hand by the end of the round (Hand rankings can be found on the pause menu, or in the back of this book). In Poker Party, you win by having the most chips by the end of all the rounds.
+text = "	The goal of poker is to be the player with the best hand by the end of the round (Hand rankings can be found on the pause menu, or in the back of this book). In Poker Party, you win by having the most chips by the end of all the rounds.
 
-Players will get a certain amount of hole cards and enough community cards will be dealt to the table in order to complete a hand. Players will then make bets going clockwise around the table. Once the bets of all the remaining players match, the round continues. If there are still community cards left to deal, the next community card is dealt to the table and the next round of betting begins. If not, then all remaining players participate in the [i]showdown[/i], in which their best hands are compared and the winner recieves the chips in the pot. 
+	Players will get a certain amount of hole cards and enough community cards will be dealt to the table in order to complete a hand. Players will then make bets going clockwise around the table. Once the bets of all the remaining players match, the round continues. If there are still community cards left to deal, the next community card is dealt to the table and the next round of betting begins. If not, then all remaining players participate in the [i]showdown[/i], in which their best hands are compared and the winner recieves the chips in the pot. 
 
-In Poker Party, after the chips are given to the winner(s), a Rule Change is enacted which can range from adding or removing cards from the deck to flipping the game on its head!"
+	In Poker Party, after the chips are given to the winner(s), a Rule Change is enacted which can range from adding or removing cards from the deck to flipping the game on its head!"
 fit_content = true
 
 [node name="Page5" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
@@ -338,6 +340,102 @@ hand_size = 6
 hand_type = "3P"
 scale = 0.31
 
+[node name="Page15" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PokerpediaBack/PageSep/PageL/Page15"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "RULE CHANGE GALLERY"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageL/Page15"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL/Page15/MarginContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page15/MarginContainer/VBoxContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[i]Dependent[/i] Rule Changes must be increased before their corresponding decrease can appear."
+fit_content = true
+
+[node name="example_rule_change" parent="PokerpediaBack/PageSep/PageL/Page15/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "HAND_UP"
+
+[node name="example_rule_change2" parent="PokerpediaBack/PageSep/PageL/Page15/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "HAND_DOWN"
+
+[node name="example_rule_change3" parent="PokerpediaBack/PageSep/PageL/Page15/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "HOLE_UP"
+
+[node name="Page17" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageL/Page17"]
+layout_mode = 2
+theme_override_constants/margin_top = 55
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL/Page17/MarginContainer"]
+layout_mode = 2
+
+[node name="example_rule_change" parent="PokerpediaBack/PageSep/PageL/Page17/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "CARDS_UP"
+
+[node name="example_rule_change2" parent="PokerpediaBack/PageSep/PageL/Page17/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "CARDS_DOWN"
+
+[node name="example_rule_change3" parent="PokerpediaBack/PageSep/PageL/Page17/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "BALL_FLIP"
+
+[node name="Page19" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageL/Page19"]
+layout_mode = 2
+theme_override_constants/margin_top = 55
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL/Page19/MarginContainer"]
+layout_mode = 2
+
+[node name="example_rule_change" parent="PokerpediaBack/PageSep/PageL/Page19/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "WINNERS_DOWN"
+
+[node name="example_rule_change2" parent="PokerpediaBack/PageSep/PageL/Page19/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "WILD_UP"
+
+[node name="example_rule_change3" parent="PokerpediaBack/PageSep/PageL/Page19/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "WILD_DOWN"
+
 [node name="PageR" type="Panel" parent="PokerpediaBack/PageSep"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -399,7 +497,8 @@ text = "[url={\"page\":3}]How to Play[/url]
 [url={\"page\":6}]Rule Change[/url][/indent]
 [url={\"page\":7}]Hand Rankings[/url]
 [indent][url={\"page\":12}]With Six Cards[/url]
-[url={\"page\":14}]With Four Cards[/url]"
+[url={\"page\":14}]With Four Cards[/url][/indent]
+[url={\"page\":15}]Rule Change Gallery[/url]"
 
 [node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageR/Page2/MarginContainer/HBoxContainer"]
 layout_mode = 2
@@ -414,7 +513,8 @@ text = "[center]3
 6
 7
 12
-14"
+14
+15"
 
 [node name="Page4" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
 visible = false
@@ -619,6 +719,62 @@ layout_mode = 2
 bbcode_enabled = true
 text = "[center]With four cards per hand, 4-of-a-kind rises above Straight Flush and 3-of-a-kind rises above Full House."
 fit_content = true
+
+[node name="Page16" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageR/Page16"]
+layout_mode = 2
+theme_override_constants/margin_top = 55
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR/Page16/MarginContainer"]
+layout_mode = 2
+
+[node name="example_rule_change" parent="PokerpediaBack/PageSep/PageR/Page16/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "HOLE_DOWN"
+
+[node name="example_rule_change2" parent="PokerpediaBack/PageSep/PageR/Page16/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "SUITS_UP"
+
+[node name="example_rule_change3" parent="PokerpediaBack/PageSep/PageR/Page16/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "SUITS_DOWN"
+
+[node name="Page18" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageR/Page18"]
+layout_mode = 2
+theme_override_constants/margin_top = 55
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR/Page18/MarginContainer"]
+layout_mode = 2
+
+[node name="example_rule_change" parent="PokerpediaBack/PageSep/PageR/Page18/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "COMM_UP"
+
+[node name="example_rule_change2" parent="PokerpediaBack/PageSep/PageR/Page18/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "COMM_DOWN"
+
+[node name="example_rule_change3" parent="PokerpediaBack/PageSep/PageR/Page18/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "WINNERS_UP"
 
 [node name="ButtonBACK" type="TextureButton" parent="PokerpediaBack"]
 unique_name_in_owner = true
