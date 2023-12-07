@@ -1,0 +1,7 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dt7t5rqe13vpi"]
+
+[ext_resource type="Shader" path="res://textures/gameplay/scroll_shader.gdshader" id="1_7b1be"]
+
+[resource]
+shader = ExtResource("1_7b1be")
+shader_parameter/dir = null

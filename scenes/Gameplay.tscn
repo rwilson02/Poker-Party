@@ -1,12 +1,15 @@
-[gd_scene load_steps=19 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=22 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
+[ext_resource type="Texture2D" uid="uid://joc8iiskpk1v" path="res://textures/gameplay/background1.png" id="3_7xhbr"]
+[ext_resource type="Material" uid="uid://dt7t5rqe13vpi" path="res://textures/gameplay/scroll_shader.tres" id="3_b7hpk"]
 [ext_resource type="Texture2D" uid="uid://d060cb4eiywnv" path="res://textures/table.png" id="3_e3pou"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_betting.gd" id="3_xwsyi"]
 [ext_resource type="PackedScene" uid="uid://de2s5vw6wxn1u" path="res://scenes/ui/player_icon.tscn" id="4_26j3u"]
 [ext_resource type="PackedScene" uid="uid://cnd6j21isfrjj" path="res://scenes/ui/scorebug.tscn" id="4_otush"]
 [ext_resource type="Texture2D" uid="uid://d1vdkbk325lco" path="res://textures/ico_chips.png" id="4_rxcjr"]
+[ext_resource type="Script" path="res://scripts/gameplay/gameplay_display_bg.gd" id="5_5hwgm"]
 [ext_resource type="PackedScene" uid="uid://cl1k1vjj8jeil" path="res://scenes/ui/betting_bar.tscn" id="5_nnckb"]
 [ext_resource type="PackedScene" uid="uid://br8kujy37icgm" path="res://scenes/ui/rule_change_menu.tscn" id="6_5hbob"]
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="6_b6hf0"]
@@ -34,6 +37,17 @@ script = ExtResource("1_glytd")
 
 [node name="Display" type="Node" parent="."]
 script = ExtResource("2_lvqcw")
+
+[node name="Background" type="TextureRect" parent="Display"]
+material = ExtResource("3_b7hpk")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_7xhbr")
+stretch_mode = 1
+script = ExtResource("5_5hwgm")
 
 [node name="Table" type="TextureRect" parent="Display"]
 modulate = Color(0.678431, 0.678431, 0.678431, 1)
