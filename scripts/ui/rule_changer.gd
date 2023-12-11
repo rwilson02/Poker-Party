@@ -68,6 +68,10 @@ func compute_possible_changes():
 	if Rules.RULES.CURRENT_CHANGES.size() < 5: 
 		possible_changes.erase("FULL_RESET")
 	
+	# Don't offer trickle down if there aren't enough players to benefit
+	if Netgame.players - 1 >= Rules.RULES.CURRENT_CHANGES.count("WINNERS_UP"):
+		possible_changes.erase("WINNERS_UP")
+	
 	for change in CHANGES:
 #		# Eliminate one-time options
 		if CHANGES[change] < TWO_TIME_CHANGES:

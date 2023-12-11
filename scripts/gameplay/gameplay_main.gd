@@ -107,7 +107,7 @@ func gameplay_loop():
 	TIMER.start(1)
 	await TIMER.timeout
 	clear_losers() # Just to make sure
-#	Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
+	Netgame.state_updated.emit()
 	next_round.emit()
 
 func initial_round_tasks():
