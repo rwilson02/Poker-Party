@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://ct2nwwuqvympr"]
+[gd_scene load_steps=4 format=3 uid="uid://ct2nwwuqvympr"]
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_biwbu"]
 [ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1_ubr7w"]
+[ext_resource type="StyleBox" uid="uid://bwa11cbuhe8wh" path="res://theming/gold_panel.tres" id="2_ofvmd"]
 
 [node name="pause_menu" type="Panel"]
 anchors_preset = 4
@@ -12,6 +13,7 @@ offset_right = 300.0
 offset_bottom = 200.0
 grow_vertical = 2
 theme = ExtResource("1_biwbu")
+theme_override_styles/panel = ExtResource("2_ofvmd")
 script = ExtResource("1_ubr7w")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

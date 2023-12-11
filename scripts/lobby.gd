@@ -10,7 +10,7 @@ extends Node
 
 const POKERPEDIA = preload("res://scenes/Pokerpedia.tscn")
 
-@onready var name_input = $PlayerSetup/LineEdit
+@onready var player_inputs = $PlayerSetup/IDCard
 
 func _ready():
 	Netgame.test_player_conditions.connect(update_player_display)
@@ -44,13 +44,12 @@ func update_player_display(_remaining = null):
 	player_display.pop()
 
 func create_game():
-	if not name_input.text.is_empty():
-		Netgame.player_info.name = name_input.text
+	Netgame.player_info.name = player_inputs.get_player_name()
 	
 	var port = port_input.value
 	var error = Netgame.create_game(port)
 	if not error:
-		name_input.editable = false
+		player_inputs.set_editable(false)
 		lobby_controls.visible = false
 		start_controls.visible = true
 		start_controls.get_node("StartButton").visible = true
@@ -66,8 +65,7 @@ func create_game():
 		player_display.pop()
 
 func on_join_button():
-	if not name_input.text.is_empty():
-		Netgame.player_info.name = name_input.text
+	Netgame.player_info.name = player_inputs.get_player_name()
 	
 	var error
 	if ":" in address_bar.text:
@@ -77,7 +75,7 @@ func on_join_button():
 		error = Netgame.join_game(address_bar.text)
 	
 	if not error:
-		name_input.editable = false
+		player_inputs.set_editable(false)
 		lobby_controls.visible = false
 		start_controls.visible = true
 		start_controls.get_node("StartButton").visible = false
@@ -99,7 +97,7 @@ func on_cancel_button():
 
 	start_controls.visible = false
 	lobby_controls.visible = true
-	name_input.editable = true
+	player_inputs.set_editable(true)
 	$LobbyControls/LobbyMenu.tabs_visible = false
 
 func on_start_button():
@@ -118,7 +116,7 @@ func server_exploded():
 	
 	start_controls.visible = false
 	lobby_controls.visible = true
-	name_input.editable = true
+	player_inputs.set_editable(true)
 	
 	player_display.clear()
 	if not is_server:
@@ -134,7 +132,7 @@ func timeout():
 		player_display.append_text("Nobody's hosting at this address right now.")
 		lobby_controls.visible = true
 		start_controls.visible = false
-		name_input.editable = true
+		player_inputs.set_editable(true)
 
 func set_lobby_rules():
 	for possible_rule in options.get_children():

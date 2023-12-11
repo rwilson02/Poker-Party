@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=25 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
@@ -18,19 +18,32 @@
 [ext_resource type="Script" path="res://scripts/ui/chat.gd" id="9_nl5ow"]
 [ext_resource type="FontFile" uid="uid://15waa33347nr" path="res://theming/DejaVuSerifCondensed-Bold.ttf" id="10_jh3m0"]
 [ext_resource type="Texture2D" uid="uid://dafgvxe851s1m" path="res://textures/double-arrow.png" id="11_bwsl0"]
+[ext_resource type="StyleBox" uid="uid://bwa11cbuhe8wh" path="res://theming/gold_panel.tres" id="11_uu4p1"]
 [ext_resource type="PackedScene" uid="uid://ct2nwwuqvympr" path="res://scenes/ui/pause_menu.tscn" id="12_d8vuc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v6blc"]
+bg_color = Color(0.235294, 0.211765, 0.0156863, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.831373, 0.741176, 0, 1)
+corner_radius_top_left = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5cxhb"]
+bg_color = Color(0.713254, 0.635078, 1.92523e-07, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7acnl"]
+bg_color = Color(0.831373, 0.741176, 0, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_k628p"]
 properties/0/path = NodePath("PotText:text")
 properties/0/spawn = true
 properties/0/sync = true
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dp35u"]
-bg_color = Color(0.27451, 0.145098, 0.145098, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
 
 [node name="Gameplay" type="Node"]
 script = ExtResource("1_glytd")
@@ -220,6 +233,7 @@ offset_right = 357.0
 offset_bottom = 460.0
 grow_horizontal = 0
 theme = ExtResource("6_b6hf0")
+theme_override_styles/panel = ExtResource("11_uu4p1")
 
 [node name="MarginContainer" type="MarginContainer" parent="Display/ShowdownPanel"]
 layout_mode = 1
@@ -258,7 +272,24 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_v6blc")
 script = ExtResource("9_nl5ow")
+
+[node name="Stem" type="Panel" parent="Display/Chat"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+offset_bottom = 33.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_5cxhb")
 
 [node name="MarginContainer" type="MarginContainer" parent="Display/Chat"]
 layout_mode = 1
@@ -298,10 +329,13 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -40.0
-offset_top = -40.0
+offset_top = -38.0
+offset_bottom = 2.0
 grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_7acnl")
 
 [node name="TextureButton" type="TextureButton" parent="Display/Chat/Panel"]
+modulate = Color(0.235294, 0.211765, 0.0156863, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -360,7 +394,7 @@ offset_right = 400.0
 offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dp35u")
+theme_override_styles/panel = ExtResource("11_uu4p1")
 
 [node name="End" type="Panel" parent="Menus"]
 anchors_preset = 8
@@ -375,6 +409,7 @@ offset_bottom = -595.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_b6hf0")
+theme_override_styles/panel = ExtResource("11_uu4p1")
 
 [node name="BigText" type="Label" parent="Menus/End"]
 layout_mode = 1
@@ -458,6 +493,8 @@ text = "EXIT LOBBY"
 
 [node name="Pause" parent="Menus" instance=ExtResource("12_d8vuc")]
 offset_left = -350.0
+offset_top = -300.0
 offset_right = -50.0
+offset_bottom = 100.0
 
 [node name="Timer" type="Timer" parent="."]

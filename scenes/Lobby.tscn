@@ -1,7 +1,46 @@
-[gd_scene load_steps=5 format=3 uid="uid://3qprhn0jes4i"]
+[gd_scene load_steps=12 format=3 uid="uid://3qprhn0jes4i"]
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_6mw0b"]
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="1_vmmqq"]
+[ext_resource type="PackedScene" uid="uid://dqf80ncy8fmxq" path="res://scenes/ui/id_card.tscn" id="3_6nbw5"]
+[ext_resource type="Texture2D" uid="uid://cxm8mmggjakdc" path="res://textures/lobby/bg_lobby.png" id="3_sm14j"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b4umi"]
+bg_color = Color(0.713726, 0.635294, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uvgmb"]
+bg_color = Color(0.831373, 0.741176, 0, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mt7s4"]
+bg_color = Color(0.235294, 0.211765, 0.0156863, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pd5t6"]
+bg_color = Color(0.235294, 0.211765, 0.0156863, 1)
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+border_color = Color(0.831373, 0.741176, 0, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_idn42"]
+bg_color = Color(0.235294, 0.211765, 0.0156863, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.831373, 0.741176, 0, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="Theme" id="Theme_fld4m"]
 LineEdit/colors/font_color = Color(0.576471, 0.576471, 0.576471, 1)
@@ -15,6 +54,12 @@ offset_right = 1280.0
 offset_bottom = 720.0
 theme = ExtResource("1_6mw0b")
 script = ExtResource("1_vmmqq")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("3_sm14j")
 
 [node name="LobbyControls" type="ReferenceRect" parent="."]
 layout_mode = 1
@@ -30,6 +75,21 @@ offset_bottom = 320.0
 grow_horizontal = 0
 grow_vertical = 2
 
+[node name="SignStem" type="Panel" parent="LobbyControls"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -171.0
+offset_right = 20.0
+offset_bottom = 78.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_b4umi")
+
 [node name="LobbyMenu" type="TabContainer" parent="LobbyControls"]
 layout_mode = 1
 anchors_preset = 5
@@ -40,6 +100,9 @@ offset_top = 20.0
 offset_right = 210.0
 offset_bottom = 520.0
 grow_horizontal = 2
+theme_override_styles/tab_selected = SubResource("StyleBoxFlat_uvgmb")
+theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_mt7s4")
+theme_override_styles/panel = SubResource("StyleBoxFlat_pd5t6")
 tab_alignment = 1
 tabs_visible = false
 
@@ -56,15 +119,15 @@ layout_mode = 2
 
 [node name="ScrollContainer" type="ScrollContainer" parent="LobbyControls/LobbyMenu/Options"]
 layout_mode = 2
-scroll_vertical = 48
 horizontal_scroll_mode = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer"]
 layout_mode = 2
+size_flags_horizontal = 6
 size_flags_vertical = 3
+alignment = 2
 
 [node name="CARDS" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
-custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 text = "CARD OPTIONS"
 horizontal_alignment = 2
@@ -291,12 +354,19 @@ offset_right = 210.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_idn42")
 
 [node name="PreGame" type="HBoxContainer" parent="LobbyControls/Control"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -205.0
+offset_top = -35.0
+offset_right = 205.0
+offset_bottom = 35.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -340,9 +410,15 @@ text = "Join Game"
 [node name="InGame" type="HBoxContainer" parent="LobbyControls/Control"]
 visible = false
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -205.0
+offset_top = -35.0
+offset_right = 205.0
+offset_bottom = 35.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -367,37 +443,31 @@ offset_right = 570.0
 offset_bottom = 320.0
 grow_vertical = 2
 
-[node name="LineEdit" type="LineEdit" parent="PlayerSetup"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -110.0
-offset_top = -20.0
-offset_right = 110.0
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
-placeholder_text = "Player Name"
-alignment = 1
-context_menu_enabled = false
-
 [node name="OpenPokerpedia" type="Button" parent="PlayerSetup"]
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
+anchors_preset = 2
 anchor_top = 1.0
-anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -85.0
+offset_left = 20.0
 offset_top = -50.0
-offset_right = 85.0
+offset_right = 190.0
 offset_bottom = -20.0
-grow_horizontal = 2
 grow_vertical = 0
 text = "POKERPEDIA"
+
+[node name="IDCard" parent="PlayerSetup" instance=ExtResource("3_6nbw5")]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -130.0
+offset_top = -100.0
+offset_right = 80.0
+offset_bottom = 208.0
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true

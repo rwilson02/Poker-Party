@@ -1,0 +1,95 @@
+[gd_scene load_steps=7 format=3 uid="uid://dqf80ncy8fmxq"]
+
+[ext_resource type="FontFile" uid="uid://15waa33347nr" path="res://theming/DejaVuSerifCondensed-Bold.ttf" id="1_k44p4"]
+[ext_resource type="Script" path="res://scripts/ui/id_card.gd" id="1_ycgv6"]
+[ext_resource type="Texture2D" uid="uid://cl00gjptu5w6e" path="res://textures/cards/suit_selector.tres" id="3_0wejh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x6uns"]
+bg_color = Color(1, 1, 1, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d668d"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1f535"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[node name="IDCard" type="Panel"]
+offset_right = 210.0
+offset_bottom = 308.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_x6uns")
+script = ExtResource("1_ycgv6")
+main_color = Color(0.333333, 0.282353, 0.643137, 1)
+
+[node name="TopLeft" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 4.0
+offset_right = 200.0
+offset_bottom = 44.0
+alignment = 1
+
+[node name="PlayerName" type="LineEdit" parent="TopLeft"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_placeholder_color = Color(0.501961, 0.501961, 0.501961, 1)
+theme_override_fonts/font = ExtResource("1_k44p4")
+theme_override_styles/normal = SubResource("StyleBoxFlat_d668d")
+theme_override_styles/focus = SubResource("StyleBoxFlat_1f535")
+placeholder_text = "Player Name"
+context_menu_enabled = false
+
+[node name="TextureRect" type="TextureRect" parent="TopLeft"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("3_0wejh")
+expand_mode = 1
+
+[node name="BottomRight" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 304.0
+offset_right = 390.0
+offset_bottom = 388.0
+rotation = 3.14159
+alignment = 1
+
+[node name="Label" type="Label" parent="BottomRight"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_k44p4")
+vertical_alignment = 1
+clip_text = true
+
+[node name="TextureRect" type="TextureRect" parent="BottomRight"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("3_0wejh")
+expand_mode = 1
+
+[node name="FaceIcon" type="TextureRect" parent="."]
+layout_mode = 2
+offset_left = 25.0
+offset_top = 74.0
+offset_right = 185.0
+offset_bottom = 234.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_0wejh")
+expand_mode = 1
