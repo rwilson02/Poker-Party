@@ -16,7 +16,10 @@ var player_info = {
 	"cards": [],
 	"chips": 0,
 	"current_bet": 0,
-	"awaiting": false
+	"awaiting": false,
+	
+	"icon": 0,
+	"color": Color.BLACK
 }
 @export var game_state = {
 	"pot": 0,

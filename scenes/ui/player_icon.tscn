@@ -1,11 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://de2s5vw6wxn1u"]
+[gd_scene load_steps=4 format=3 uid="uid://de2s5vw6wxn1u"]
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_toyqu"]
+[ext_resource type="Script" path="res://scripts/ui/player_icon.gd" id="2_rn8ld"]
+[ext_resource type="Texture2D" uid="uid://cshuyhkkjyttb" path="res://textures/lobby/icon_selector.tres" id="3_26dcl"]
 
 [node name="player_icon" type="ReferenceRect"]
 offset_right = 128.0
 offset_bottom = 180.0
 theme = ExtResource("1_toyqu")
+script = ExtResource("2_rn8ld")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(128, 128)
@@ -17,6 +20,8 @@ offset_left = -64.0
 offset_right = 64.0
 offset_bottom = 128.0
 grow_horizontal = 2
+texture = ExtResource("3_26dcl")
+expand_mode = 1
 
 [node name="RichTextLabel" type="RichTextLabel" parent="."]
 layout_mode = 1

@@ -1,8 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://dqf80ncy8fmxq"]
+[gd_scene load_steps=9 format=3 uid="uid://dqf80ncy8fmxq"]
 
 [ext_resource type="FontFile" uid="uid://15waa33347nr" path="res://theming/DejaVuSerifCondensed-Bold.ttf" id="1_k44p4"]
 [ext_resource type="Script" path="res://scripts/ui/id_card.gd" id="1_ycgv6"]
-[ext_resource type="Texture2D" uid="uid://cl00gjptu5w6e" path="res://textures/cards/suit_selector.tres" id="3_0wejh"]
+[ext_resource type="Texture2D" uid="uid://cshuyhkkjyttb" path="res://textures/lobby/icon_selector.tres" id="3_xsqlu"]
+[ext_resource type="Texture2D" uid="uid://dk0rcm57vix5s" path="res://textures/barb_arrow.png" id="4_geh82"]
+[ext_resource type="Texture2D" uid="uid://cyb58hglrd1im" path="res://textures/barb_arrow_empty.png" id="5_pw7fo"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x6uns"]
 bg_color = Color(1, 1, 1, 1)
@@ -56,7 +58,7 @@ custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-texture = ExtResource("3_0wejh")
+texture = ExtResource("3_xsqlu")
 expand_mode = 1
 
 [node name="BottomRight" type="VBoxContainer" parent="."]
@@ -80,16 +82,60 @@ custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-texture = ExtResource("3_0wejh")
+texture = ExtResource("3_xsqlu")
 expand_mode = 1
 
 [node name="FaceIcon" type="TextureRect" parent="."]
-layout_mode = 2
-offset_left = 25.0
-offset_top = 74.0
-offset_right = 185.0
-offset_bottom = 234.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -70.0
+offset_right = 70.0
+offset_bottom = 70.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_0wejh")
+texture = ExtResource("3_xsqlu")
 expand_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 224.0
+offset_right = 175.0
+offset_bottom = 244.0
+
+[node name="BackButton" type="TextureButton" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("4_geh82")
+texture_disabled = ExtResource("5_pw7fo")
+ignore_texture_size = true
+stretch_mode = 5
+flip_h = true
+
+[node name="FwdButton" type="TextureButton" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("4_geh82")
+texture_disabled = ExtResource("5_pw7fo")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -30.0
+offset_right = 40.0
+grow_horizontal = 0
+grow_vertical = 0
+color = Color(0.333333, 0.282353, 0.643137, 1)
+edit_alpha = false

@@ -63,7 +63,6 @@ stretch_mode = 1
 script = ExtResource("5_5hwgm")
 
 [node name="Table" type="TextureRect" parent="Display"]
-modulate = Color(0.678431, 0.678431, 0.678431, 1)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -73,7 +72,6 @@ texture = ExtResource("3_e3pou")
 expand_mode = 2
 
 [node name="Players" type="Control" parent="Display/Table"]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -135,9 +133,9 @@ offset_bottom = 360.0
 [node name="player_icon8" parent="Display/Table/Players" instance=ExtResource("4_26j3u")]
 layout_mode = 0
 offset_left = -578.0
-offset_top = 105.0
+offset_top = 60.0
 offset_right = -450.0
-offset_bottom = 285.0
+offset_bottom = 240.0
 
 [node name="player_icon9" parent="Display/Table/Players" instance=ExtResource("4_26j3u")]
 layout_mode = 0

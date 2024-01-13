@@ -9,6 +9,7 @@ extends Node
 @onready var chip_zoom = $ChipZoom
 @onready var sfxer = $AudioStreamPlayer
 @onready var chat = $Chat
+@onready var players = $Table/Players
 
 const CHIP_TEMPLATE = "[img=24]res://textures/ico_chips.png[/img] %d"
 const UI_CARD = preload("res://scenes/ui/ui_card.tscn")
@@ -18,6 +19,13 @@ const ICON_SIZE = 40
 
 func _ready():
 	$MultiplayerSynchronizer.synchronized.connect(update_display)
+	for idx in Netgame.players.size():
+		var icon = players.get_child(idx)
+		icon.setup(Netgame.players.keys()[idx])
+		$MultiplayerSynchronizer.synchronized.connect(icon.update)
+	for child in players.get_children():
+		if child.id == -1:
+			child.visible = false
 	
 	if(multiplayer.get_unique_id() == 1):
 		var display_timer = Timer.new()

@@ -44,7 +44,7 @@ func update_player_display(_remaining = null):
 	player_display.pop()
 
 func create_game():
-	Netgame.player_info.name = player_inputs.get_player_name()
+	set_player_info()
 	
 	var port = port_input.value
 	var error = Netgame.create_game(port)
@@ -65,7 +65,7 @@ func create_game():
 		player_display.pop()
 
 func on_join_button():
-	Netgame.player_info.name = player_inputs.get_player_name()
+	set_player_info()
 	
 	var error
 	if ":" in address_bar.text:
@@ -99,6 +99,11 @@ func on_cancel_button():
 	lobby_controls.visible = true
 	player_inputs.set_editable(true)
 	$LobbyControls/LobbyMenu.tabs_visible = false
+
+func set_player_info():
+	Netgame.player_info.name = player_inputs.get_player_name()
+	Netgame.player_info.color = player_inputs.get_player_color()
+	Netgame.player_info.icon = player_inputs.get_player_icon()
 
 func on_start_button():
 	set_lobby_rules()
