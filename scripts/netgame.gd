@@ -82,8 +82,6 @@ func _on_player_disconnected(id):
 			game_state.losers.append(id)
 			game_state.folded_players.append(id)
 			game_state.pot += players[id].chips
-#			if multiplayer.is_server():
-#				sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		else:
 			players.erase(id)
 		
