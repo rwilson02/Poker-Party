@@ -28,5 +28,6 @@
 	"MIN_BET": 5,
 	"WINNERS": 1,
 	"WILDS": 0,
-	"BALL": 1
+	"BALL": 1,
+	"BLINDING": 0
 }

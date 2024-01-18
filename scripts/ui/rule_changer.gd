@@ -5,9 +5,9 @@ signal option_selected(valid)
 
 # Delimiters of change types
 # All powers of two -1 because increases are odds
-const ONE_TIME_CHANGES = 2 ** 2 - 1 
-const TWO_TIME_CHANGES = 2 ** 5 - 1
-const DEPENDENT_CHANGES = 2 ** 8 - 1
+const ONE_TIME_CHANGES = 2 ** 2 - 1 # 3
+const TWO_TIME_CHANGES = 2 ** 5 - 1 # 31, toggles also go here
+const DEPENDENT_CHANGES = 2 ** 8 - 1 # 255
 const DEPENDENT_MAX_LIMIT = 3
 
 # Other constants
@@ -31,7 +31,7 @@ enum CHANGES {
 	CARDS_DOWN,
 	COMM_UP,
 	COMM_DOWN,
-	BALL_FLIP, # This isn't a two-time change technically but it works in the appearance code
+	BALL_FLIP,
 	# Dependent changes, in which you can only have increases first
 	WINNERS_UP = DEPENDENT_CHANGES,
 	WINNERS_DOWN,
@@ -69,7 +69,7 @@ func compute_possible_changes():
 		possible_changes.erase("FULL_RESET")
 	
 	# Don't offer trickle down if there aren't enough players to benefit
-	if Netgame.players - 1 >= Rules.RULES.CURRENT_CHANGES.count("WINNERS_UP"):
+	if Netgame.players.keys().size() - 1 >= Rules.RULES.CURRENT_CHANGES.count("WINNERS_UP"):
 		possible_changes.erase("WINNERS_UP")
 	
 	for change in CHANGES:
@@ -106,10 +106,9 @@ func setup_menu():
 		option_box.get_node("Title").text = TEXT_TEMPLATE % info.TITLE
 		option_box.get_node("Image").texture = load(CHANGE_ICON_TEMPLATE % info.ICON)
 		
-		option_box.get_node("Image").flip_v = (info.RULE == "BALL" and Rules.RULES.BALL == 1)
-		
 		option_box.get_node("Description").text = TEXT_TEMPLATE % (info.DESC % info.VALUE) \
 			if info.FORMATTED else TEXT_TEMPLATE % info.DESC
+		
 		var option_button = option_box.get_node("Select")
 		option_button.disabled = false
 		if option_button.pressed.is_connected(on_button_pressed):
@@ -135,16 +134,19 @@ static func get_info_dict(raw_info):
 	else:
 		info = {
 			"TITLE": raw_info[3],
-			"ICON": raw_info[1] if not raw_info[1].is_empty() else raw_info[0],
+			"ICON": raw_info[1] if (not raw_info[1].is_empty() and Rules.RULES[raw_info[5]] < 0) else raw_info[0],
 			"DESC": raw_info[4],
 			"FORMATTED": raw_info[2] as int as bool,
 			"RULE": raw_info[5],
-			"VALUE": Rules.RULES[raw_info[5]] + (raw_info[6] as int) \
-				if Rules.RULES.has(raw_info[5]) else (raw_info[6] as int)
 		}
-	
-	if info.RULE == "BALL":
-		info.VALUE = ["high", "low"] if Rules.RULES.BALL == 1 else ["low", "high"]
+		if raw_info[6].is_valid_int():
+			info.VALUE = Rules.RULES[raw_info[5]] + (raw_info[6] as int) \
+				if Rules.RULES.has(raw_info[5]) else (raw_info[6] as int)
+		elif raw_info[6] is String: # Presume this is a toggle
+			info.VALUE = Array(raw_info[6].split("|"))
+			if Rules.RULES[raw_info[5]] < 0:
+				info.VALUE.reverse()
+		else: info.VALUE = 0
 	
 	return info
 
