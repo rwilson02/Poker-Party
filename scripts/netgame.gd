@@ -82,6 +82,7 @@ func _on_player_disconnected(id):
 			game_state.losers.append(id)
 			game_state.folded_players.append(id)
 			game_state.pot += players[id].chips
+			players[id].chips = 0
 		else:
 			players.erase(id)
 		
