@@ -69,7 +69,7 @@ func compute_possible_changes():
 		possible_changes.erase("FULL_RESET")
 	
 	# Don't offer trickle down if there aren't enough players to benefit
-	if Netgame.players.keys().size() - 1 >= Rules.RULES.CURRENT_CHANGES.count("WINNERS_UP"):
+	if Netgame.players.keys().size() - 1 <= Rules.RULES.CURRENT_CHANGES.count("WINNERS_UP"):
 		possible_changes.erase("WINNERS_UP")
 	
 	for change in CHANGES:
