@@ -18,11 +18,14 @@ const HOLDER_BASE_WIDTH = 600
 const ICON_SIZE = 40
 
 func _ready():
+	var icons = []
+	
 	$MultiplayerSynchronizer.synchronized.connect(update_display)
 	for idx in Netgame.players.size():
 		var icon = players.get_child(idx)
 		icon.setup(Netgame.players.keys()[idx])
 		$MultiplayerSynchronizer.synchronized.connect(icon.update)
+		icons.append(icon)
 	for child in players.get_children():
 		if child.id == -1:
 			child.visible = false
@@ -31,6 +34,8 @@ func _ready():
 		var display_timer = Timer.new()
 		display_timer.one_shot = false
 		display_timer.timeout.connect(update_display)
+		for i in icons:
+			display_timer.timeout.connect(i.update)
 		add_child(display_timer)
 		display_timer.start($MultiplayerSynchronizer.replication_interval)
 
