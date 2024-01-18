@@ -1,12 +1,9 @@
 extends Node
 
-# Spades, Hearts, Clubs, Diamonds, Stars, Moons
-#const COLORS = [Color.BLACK, Color.RED, Color.BLACK, Color.RED, Color.DARK_MAGENTA, Color.DARK_MAGENTA]
-const SUITS_PER_ROW = 4
-const ROWS = 2
-const SUIT_SIZE = 256
-
 @export var auto: bool
+@export var flipped: bool
+
+const FLIP_TIME: float = 0.8
 
 func _ready():
 	if auto:
@@ -15,7 +12,7 @@ func _ready():
 
 func _make_custom_tooltip(for_text: String):
 	var tooltip = RichTextLabel.new()
-	tooltip.text = "[color=WHITE]%s[/color]" % for_text
+	tooltip.text = "[color=WHITE]%s[/color]" % for_text if not flipped else "???"
 	tooltip.bbcode_enabled = true
 	tooltip.fit_content = true
 	tooltip.autowrap_mode = TextServer.AUTOWRAP_OFF
@@ -31,10 +28,6 @@ func setup(card: int):
 	var suit = Rules.get_suit(card)
 	var wild = value == "??"
 	
-#	var POS = Vector2(suit % SUITS_PER_ROW, suit / SUITS_PER_ROW) \
-#		if not wild else Vector2(SUITS_PER_ROW - 1, ROWS - 1)
-#	var SIZE = Vector2.ONE * SUIT_SIZE
-	
 	for i in icons:
 		i.texture.region = Rules.get_suit_loc(suit)
 	for t in texts:
@@ -43,3 +36,18 @@ func setup(card: int):
 		idx.modulate = Rules.SUIT_COLORS[suit] if not wild else Color.BLACK
 		
 	self.tooltip_text = Rules.get_card_string(card)
+	
+	if flipped: $Back.visible = true
+
+func flip(instant = false):
+	if instant:
+		flipped = not flipped
+		$Back.visible = flipped
+	else:
+		var tween = create_tween()
+		tween.tween_property(self, "scale", Vector2(0, 1), FLIP_TIME / 2)\
+			.set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_IN)
+		tween.tween_property(self, "flipped", not flipped, 0)
+		tween.tween_property($Back, "visible", not flipped, 0)
+		tween.tween_property(self, "scale", Vector2.ONE, FLIP_TIME / 2)\
+			.set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
