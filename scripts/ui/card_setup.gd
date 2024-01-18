@@ -4,6 +4,10 @@ extends Node
 @export var flipped: bool
 
 const FLIP_TIME: float = 0.8
+const JACKS = preload("res://textures/cards/jack_atlas.png")
+const QUEENS = preload("res://textures/cards/queen_atlas.png")
+const KINGS = preload("res://textures/cards/king_atlas.png")
+const FACE_ART_SIZE = Vector2i(210, 322)
 
 func _ready():
 	if auto:
@@ -20,21 +24,32 @@ func _make_custom_tooltip(for_text: String):
 
 func setup(card: int):
 	var indices = [$TopLeft, $BottomRight]
-	var icons = [$TopLeft/Icon, $BottomRight/Icon]
-	var texts = [$TopLeft/Text, $BottomRight/Text]
+#	var icons = [$TopLeft/Icon, $BottomRight/Icon]
+#	var texts = [$TopLeft/Text, $BottomRight/Text]
+	var face = $FaceArt
 	
 	set_meta("card", card)
 	var value = Rules.get_proper_value(card)
 	var suit = Rules.get_suit(card)
 	var wild = value == "??"
+	var color = Rules.SUIT_COLORS[suit] if not wild else Color.BLACK
 	
-	for i in icons:
-		i.texture.region = Rules.get_suit_loc(suit)
-	for t in texts:
-		t.text = value
+#	for i in icons:
+#		i.texture.region = Rules.get_suit_loc(suit)
+#	for t in texts:
+#		t.text = value
 	for idx in indices:
-		idx.modulate = Rules.SUIT_COLORS[suit] if not wild else Color.BLACK
-		
+		idx.modulate = color
+		idx.get_node("Icon").texture.region = Rules.get_suit_loc(suit)
+		idx.get_node("Text").text = value
+	face.modulate = color
+	
+	var face_card = "JQK".find(value)
+	if face_card > -1:
+#		var atlas = [JACKS, QUEENS, KINGS]
+		face.texture.atlas = [JACKS, QUEENS, KINGS][face_card]
+		face.texture.region = Rect2(Vector2.RIGHT * FACE_ART_SIZE.x * (suit + 1), FACE_ART_SIZE)
+	
 	self.tooltip_text = Rules.get_card_string(card)
 	
 	if flipped: $Back.visible = true
