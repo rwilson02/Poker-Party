@@ -148,7 +148,7 @@ func integerize(dict: Dictionary):
 	for key in dict:
 		match typeof(dict[key]):
 			TYPE_FLOAT:
-				dict[key] = int(dict[key])
+				dict[key] = roundi(dict[key])
 			TYPE_DICTIONARY:
 				integerize(dict[key])
 			_: pass
