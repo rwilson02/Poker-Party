@@ -64,9 +64,7 @@ func start_game(restart):
 
 func gameplay_loop():
 	initial_round_tasks()
-#	Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 	deal_cards()
-#	Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 	TIMER.start(1)
 	await TIMER.timeout
 	
@@ -77,7 +75,6 @@ func gameplay_loop():
 	if Netgame.get_live_players() > 1 and not restart_requested:
 		while Netgame.game_state.comm_cards.size() < Rules.RULES.COMM_CARDS:
 			Netgame.game_state.comm_cards.append(deck.pop_back())
-#			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 			TIMER.start(1)
 			await TIMER.timeout
 			# Another betting round
@@ -92,7 +89,6 @@ func gameplay_loop():
 			TIMER.start(3 + winners.size())
 			await TIMER.timeout
 		credit_winners(winners)
-#		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		# Anyone with no chips by now has lost the game
 		# Also remove player cards because we're going to the next round
