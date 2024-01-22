@@ -153,8 +153,12 @@ func determine_card(flavor: String, holder: Node, id: int):
 			marker.add_child(create_new_card(corresponding_card))
 
 func create_new_card(card: int):
+	var blind = Rules.odds(Rules.RULES.BLINDING)
 	var new_card = UI_CARD.instantiate()
 	new_card.setup(card)
+	
+	if blind: new_card.flip(true)
+	
 	new_card.scale = CARD_SCALE
 	return new_card
 
@@ -168,8 +172,9 @@ func display_showdown(results: Array):
 	for pair in results:
 		var id = pair[0]
 		var hand = Hand.new(pair[1])
+		
 		showdown_text.append_text("%s:\n" % Netgame.players[id].name)
-		showdown_text.append_text("[b]%s[/b]\n" % Hand.hand_to_string(pair[1]))
+		showdown_text.append_text("[b]%s[/b]\n" % Hand.hand_to_string(hand))
 		showdown_text.append_text("[i]%s[/i]\n\n" % hand.get_name())
 	
 	var in_tween = create_tween()

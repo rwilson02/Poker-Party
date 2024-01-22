@@ -37,6 +37,8 @@ enum CHANGES {
 	WINNERS_DOWN,
 	WILD_UP,
 	WILD_DOWN,
+	BLINDING_UP,
+	BLINDING_DOWN,
 }
 
 @onready var option_container = $HBoxContainer

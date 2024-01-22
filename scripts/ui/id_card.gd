@@ -31,6 +31,7 @@ func _ready():
 	
 	change_icon(selected_icon)
 	color_all_children(self, main_color)
+	$ColorPickerButton.color = main_color
 
 func get_player_name(): 
 	return player_name.text if not player_name.text.is_empty() else "Player"

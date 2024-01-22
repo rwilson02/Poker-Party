@@ -197,3 +197,14 @@ func get_changes():
 	return change_array
 
 func basic_rules(): return integerize(load_json_at("res://rules/base_rules.json"))
+
+func odds(chance) -> bool:
+	if chance is int:
+		if chance == 100: return true
+		elif chance == 0: return false
+		else: return randf() * 100 < chance
+	elif chance is float:
+		if is_equal_approx(chance, 1.0): return true
+		elif is_zero_approx(chance): return false
+		else: return randf() < chance
+	else: return false
