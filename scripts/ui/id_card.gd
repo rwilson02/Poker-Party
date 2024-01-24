@@ -22,16 +22,31 @@ func _ready():
 	picker.presets_visible = false
 	
 	config = ConfigFile.new()
-	var err = config.load(CONFIG_PATH)
+	var err = config.load(CONFIG_PATH) if not OS.has_feature("editor") else ERR_UNAVAILABLE
 	if not err:
 		player_name.text = config.get_value("cosmetic", "name", "")
 		player_name.text_changed.emit(player_name.text)
-		main_color = config.get_value("cosmetic", "color", Color.SLATE_BLUE.darkened(0.2))
+		main_color = config.get_value("cosmetic", "color", Color.from_hsv(randf(), 0.7, 1.0))
 		selected_icon = config.get_value("cosmetic", "icon", 0)
+	else:
+		main_color = Color.from_hsv(randf(), 0.7, 1.0)
+		diff_icon(randi())
+	
+	if err or player_name.text.is_empty():
+		$EditReminder.visible = true
 	
 	change_icon(selected_icon)
 	color_all_children(self, main_color)
 	$ColorPickerButton.color = main_color
+	
+	var tween = create_tween()
+	tween.tween_interval(1)
+	tween.tween_property(self, "position", Vector2(position.x, position.y - 400), 1)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	
+	if $EditReminder.visible:
+		tween.tween_interval(2)
+		tween.tween_property($EditReminder, "modulate", Color.TRANSPARENT, 1)
 
 func get_player_name(): 
 	return player_name.text if not player_name.text.is_empty() else "Player"
@@ -44,11 +59,13 @@ func set_editable(can_edit: bool):
 	$HBoxContainer/BackButton.disabled = not can_edit
 
 func color_all_children(node: Node, color: Color):
+	var exceptions = [$ColorPickerButton, $EditReminder]
+	
 	for c in node.get_children():
 		if c.get_child_count() > 0:
 			color_all_children(c, color)
 		
-		if not c.name.contains("Color"):
+		if not c in exceptions:
 			c.self_modulate = color
 
 func diff_icon(dir: int):
