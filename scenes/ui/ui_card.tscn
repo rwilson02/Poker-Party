@@ -1,35 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://bci8qpa7y3464"]
+[gd_scene load_steps=6 format=3 uid="uid://bci8qpa7y3464"]
 
 [ext_resource type="Script" path="res://scripts/ui/card_setup.gd" id="1_hdb8b"]
 [ext_resource type="Texture2D" uid="uid://cl00gjptu5w6e" path="res://textures/cards/suit_selector.tres" id="1_lfkq7"]
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_y2g7m"]
+[ext_resource type="StyleBox" uid="uid://dvekrj5kb734i" path="res://theming/card_panel.tres" id="2_rsedt"]
 [ext_resource type="Texture2D" uid="uid://cir0ad8rbglwc" path="res://textures/cards/face_selector.tres" id="3_h3oe0"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_22ryu"]
-bg_color = Color(1, 1, 1, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-anti_aliasing = false
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_venk3"]
-bg_color = Color(1, 1, 1, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-anti_aliasing = false
 
 [node name="Card" type="Panel"]
 custom_minimum_size = Vector2(15, 22)
@@ -40,7 +15,7 @@ offset_bottom = 176.0
 pivot_offset = Vector2(120, 176)
 tooltip_text = "??🃏"
 theme = ExtResource("1_y2g7m")
-theme_override_styles/panel = SubResource("StyleBoxFlat_22ryu")
+theme_override_styles/panel = ExtResource("2_rsedt")
 script = ExtResource("1_hdb8b")
 metadata/card = 0
 
@@ -138,4 +113,4 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_venk3")
+theme_override_styles/panel = ExtResource("2_rsedt")
