@@ -48,7 +48,7 @@ func setup(card: int):
 	if face_card > -1:
 #		var atlas = [JACKS, QUEENS, KINGS]
 		face.texture.atlas = [JACKS, QUEENS, KINGS][face_card]
-		face.texture.region = Rect2(Vector2.RIGHT * FACE_ART_SIZE.x * (suit + 1), FACE_ART_SIZE)
+		face.texture.region = Rect2(Vector2.RIGHT * FACE_ART_SIZE.x * suit, FACE_ART_SIZE)
 	
 	self.tooltip_text = Rules.get_card_string(card)
 	
