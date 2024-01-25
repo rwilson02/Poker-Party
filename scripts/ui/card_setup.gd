@@ -59,10 +59,11 @@ func flip(instant = false):
 		flipped = not flipped
 		$Back.visible = flipped
 	else:
+		var original_scale = self.scale
 		var tween = create_tween()
-		tween.tween_property(self, "scale", Vector2(0, 1), FLIP_TIME / 2)\
+		tween.tween_property(self, "scale", Vector2(0, original_scale.y), FLIP_TIME / 2)\
 			.set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_IN)
 		tween.tween_property(self, "flipped", not flipped, 0)
 		tween.tween_property($Back, "visible", not flipped, 0)
-		tween.tween_property(self, "scale", Vector2.ONE, FLIP_TIME / 2)\
+		tween.tween_property(self, "scale", original_scale, FLIP_TIME / 2)\
 			.set_trans(Tween.TRANS_CIRC).set_ease(Tween.EASE_OUT)
