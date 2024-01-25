@@ -25,5 +25,8 @@ func setup(this_player: int):
 	update()
 
 func update():
-	icon.modulate = Netgame.players[id].color if not id in Netgame.game_state.losers else Color.DIM_GRAY
-	text.text = TEXT_TEMPLATE % [Netgame.players[id].name, Netgame.players[id].chips]
+	var player = Netgame.players[id]
+	icon.modulate = player.color if not id in Netgame.game_state.losers else Color.DIM_GRAY
+	var top_line = "[pulse freq=1.0 color=#ffffff40 ease=-2.0]▶[/pulse] %s" % player.name if player.awaiting else player.name
+	
+	text.text = TEXT_TEMPLATE % [top_line, Netgame.players[id].chips]

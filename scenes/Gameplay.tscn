@@ -43,7 +43,7 @@ corner_radius_top_right = 5
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_k628p"]
 properties/0/path = NodePath("PotText:text")
 properties/0/spawn = true
-properties/0/sync = true
+properties/0/replication_mode = 1
 
 [node name="Gameplay" type="Node"]
 script = ExtResource("1_glytd")
