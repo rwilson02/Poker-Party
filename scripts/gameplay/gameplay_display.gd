@@ -153,11 +153,10 @@ func determine_card(flavor: String, holder: Node, id: int):
 			marker.add_child(create_new_card(corresponding_card))
 
 func create_new_card(card: int):
-	var blind = Rules.odds(Rules.RULES.BLINDING)
 	var new_card = UI_CARD.instantiate()
 	new_card.setup(card)
 	
-	if blind: new_card.flip(true)
+	if card & Rules.HIDDEN: new_card.flip(true)
 	
 	new_card.scale = CARD_SCALE
 	return new_card
@@ -165,6 +164,15 @@ func create_new_card(card: int):
 @rpc("authority","call_local","reliable")
 func display_showdown(results: Array):
 	showdown_panel.size = Vector2(50 * Rules.RULES.CARDS_PER_HAND + 50, 400)
+	
+	var any_flips = false
+	for marker in (comm_card_holder.get_children() + hole_card_holder.get_children()):
+		if marker.get_child(0).flipped:
+			any_flips = true
+			marker.get_child(0).flip()
+			await get_tree().create_timer(0.5).timeout
+	if any_flips:
+		await get_tree().create_timer(1).timeout
 	
 	var showdown_text: RichTextLabel = showdown_panel.find_child("RichTextLabel")
 	showdown_text.clear()

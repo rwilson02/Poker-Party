@@ -28,8 +28,8 @@ func setup(card: int):
 #	var texts = [$TopLeft/Text, $BottomRight/Text]
 	var face = $FaceArt
 	
-	set_meta("card", card)
 	var value = Rules.get_proper_value(card)
+	set_meta("card", card)
 	var suit = Rules.get_suit(card)
 	var wild = value == "??"
 	var color = Rules.SUIT_COLORS[suit] if not wild else Color.BLACK
