@@ -17,27 +17,15 @@ const CARD_SCALE = Vector2.ONE * 0.4
 const HOLDER_BASE_WIDTH = 600
 const ICON_SIZE = 40
 
+var host_timer
+
 func _ready():
-	var icons = []
-	
-	$MultiplayerSynchronizer.synchronized.connect(update_display)
-	for idx in Netgame.players.size():
-		var icon = players.get_child(idx)
-		icon.setup(Netgame.players.keys()[idx])
-		$MultiplayerSynchronizer.synchronized.connect(icon.update)
-		icons.append(icon)
-	for child in players.get_children():
-		if child.id == -1:
-			child.visible = false
-	
 	if(multiplayer.get_unique_id() == 1):
-		var display_timer = Timer.new()
-		display_timer.one_shot = false
-		display_timer.timeout.connect(update_display)
-		for i in icons:
-			display_timer.timeout.connect(i.update)
-		add_child(display_timer)
-		display_timer.start($MultiplayerSynchronizer.replication_interval)
+		host_timer = Timer.new()
+		host_timer.one_shot = false
+		host_timer.timeout.connect(update_display)
+		add_child(host_timer)
+		host_timer.start($MultiplayerSynchronizer.replication_interval)
 
 func update_display():
 	# Handle scorebug
@@ -211,3 +199,20 @@ func chip_zoom_anim(to_pot: bool):
 
 func log_to_chat(this: String):
 	chat.add_message(this)
+
+func setup_icons(ids):
+	var icons = []
+	
+	$MultiplayerSynchronizer.synchronized.connect(update_display)
+	for idx in ids.size():
+		var icon = players.get_child(idx)
+		icon.setup(ids[idx])
+		$MultiplayerSynchronizer.synchronized.connect(icon.update)
+		icons.append(icon)
+	for child in players.get_children():
+		if child.id == -1:
+			child.visible = false
+	
+	if multiplayer.get_unique_id() == 1:
+		for i in icons:
+			host_timer.timeout.connect(i.update)
