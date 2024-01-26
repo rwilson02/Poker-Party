@@ -200,6 +200,7 @@ func chip_zoom_anim(to_pot: bool):
 func log_to_chat(this: String):
 	chat.add_message(this)
 
+@rpc("authority", "call_local", "reliable")
 func setup_icons(ids):
 	var icons = []
 	

@@ -53,7 +53,7 @@ func start_game(restart):
 		Netgame.players[id].chips = Rules.RULES.INITIAL_CHIPS
 	Netgame.game_state.active_players.shuffle()
 	
-	DISPLAY.setup_icons(Netgame.game_state.active_players)
+	DISPLAY.setup_icons.rpc(Netgame.game_state.active_players)
 	
 	while Netgame.game_state.active_players.size() > 1 and round_start_index < Rules.RULES.GAMEPLAY_ROUNDS:
 		await gameplay_loop()
