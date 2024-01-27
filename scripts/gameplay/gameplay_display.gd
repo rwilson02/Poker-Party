@@ -11,6 +11,8 @@ extends Node
 @onready var chat = $Chat
 @onready var players = $Table/Players
 
+signal done
+
 const CHIP_TEMPLATE = "[img=24]res://textures/ico_chips.png[/img] %d"
 const UI_CARD = preload("res://scenes/ui/ui_card.tscn")
 const CARD_SCALE = Vector2.ONE * 0.4
@@ -179,6 +181,8 @@ func display_showdown(results: Array):
 	await get_tree().create_timer(3 + results.size()).timeout
 	var out_tween = create_tween()
 	out_tween.tween_property(showdown_panel, "position", showdown_panel.position + (Vector2.RIGHT * 400), 0.5)
+	
+	done.emit()
 
 @rpc("authority", "call_local", "reliable")
 func chip_zoom_anim(to_pot: bool):

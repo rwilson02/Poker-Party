@@ -88,8 +88,7 @@ func gameplay_loop():
 		var winners = get_winners()
 		if winners.size() > 1:
 			DISPLAY.display_showdown.rpc(winners)
-			TIMER.start(3 + winners.size())
-			await TIMER.timeout
+			await DISPLAY.done
 		credit_winners(winners)
 		
 		# Anyone with no chips by now has lost the game
