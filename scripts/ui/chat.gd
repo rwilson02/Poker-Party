@@ -12,7 +12,7 @@ var regex: RegEx
 var messages = 0
 var scroll_val = 0.0
 
-var collapsed = false
+var collapsed = true
 var is_moving = false
 
 func _ready():
@@ -83,7 +83,7 @@ func move():
 		is_moving = true
 		
 		var tween1 = create_tween()
-		tween1.tween_property(self, "position", self.position + Vector2.DOWN * (-200 if collapsed else 200), 0.5)\
+		tween1.tween_property(self, "position", self.position + Vector2.UP * (200 if collapsed else -200), 0.5)\
 			.set_trans(Tween.TRANS_CUBIC)
 		var tween2 = create_tween()
 		tween2.tween_property($Panel/TextureButton, "rotation", $Panel/TextureButton.rotation + PI, 0.5)

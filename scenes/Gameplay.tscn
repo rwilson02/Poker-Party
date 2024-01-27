@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=28 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
@@ -18,8 +18,19 @@
 [ext_resource type="Script" path="res://scripts/ui/chat.gd" id="9_nl5ow"]
 [ext_resource type="FontFile" uid="uid://15waa33347nr" path="res://theming/DejaVuSerifCondensed-Bold.ttf" id="10_jh3m0"]
 [ext_resource type="Texture2D" uid="uid://dafgvxe851s1m" path="res://textures/double-arrow.png" id="11_bwsl0"]
-[ext_resource type="StyleBox" uid="uid://bwa11cbuhe8wh" path="res://theming/gold_panel.tres" id="11_uu4p1"]
 [ext_resource type="PackedScene" uid="uid://ct2nwwuqvympr" path="res://scenes/ui/pause_menu.tscn" id="12_d8vuc"]
+[ext_resource type="Texture2D" uid="uid://vv40vh0lqw2w" path="res://textures/pause_button.png" id="20_yah2q"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_viyi8"]
+bg_color = Color(0.235294, 0.211765, 0.0156863, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.831373, 0.741176, 0, 1)
+corner_radius_top_left = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v6blc"]
 bg_color = Color(0.235294, 0.211765, 0.0156863, 1)
@@ -43,7 +54,15 @@ corner_radius_top_right = 5
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_k628p"]
 properties/0/path = NodePath("PotText:text")
 properties/0/spawn = true
-properties/0/sync = true
+properties/0/replication_mode = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e1yy7"]
+bg_color = Color(0.831373, 0.741176, 0, 1)
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ebree"]
+bg_color = Color(0.713726, 0.635294, 0, 1)
 
 [node name="Gameplay" type="Node"]
 script = ExtResource("1_glytd")
@@ -63,7 +82,6 @@ stretch_mode = 1
 script = ExtResource("5_5hwgm")
 
 [node name="Table" type="TextureRect" parent="Display"]
-modulate = Color(0.678431, 0.678431, 0.678431, 1)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -73,7 +91,6 @@ texture = ExtResource("3_e3pou")
 expand_mode = 2
 
 [node name="Players" type="Control" parent="Display/Table"]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -135,9 +152,9 @@ offset_bottom = 360.0
 [node name="player_icon8" parent="Display/Table/Players" instance=ExtResource("4_26j3u")]
 layout_mode = 0
 offset_left = -578.0
-offset_top = 105.0
+offset_top = 60.0
 offset_right = -450.0
-offset_bottom = 285.0
+offset_bottom = 240.0
 
 [node name="player_icon9" parent="Display/Table/Players" instance=ExtResource("4_26j3u")]
 layout_mode = 0
@@ -233,7 +250,7 @@ offset_right = 357.0
 offset_bottom = 460.0
 grow_horizontal = 0
 theme = ExtResource("6_b6hf0")
-theme_override_styles/panel = ExtResource("11_uu4p1")
+theme_override_styles/panel = SubResource("StyleBoxFlat_viyi8")
 
 [node name="MarginContainer" type="MarginContainer" parent="Display/ShowdownPanel"]
 layout_mode = 1
@@ -267,9 +284,8 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -320.0
-offset_top = -200.0
 offset_right = -20.0
-offset_bottom = -20.0
+offset_bottom = 180.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_v6blc")
@@ -342,6 +358,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+rotation = 3.14159
 pivot_offset = Vector2(20, 20)
 texture_normal = ExtResource("11_bwsl0")
 ignore_texture_size = true
@@ -394,7 +411,7 @@ offset_right = 400.0
 offset_bottom = 250.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = ExtResource("11_uu4p1")
+theme_override_styles/panel = SubResource("StyleBoxFlat_viyi8")
 
 [node name="End" type="Panel" parent="Menus"]
 anchors_preset = 8
@@ -409,7 +426,7 @@ offset_bottom = -595.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("6_b6hf0")
-theme_override_styles/panel = ExtResource("11_uu4p1")
+theme_override_styles/panel = SubResource("StyleBoxFlat_viyi8")
 
 [node name="BigText" type="Label" parent="Menus/End"]
 layout_mode = 1
@@ -492,9 +509,44 @@ tooltip_text = "Exit this lobby."
 text = "EXIT LOBBY"
 
 [node name="Pause" parent="Menus" instance=ExtResource("12_d8vuc")]
-offset_left = -350.0
+offset_left = -300.0
 offset_top = -300.0
-offset_right = -50.0
+offset_right = 0.0
 offset_bottom = 100.0
 
+[node name="Panel" type="Panel" parent="Menus/Pause"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_right = 40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_e1yy7")
+
+[node name="TextureButton" type="TextureButton" parent="Menus/Pause/Panel"]
+self_modulate = Color(0.235294, 0.211765, 0.0156863, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("20_yah2q")
+
+[node name="Stem" type="Panel" parent="Menus/Pause"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -114.0
+offset_top = -20.0
+offset_right = 40.0
+offset_bottom = 20.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ebree")
+
 [node name="Timer" type="Timer" parent="."]
+
+[connection signal="pressed" from="Menus/Pause/Panel/TextureButton" to="Menus" method="toggle_pause"]

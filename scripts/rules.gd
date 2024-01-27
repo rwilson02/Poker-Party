@@ -1,8 +1,10 @@
 extends Node
 
 @export var RULES: Dictionary
-var FREE_WILD = 0x2_0000
-var WILD = 0x1_0000
+const HIDDEN = 0x4_0000
+const FREE_WILD = 0x2_0000
+const WILD = 0x1_0000
+const VALUE = 0xFFFF
 # Spades, Hearts, Clubs, Diamonds, Stars, Moons
 var SUIT_COLORS = [Color.SLATE_BLUE.darkened(0.2), Color.RED, Color.SLATE_BLUE.darkened(0.2), Color.RED, \
 	Color.GOLDENROD, Color.GOLDENROD]
@@ -19,16 +21,19 @@ func get_value(card):
 	if card is int:
 		if card == FREE_WILD:
 			return FREE_WILD
-		elif card & WILD:
-			if card & FREE_WILD:
-				return card ^ (WILD | FREE_WILD)
-			else:
-				return card ^ WILD
 		else:
-			return card % RULES.VALS_PER_SUIT
+			return (card & VALUE) % RULES.VALS_PER_SUIT
 	else:
 		return -1
-func get_suit(card): return card / RULES.VALS_PER_SUIT if card is int else -1
+func get_suit(card): 
+	if not card is int:
+		return -1
+	else:
+		if card & HIDDEN:
+			return (card & VALUE) / RULES.VALS_PER_SUIT
+		else: 
+			return card / RULES.VALS_PER_SUIT
+	#return card / RULES.VALS_PER_SUIT if card is int else -1
 func get_suit_loc(suit):
 	const SUITS_PER_ROW = 4
 	const ROWS = 2
@@ -54,17 +59,17 @@ func get_proper_value(card):
 	else:
 		return str(card_value + 2)
 
-func get_proper_symbol(card: int):
-	if card == null:
-		return null
-	elif card == FREE_WILD:
-		return "??\U01F0CF"
-	
-	# Spades, Hearts, Clubs, Diamonds, Stars, Moons
-	const suits = "\u2660\u2665\u2663\u2666\u2605\U01F319"
-	var card_suit = suits[get_suit(card)] if card < WILD else "\U01F0CF"
-	
-	return get_proper_value(card) + card_suit
+#func get_proper_symbol(card: int):
+	#if card == null:
+		#return null
+	#elif card == FREE_WILD:
+		#return "??\U01F0CF"
+	#
+	## Spades, Hearts, Clubs, Diamonds, Stars, Moons
+	#const suits = "\u2660\u2665\u2663\u2666\u2605\U01F319"
+	#var card_suit = suits[get_suit(card)] if card < WILD else "\U01F0CF"
+	#
+	#return get_proper_value(card) + card_suit
 
 func get_card_string(card):
 	const TEMPLATE = "%s[img=16 region=%s color=%s]%s[/img]"
@@ -148,7 +153,7 @@ func integerize(dict: Dictionary):
 	for key in dict:
 		match typeof(dict[key]):
 			TYPE_FLOAT:
-				dict[key] = int(dict[key])
+				dict[key] = roundi(dict[key])
 			TYPE_DICTIONARY:
 				integerize(dict[key])
 			_: pass
@@ -187,6 +192,10 @@ func get_changes():
 				template = "Play by %sball poker rules."
 				value = "low"
 				dependent = true
+			"BLINDING":
+				template = "Chance that a card is blind is %d%%."
+				value *= 15
+				dependent = true
 			_:
 				push_error("you fucked it")
 		if dependent:
@@ -197,3 +206,14 @@ func get_changes():
 	return change_array
 
 func basic_rules(): return integerize(load_json_at("res://rules/base_rules.json"))
+
+func odds(chance) -> bool:
+	if chance is int:
+		if chance == 100: return true
+		elif chance == 0: return false
+		else: return randf() * 100 < chance
+	elif chance is float:
+		if is_equal_approx(chance, 1.0): return true
+		elif is_zero_approx(chance): return false
+		else: return randf() < chance
+	else: return false

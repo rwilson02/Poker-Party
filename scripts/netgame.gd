@@ -16,7 +16,10 @@ var player_info = {
 	"cards": [],
 	"chips": 0,
 	"current_bet": 0,
-	"awaiting": false
+	"awaiting": false,
+	
+	"icon": 0,
+	"color": Color.BLACK
 }
 @export var game_state = {
 	"pot": 0,
@@ -79,8 +82,7 @@ func _on_player_disconnected(id):
 			game_state.losers.append(id)
 			game_state.folded_players.append(id)
 			game_state.pot += players[id].chips
-#			if multiplayer.is_server():
-#				sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
+			players[id].chips = 0
 		else:
 			players.erase(id)
 		

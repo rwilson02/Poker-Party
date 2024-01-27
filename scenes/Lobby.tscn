@@ -341,6 +341,23 @@ popup/item_0/id = 0
 popup/item_1/text = "Lowball"
 popup/item_1/id = 2
 
+[node name="BLINDING" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/BLINDING"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Chance to Blind Cards: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/BLINDING"]
+layout_mode = 2
+max_value = 45.0
+step = 15.0
+rounded = true
+suffix = "%"
+
 [node name="Control" type="Panel" parent="LobbyControls"]
 layout_mode = 1
 anchors_preset = 7
@@ -463,9 +480,9 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -130.0
-offset_top = -100.0
+offset_top = 92.0
 offset_right = 80.0
-offset_bottom = 208.0
+offset_bottom = 400.0
 grow_horizontal = 0
 grow_vertical = 0
 

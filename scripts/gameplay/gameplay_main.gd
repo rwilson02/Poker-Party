@@ -53,6 +53,8 @@ func start_game(restart):
 		Netgame.players[id].chips = Rules.RULES.INITIAL_CHIPS
 	Netgame.game_state.active_players.shuffle()
 	
+	DISPLAY.setup_icons.rpc(Netgame.game_state.active_players)
+	
 	while Netgame.game_state.active_players.size() > 1 and round_start_index < Rules.RULES.GAMEPLAY_ROUNDS:
 		await gameplay_loop()
 		if restart_requested: break
@@ -64,9 +66,7 @@ func start_game(restart):
 
 func gameplay_loop():
 	initial_round_tasks()
-#	Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 	deal_cards()
-#	Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 	TIMER.start(1)
 	await TIMER.timeout
 	
@@ -76,8 +76,7 @@ func gameplay_loop():
 	# (Live players = Players who are active (haven't lost) and haven't folded)
 	if Netgame.get_live_players() > 1 and not restart_requested:
 		while Netgame.game_state.comm_cards.size() < Rules.RULES.COMM_CARDS:
-			Netgame.game_state.comm_cards.append(deck.pop_back())
-#			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
+			Netgame.game_state.comm_cards.append(deck.pop_back() | Rules.HIDDEN * int(Rules.odds(Rules.RULES.BLINDING)))
 			TIMER.start(1)
 			await TIMER.timeout
 			# Another betting round
@@ -92,7 +91,6 @@ func gameplay_loop():
 			TIMER.start(3 + winners.size())
 			await TIMER.timeout
 		credit_winners(winners)
-#		Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		# Anyone with no chips by now has lost the game
 		# Also remove player cards because we're going to the next round
@@ -126,12 +124,20 @@ func initial_round_tasks():
 func deal_cards():
 	for i in (Rules.RULES.CARDS_PER_HAND - Rules.RULES.HOLE_CARDS):
 		if i >= Rules.RULES.COMM_CARDS: break
-		Netgame.game_state.comm_cards.append(deck.pop_back())
+		
+		var card = deck.pop_back()
+		if Rules.odds(Rules.RULES.BLINDING):
+			card |= Rules.HIDDEN
+		
+		Netgame.game_state.comm_cards.append(card)
 #		print("given comm card")
+	var player_card_probs = []
 	for i in Rules.RULES.HOLE_CARDS:
+		player_card_probs.append(Rules.odds(Rules.RULES.BLINDING))
+	for i in player_card_probs:
 		for id in Netgame.game_state.active_players:
 #			prints("given hole card to", id)
-			Netgame.players[id].cards.append(deck.pop_back())
+			Netgame.players[id].cards.append(deck.pop_back() | (Rules.HIDDEN * int(i)))
 
 # Returns array of [winner id, winning hand] from best to worst
 func get_winners() -> Array:

@@ -1,20 +1,12 @@
-[gd_scene load_steps=7 format=3 uid="uid://dqf80ncy8fmxq"]
+[gd_scene load_steps=10 format=3 uid="uid://dqf80ncy8fmxq"]
 
 [ext_resource type="FontFile" uid="uid://15waa33347nr" path="res://theming/DejaVuSerifCondensed-Bold.ttf" id="1_k44p4"]
+[ext_resource type="StyleBox" uid="uid://dvekrj5kb734i" path="res://theming/card_panel.tres" id="1_l48x6"]
 [ext_resource type="Script" path="res://scripts/ui/id_card.gd" id="1_ycgv6"]
-[ext_resource type="Texture2D" uid="uid://cl00gjptu5w6e" path="res://textures/cards/suit_selector.tres" id="3_0wejh"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x6uns"]
-bg_color = Color(1, 1, 1, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
+[ext_resource type="Texture2D" uid="uid://cshuyhkkjyttb" path="res://textures/lobby/icon_selector.tres" id="3_xsqlu"]
+[ext_resource type="Texture2D" uid="uid://dk0rcm57vix5s" path="res://textures/barb_arrow.png" id="4_geh82"]
+[ext_resource type="Texture2D" uid="uid://cyb58hglrd1im" path="res://textures/barb_arrow_empty.png" id="5_pw7fo"]
+[ext_resource type="FontFile" uid="uid://ce2om7nbymu5y" path="res://theming/CLARE___.TTF" id="7_372tl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d668d"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
@@ -27,7 +19,7 @@ border_color = Color(1, 1, 1, 1)
 [node name="IDCard" type="Panel"]
 offset_right = 210.0
 offset_bottom = 308.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_x6uns")
+theme_override_styles/panel = ExtResource("1_l48x6")
 script = ExtResource("1_ycgv6")
 main_color = Color(0.333333, 0.282353, 0.643137, 1)
 
@@ -56,7 +48,7 @@ custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-texture = ExtResource("3_0wejh")
+texture = ExtResource("3_xsqlu")
 expand_mode = 1
 
 [node name="BottomRight" type="VBoxContainer" parent="."]
@@ -80,16 +72,87 @@ custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-texture = ExtResource("3_0wejh")
+texture = ExtResource("3_xsqlu")
 expand_mode = 1
 
 [node name="FaceIcon" type="TextureRect" parent="."]
-layout_mode = 2
-offset_left = 25.0
-offset_top = 74.0
-offset_right = 185.0
-offset_bottom = 234.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = -70.0
+offset_right = 70.0
+offset_bottom = 70.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_0wejh")
+texture = ExtResource("3_xsqlu")
 expand_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 35.0
+offset_top = 224.0
+offset_right = 175.0
+offset_bottom = 244.0
+
+[node name="BackButton" type="TextureButton" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("4_geh82")
+texture_disabled = ExtResource("5_pw7fo")
+ignore_texture_size = true
+stretch_mode = 5
+flip_h = true
+
+[node name="FwdButton" type="TextureButton" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture_normal = ExtResource("4_geh82")
+texture_disabled = ExtResource("5_pw7fo")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -30.0
+offset_right = 40.0
+grow_horizontal = 0
+grow_vertical = 0
+color = Color(0.333333, 0.282353, 0.643137, 1)
+edit_alpha = false
+
+[node name="EditReminder" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_top = -50.0
+offset_right = 210.0
+offset_bottom = -10.0
+theme_override_styles/panel = ExtResource("1_l48x6")
+
+[node name="Label" type="Label" parent="EditReminder"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -92.0
+offset_top = -12.0
+offset_right = 92.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("7_372tl")
+text = "✏ Add your details!"
+horizontal_alignment = 2
+vertical_alignment = 1

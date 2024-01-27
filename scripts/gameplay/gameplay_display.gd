@@ -9,6 +9,7 @@ extends Node
 @onready var chip_zoom = $ChipZoom
 @onready var sfxer = $AudioStreamPlayer
 @onready var chat = $Chat
+@onready var players = $Table/Players
 
 const CHIP_TEMPLATE = "[img=24]res://textures/ico_chips.png[/img] %d"
 const UI_CARD = preload("res://scenes/ui/ui_card.tscn")
@@ -16,15 +17,15 @@ const CARD_SCALE = Vector2.ONE * 0.4
 const HOLDER_BASE_WIDTH = 600
 const ICON_SIZE = 40
 
+var host_timer
+
 func _ready():
-	$MultiplayerSynchronizer.synchronized.connect(update_display)
-	
 	if(multiplayer.get_unique_id() == 1):
-		var display_timer = Timer.new()
-		display_timer.one_shot = false
-		display_timer.timeout.connect(update_display)
-		add_child(display_timer)
-		display_timer.start($MultiplayerSynchronizer.replication_interval)
+		host_timer = Timer.new()
+		host_timer.one_shot = false
+		host_timer.timeout.connect(update_display)
+		add_child(host_timer)
+		host_timer.start($MultiplayerSynchronizer.replication_interval)
 
 func update_display():
 	# Handle scorebug
@@ -142,6 +143,9 @@ func determine_card(flavor: String, holder: Node, id: int):
 func create_new_card(card: int):
 	var new_card = UI_CARD.instantiate()
 	new_card.setup(card)
+	
+	if card & Rules.HIDDEN: new_card.flip(true)
+	
 	new_card.scale = CARD_SCALE
 	return new_card
 
@@ -149,14 +153,24 @@ func create_new_card(card: int):
 func display_showdown(results: Array):
 	showdown_panel.size = Vector2(50 * Rules.RULES.CARDS_PER_HAND + 50, 400)
 	
+	var any_flips = false
+	for marker in (comm_card_holder.get_children() + hole_card_holder.get_children()):
+		if marker.get_child(0).flipped:
+			any_flips = true
+			marker.get_child(0).flip()
+			await get_tree().create_timer(0.5).timeout
+	if any_flips:
+		await get_tree().create_timer(1).timeout
+	
 	var showdown_text: RichTextLabel = showdown_panel.find_child("RichTextLabel")
 	showdown_text.clear()
 	
 	for pair in results:
 		var id = pair[0]
 		var hand = Hand.new(pair[1])
+		
 		showdown_text.append_text("%s:\n" % Netgame.players[id].name)
-		showdown_text.append_text("[b]%s[/b]\n" % Hand.hand_to_string(pair[1]))
+		showdown_text.append_text("[b]%s[/b]\n" % Hand.hand_to_string(hand))
 		showdown_text.append_text("[i]%s[/i]\n\n" % hand.get_name())
 	
 	var in_tween = create_tween()
@@ -185,3 +199,21 @@ func chip_zoom_anim(to_pot: bool):
 
 func log_to_chat(this: String):
 	chat.add_message(this)
+
+@rpc("authority", "call_local", "reliable")
+func setup_icons(ids):
+	var icons = []
+	
+	$MultiplayerSynchronizer.synchronized.connect(update_display)
+	for idx in ids.size():
+		var icon = players.get_child(idx)
+		icon.setup(ids[idx])
+		$MultiplayerSynchronizer.synchronized.connect(icon.update)
+		icons.append(icon)
+	for child in players.get_children():
+		if child.id == -1:
+			child.visible = false
+	
+	if multiplayer.get_unique_id() == 1:
+		for i in icons:
+			host_timer.timeout.connect(i.update)
