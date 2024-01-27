@@ -59,18 +59,6 @@ func get_proper_value(card):
 	else:
 		return str(card_value + 2)
 
-#func get_proper_symbol(card: int):
-	#if card == null:
-		#return null
-	#elif card == FREE_WILD:
-		#return "??\U01F0CF"
-	#
-	## Spades, Hearts, Clubs, Diamonds, Stars, Moons
-	#const suits = "\u2660\u2665\u2663\u2666\u2605\U01F319"
-	#var card_suit = suits[get_suit(card)] if card < WILD else "\U01F0CF"
-	#
-	#return get_proper_value(card) + card_suit
-
 func get_card_string(card):
 	const TEMPLATE = "%s[img=16 region=%s color=%s]%s[/img]"
 	const SUITS_PATH = "res://textures/cards/suit_atlas.png"
