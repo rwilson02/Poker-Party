@@ -197,11 +197,11 @@ func basic_rules(): return integerize(load_json_at("res://rules/base_rules.json"
 
 func odds(chance) -> bool:
 	if chance is int:
-		if chance == 100: return true
-		elif chance == 0: return false
+		if chance >= 100: return true
+		elif chance <= 0: return false
 		else: return randf() * 100 < chance
 	elif chance is float:
-		if is_equal_approx(chance, 1.0): return true
-		elif is_zero_approx(chance): return false
+		if is_equal_approx(chance, 1.0) or chance > 1.0: return true
+		elif is_zero_approx(chance) or signf(chance) == -1: return false
 		else: return randf() < chance
 	else: return false
