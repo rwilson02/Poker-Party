@@ -186,9 +186,10 @@ theme_override_constants/margin_top = 10
 [node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page3/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "	The goal of poker is to be the player with the best hand by the end of the round (Hand rankings can be found on the pause menu, or in the back of this book). In Poker Party, you win by having the most chips by the end of all the rounds.
+text = "	The goal of poker is to be the player with the best hand by the end of the round (Hand rankings can be found on the pause menu, or in the back of this book). In Poker Party, you win by having the most
+[img=24]res://textures/ico_chips.png[/img] chips by the end of all the rounds.
 
-	Players will get a certain amount of hole cards and enough community cards will be dealt to the table in order to complete a hand. Players will then make bets going clockwise around the table. Once the bets of all the remaining players match, the round continues. If there are still community cards left to deal, the next community card is dealt to the table and the next round of betting begins. If not, then all remaining players participate in the [i]showdown[/i], in which their best hands are compared and the winner recieves the chips in the pot. 
+	Players will get a certain amount of hole cards and enough community cards will be dealt to the table in order to complete a hand. Players will then make [img=24]res://textures/ico_chips_bet.png[/img] bets going clockwise around the table. Once the bets of all the remaining players match, the round continues. If there are still community cards left to deal, the next community card is dealt to the table and the next round of betting begins. If not, then all remaining players participate in the [i]showdown[/i], in which their best hands are compared and the winner recieves the chips in the pot. 
 
 	In Poker Party, after the chips are given to the winner(s), a Rule Change is enacted which can range from adding or removing cards from the deck to flipping the game on its head!"
 fit_content = true
@@ -218,13 +219,13 @@ layout_mode = 2
 bbcode_enabled = true
 text = "After the initial reveal of community cards, and each reveal after, players will take turns betting until the bets of all remaining players match, or nobody can bet any more chips. 
 
-[font_size=24]Pre-Bet[/font_size]
+[font_size=24]Pre-Bet[/font_size] [img=24]res://textures/ico_chips.png[/img]
 Before any player has placed a bet:
 [ul] You may [i]check[/i], which is to not place a bet yet.
  You may [i]bet[/i], opening the pot and setting the first limit for other players to match.
  You may [i]fold[/i], which is to give up your stake in the round and be exempt from further betting.[/ul]
 
-[font_size=24]Post-Bet[/font_size]
+[font_size=24]Post-Bet[/font_size] [img=24]res://textures/ico_chips_bet.png[/img]
 After some player has bet, your options change, though you reserve the right to fold at any time:
 [ul] You can [i]call[/i], adding as many chips to your bet as it takes to match the highest bet so far.
  You can [i]raise[/i], increasing the bet to match by some number of chips."
@@ -773,6 +774,35 @@ layout_mode = 2
 change = "COMM_DOWN"
 
 [node name="example_rule_change3" parent="PokerpediaBack/PageSep/PageR/Page18/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "WINNERS_UP"
+
+[node name="Page20" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageR/Page20"]
+layout_mode = 2
+theme_override_constants/margin_top = 55
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageR/Page20/MarginContainer"]
+layout_mode = 2
+
+[node name="example_rule_change" parent="PokerpediaBack/PageSep/PageR/Page20/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "BLINDING_UP"
+
+[node name="example_rule_change2" parent="PokerpediaBack/PageSep/PageR/Page20/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "BLINDING_DOWN"
+
+[node name="example_rule_change3" parent="PokerpediaBack/PageSep/PageR/Page20/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+visible = false
 layout_mode = 2
 change = "WINNERS_UP"
 
