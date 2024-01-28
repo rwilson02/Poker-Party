@@ -37,3 +37,7 @@ project/assembly_name="Poker Party Prototype"
 [gui]
 
 timers/tooltip_delay_sec=0.33
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
