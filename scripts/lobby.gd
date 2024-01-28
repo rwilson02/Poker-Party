@@ -19,6 +19,7 @@ func _ready():
 	timer.timeout.connect(timeout)
 	Netgame.players.clear()
 	Rules.reset()
+	$PlayerSetup/VBoxContainer/QuitButton.pressed.connect(func(): get_tree().quit())
 
 func test_start(remaining_players):
 	start_controls.get_node("StartButton").disabled = false if remaining_players >= 2 else true

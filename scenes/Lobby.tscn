@@ -460,18 +460,6 @@ offset_right = 570.0
 offset_bottom = 320.0
 grow_vertical = 2
 
-[node name="OpenPokerpedia" type="Button" parent="PlayerSetup"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = -50.0
-offset_right = 190.0
-offset_bottom = -20.0
-grow_vertical = 0
-text = "POKERPEDIA"
-
 [node name="IDCard" parent="PlayerSetup" instance=ExtResource("3_6nbw5")]
 layout_mode = 1
 anchors_preset = 3
@@ -486,6 +474,25 @@ offset_bottom = 400.0
 grow_horizontal = 0
 grow_vertical = 0
 
+[node name="VBoxContainer" type="VBoxContainer" parent="PlayerSetup"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -82.0
+offset_right = 190.0
+offset_bottom = -20.0
+grow_vertical = 0
+
+[node name="OpenPokerpedia" type="Button" parent="PlayerSetup/VBoxContainer"]
+layout_mode = 2
+text = "POKERPEDIA"
+
+[node name="QuitButton" type="Button" parent="PlayerSetup/VBoxContainer"]
+layout_mode = 2
+text = "QUIT"
+
 [node name="Timer" type="Timer" parent="."]
 one_shot = true
 
@@ -493,4 +500,4 @@ one_shot = true
 [connection signal="pressed" from="LobbyControls/Control/PreGame/Joining/Join" to="." method="on_join_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/StartButton" to="." method="on_start_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/CancelButton" to="." method="on_cancel_button"]
-[connection signal="pressed" from="PlayerSetup/OpenPokerpedia" to="." method="show_how_to_play"]
+[connection signal="pressed" from="PlayerSetup/VBoxContainer/OpenPokerpedia" to="." method="show_how_to_play"]
