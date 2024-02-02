@@ -7,7 +7,6 @@ extends Node
 @onready var change_icons = $ChangeIcons
 @onready var showdown_panel = $ShowdownPanel
 @onready var chip_zoom = $ChipZoom
-@onready var sfxer = $AudioStreamPlayer
 @onready var chat = $Chat
 @onready var players = $Table/Players
 
@@ -19,6 +18,7 @@ const CARD_SCALE = Vector2.ONE * 0.4
 const HOLDER_BASE_WIDTH = 600
 const ICON_SIZE = 40
 
+var JUKEBOX
 var host_timer
 
 func _ready():
@@ -197,7 +197,7 @@ func chip_zoom_anim(to_pot: bool):
 	var tween = chip_zoom.create_tween()
 	tween.tween_property(chip_zoom, "position", location_pair[1], 0.5)\
 		.set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
-	sfxer.play()
+	JUKEBOX.play_sfx("chips")
 	await tween.finished
 	chip_zoom.visible = false
 

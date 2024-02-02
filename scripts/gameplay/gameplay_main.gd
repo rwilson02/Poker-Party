@@ -6,6 +6,7 @@ signal next_round
 @onready var DISPLAY = $Display
 @onready var BETTING = $Betting
 @onready var MENU = $Menus
+@onready var JUKEBOX = $Jukebox
 @onready var TIMER = $Timer
 
 var player_responses = 0
@@ -18,6 +19,7 @@ func _ready():
 	MENU.do_it_again.connect(start_game)
 	MENU.request_restart.connect(func(): restart_requested = true)
 	BETTING.DISPLAY = DISPLAY
+	DISPLAY.JUKEBOX = JUKEBOX
 	
 	rpc_id(1, "player_ready")
 
