@@ -29,5 +29,6 @@
 	"WINNERS": 1,
 	"WILDS": 0,
 	"BALL": 1,
-	"BLINDING": 0
+	"BLINDING": 0,
+	"SPEED": 40,
 }

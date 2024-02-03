@@ -184,6 +184,9 @@ func get_changes():
 				template = "Chance that a card is blind is %d%%."
 				value *= 15
 				dependent = true
+			"SPEED":
+				template = "You only have %d seconds to decide."
+				dependent = true
 			_:
 				push_error("you fucked it")
 		if dependent:

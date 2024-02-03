@@ -39,6 +39,8 @@ enum CHANGES {
 	WILD_DOWN,
 	BLINDING_UP,
 	BLINDING_DOWN,
+	SPEED_UP,
+	SPEED_DOWN,
 }
 
 @onready var option_container = $HBoxContainer

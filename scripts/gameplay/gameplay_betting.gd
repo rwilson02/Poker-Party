@@ -116,10 +116,13 @@ func get_bet_option(current_bet):
 	bet_raise_input.max_value = Netgame.me().chips
 	bet_raise_input.value = bet_raise_input.min_value
 	
+	# Set timer
+	bet_bar_timer.max_value = Rules.RULES.SPEED
+	
 	# Show bet bar now that everything's settled
 	bet_bar.visible = true
 	# and start the timer
-	timer.start()
+	timer.start(Rules.RULES.SPEED)
 
 @rpc("any_peer","call_local","reliable")
 func send_option(option, value):

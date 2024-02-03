@@ -437,6 +437,36 @@ change = "WILD_UP"
 layout_mode = 2
 change = "WILD_DOWN"
 
+[node name="Page21" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageL/Page21"]
+layout_mode = 2
+theme_override_constants/margin_top = 55
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL/Page21/MarginContainer"]
+layout_mode = 2
+
+[node name="example_rule_change" parent="PokerpediaBack/PageSep/PageL/Page21/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+layout_mode = 2
+change = "SPEED_DOWN"
+
+[node name="example_rule_change2" parent="PokerpediaBack/PageSep/PageL/Page21/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+visible = false
+layout_mode = 2
+change = "WILD_UP"
+
+[node name="example_rule_change3" parent="PokerpediaBack/PageSep/PageL/Page21/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
+visible = false
+layout_mode = 2
+change = "WILD_DOWN"
+
 [node name="PageR" type="Panel" parent="PokerpediaBack/PageSep"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -802,9 +832,8 @@ layout_mode = 2
 change = "BLINDING_DOWN"
 
 [node name="example_rule_change3" parent="PokerpediaBack/PageSep/PageR/Page20/MarginContainer/VBoxContainer" instance=ExtResource("5_2yr7j")]
-visible = false
 layout_mode = 2
-change = "WINNERS_UP"
+change = "SPEED_UP"
 
 [node name="ButtonBACK" type="TextureButton" parent="PokerpediaBack"]
 unique_name_in_owner = true

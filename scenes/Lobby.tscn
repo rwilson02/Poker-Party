@@ -358,6 +358,24 @@ step = 15.0
 rounded = true
 suffix = "%"
 
+[node name="SPEED" type="HBoxContainer" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/SPEED"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Move Timer: "
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="LobbyControls/LobbyMenu/Options/ScrollContainer/VBoxContainer/SPEED"]
+layout_mode = 2
+min_value = 10.0
+max_value = 40.0
+step = 10.0
+value = 40.0
+rounded = true
+
 [node name="Control" type="Panel" parent="LobbyControls"]
 layout_mode = 1
 anchors_preset = 7

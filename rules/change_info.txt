@@ -26,5 +26,8 @@ WILD_DOWN,,0,Cool Off,[color=RED]Remove one wild card per suit[/color] from the 
 BLINDING_UP,,1,Face Down,Increase odds of a card being dealt face-down to [color=GREEN]%d%%[/color].,BLINDING,15
 BLINDING_DOWN,,1,Visionary,Decrease odds of a card being dealt face-down to [color=RED]%d%%[/color].,BLINDING,-15
 
+SPEED_UP,,1,Fast-Forward,Lower the move timer to [color=RED]%d[/color].,MOVE_TIMER,-10
+SPEED_DOWN,,1,Slow Motion,Raise the move timer to [color=GREEN]%d[/color].,MOVE_TIMER,10
+
 BALL_FLIP,BALL_FLIPPED,1,Topsy-Turvy,Flip from %sball poker to %sball poker.,BALL,high|low
 
