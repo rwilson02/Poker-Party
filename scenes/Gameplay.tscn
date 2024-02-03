@@ -396,6 +396,10 @@ offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 0
 
+[node name="Timer" type="Timer" parent="Betting"]
+wait_time = 60.0
+one_shot = true
+
 [node name="Menus" type="Node" parent="."]
 script = ExtResource("6_jl3ny")
 

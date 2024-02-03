@@ -5,7 +5,7 @@
 
 [node name="BetBar" type="Panel"]
 offset_right = 600.0
-offset_bottom = 100.0
+offset_bottom = 110.0
 theme = ExtResource("1_md358")
 theme_override_styles/panel = ExtResource("2_ti8gb")
 
@@ -17,11 +17,12 @@ anchor_bottom = 1.0
 offset_left = 5.0
 offset_top = 5.0
 offset_right = -5.0
-offset_bottom = -5.0
+offset_bottom = -15.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="CheckCall" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "CHECK"
@@ -30,42 +31,40 @@ text = "CHECK"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Button" type="Button" parent="HBoxContainer/BetRaise"]
+[node name="BetRaiseButton" type="Button" parent="HBoxContainer/BetRaise"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 text = "BET"
 
-[node name="Input" type="SpinBox" parent="HBoxContainer/BetRaise"]
+[node name="BetRaiseInput" type="SpinBox" parent="HBoxContainer/BetRaise"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 step = 5.0
 alignment = 1
 custom_arrow_step = 5.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/BetRaise"]
-visible = false
-layout_mode = 2
-
-[node name="ValueUp" type="Button" parent="HBoxContainer/BetRaise/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "+"
-
-[node name="LineEdit" type="LineEdit" parent="HBoxContainer/BetRaise/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 2.0
-alignment = 1
-context_menu_enabled = false
-
-[node name="ValueDown" type="Button" parent="HBoxContainer/BetRaise/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "-
-"
-
 [node name="Fold" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Forfeit the round and wait for the next one."
 text = "FOLD"
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+modulate = Color(0.831373, 0.741176, 0, 1)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = -15.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+max_value = 40.0
+value = 40.0
+show_percentage = false

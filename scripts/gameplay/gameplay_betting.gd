@@ -14,10 +14,12 @@ const name_tooltip_combos =[
 ]
 
 @onready var bet_bar = $BetBar
-@onready var check_call: Button = bet_bar.get_node("HBoxContainer/CheckCall")
-@onready var bet_raise_button = bet_bar.get_node("HBoxContainer/BetRaise/Button")
-@onready var bet_raise_input: SpinBox = bet_bar.get_node("HBoxContainer/BetRaise/Input")
-@onready var fold = bet_bar.get_node("HBoxContainer/Fold")
+@onready var check_call: Button = bet_bar.get_node("%CheckCall")
+@onready var bet_raise_button = bet_bar.get_node("%BetRaiseButton")
+@onready var bet_raise_input: SpinBox = bet_bar.get_node("%BetRaiseInput")
+@onready var fold = bet_bar.get_node("%Fold")
+@onready var bet_bar_timer = bet_bar.get_node("ProgressBar")
+@onready var timer = $Timer
 
 var initial_bettor_index = 0
 var bet_to_match = 0
@@ -28,6 +30,9 @@ func _ready():
 	check_call.pressed.connect(button_pressed.bind("CALL"))
 	bet_raise_button.pressed.connect(button_pressed.bind("RAISE"))
 	fold.pressed.connect(button_pressed.bind("FOLD"))
+	timer.timeout.connect(
+		func(): self.send_option.rpc_id(1, "FOLD", -1)
+	)
 	
 	Netgame.player_disconnected.connect(player_disconnected)
 
@@ -113,6 +118,8 @@ func get_bet_option(current_bet):
 	
 	# Show bet bar now that everything's settled
 	bet_bar.visible = true
+	# and start the timer
+	timer.start()
 
 @rpc("any_peer","call_local","reliable")
 func send_option(option, value):
@@ -142,14 +149,19 @@ func send_option(option, value):
 				DISPLAY.log_to_chat("player(%d) raises to %d." % [sender, value])
 		"FOLD":
 			Netgame.game_state.folded_players.append(sender)
-			DISPLAY.log_to_chat("player(%d) folds." % sender)
+			var strink = "player(%d) folds." % sender
+			
+			if value == -1:
+				strink += " (Timed out)"
+			
+			DISPLAY.log_to_chat(strink)
 		"DISCONNECT":
 			DISPLAY.log_to_chat("player(%d) disconnected." % sender)
 	
 	input_received.emit(option == "RAISE")
 
 func button_pressed(option):
-	var value = null
+	var value = 0
 	
 	match option:
 		"CALL":
@@ -159,6 +171,7 @@ func button_pressed(option):
 	
 	bet_bar.visible = false
 	send_option.rpc_id(1, option, value)
+	timer.stop()
 
 func all_bets_equal(_ignore_broke = false):
 	var last_num = get_max_bet()
@@ -203,3 +216,6 @@ func redistribute_wealth(from):
 		Netgame.players[id].chips += redistributed
 		free_money -= redistributed
 	Netgame.game_state.pot += free_money
+
+func _process(_delta):
+	bet_bar_timer.value = timer.time_left
