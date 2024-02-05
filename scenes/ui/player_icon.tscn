@@ -35,3 +35,4 @@ bbcode_enabled = true
 text = "[center]Player Name
 [img=24]res://textures/ico_chips.png[/img] ????"
 fit_content = true
+autowrap_mode = 0
