@@ -23,7 +23,9 @@ func _ready():
 	$Panel/TextureButton.pressed.connect(move)
 	
 	chat_scroll = chat.get_v_scroll_bar()
-	chat_scroll.value_changed.connect(func(c): scroll_val = c)
+	chat_scroll.value_changed.connect(
+		func(c): scroll_val = c
+	)
 
 @rpc("any_peer", "call_local", "reliable")
 func add_message(msg: String):
