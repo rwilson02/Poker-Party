@@ -107,13 +107,6 @@ func me():
 func get_live_players():
 	return game_state.active_players.size() - game_state.folded_players.size()
 
-#@rpc("authority", "call_local", "reliable", 2)
-#func sync_data(player_data, rules, state):
-#	Netgame.players = player_data
-#	Rules.RULES = rules
-#	Netgame.game_state = state
-#	state_updated.emit()
-
 func reset():
 	game_state = {
 		"pot": 0,

@@ -25,6 +25,7 @@ func get_value(card):
 			return (card & VALUE) % RULES.VALS_PER_SUIT
 	else:
 		return -1
+
 func get_suit(card): 
 	if not card is int:
 		return -1
@@ -33,7 +34,7 @@ func get_suit(card):
 			return (card & VALUE) / RULES.VALS_PER_SUIT
 		else: 
 			return card / RULES.VALS_PER_SUIT
-	#return card / RULES.VALS_PER_SUIT if card is int else -1
+
 func get_suit_loc(suit):
 	const SUITS_PER_ROW = 4
 	const ROWS = 2
