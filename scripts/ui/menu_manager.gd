@@ -37,9 +37,8 @@ func _ready():
 	pause.get_node("%Exit").pressed.connect(okay_get_out)
 
 func _input(event):
-	if event is InputEventKey:
-		if event.key_label == KEY_ESCAPE and event.is_pressed():
-			toggle_pause()
+	if event.is_action_pressed("pause"):
+		toggle_pause()
 
 func toggle_shadow():
 	var tween = create_tween()

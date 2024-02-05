@@ -70,6 +70,8 @@ func fake_add_message(msg: String):
 	scroll_handling()
 
 func send_chat_message():
+	if textbox.text.is_empty(): return
+	
 	var message = "chat(%d) %s" % [multiplayer.get_unique_id(), textbox.text]
 	add_message.rpc_id(1, message)
 	textbox.clear()
@@ -82,6 +84,9 @@ func move():
 	if not is_moving:
 		is_moving = true
 		
+		if textbox.has_focus():
+			textbox.release_focus()
+		
 		var tween1 = create_tween()
 		tween1.tween_property(self, "position", self.position + Vector2.UP * (200 if collapsed else -200), 0.5)\
 			.set_trans(Tween.TRANS_CUBIC)
@@ -92,3 +97,8 @@ func move():
 		$Panel/TextureButton.rotation = fmod($Panel/TextureButton.rotation, TAU)
 		collapsed = not collapsed
 		is_moving = false
+
+func _input(event):
+	if textbox.has_focus():
+		if event.is_action_pressed("send_message"):
+			send_chat_message()

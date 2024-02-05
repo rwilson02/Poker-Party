@@ -24,6 +24,7 @@ const name_tooltip_combos =[
 var initial_bettor_index = 0
 var bet_to_match = 0
 var awaiting_player
+var is_event_listening = false
 var DISPLAY
 
 func _ready():
@@ -53,7 +54,6 @@ func do_betting_round(start_index):
 			get_bet_option.rpc_id(awaiting_player, 0)
 			got_bet = await input_received
 			Netgame.players[awaiting_player].awaiting = false
-#			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 		
 		if got_bet: 
 			initial_bettor_index = Netgame.game_state.active_players.find(awaiting_player)
@@ -63,7 +63,6 @@ func do_betting_round(start_index):
 	if all_bets_equal():
 		print("Everyone checked.")
 		collect_all_bets()
-#		Netgame.sync_data(Netgame.players, Rules.RULES, Netgame.game_state)
 		return
 	
 	# Keep it rolling around if people are there
@@ -78,11 +77,9 @@ func do_betting_round(start_index):
 			get_bet_option.rpc_id(awaiting_player, get_max_bet())
 			await input_received
 			Netgame.players[awaiting_player].awaiting = false
-#			Netgame.sync_data.rpc(Netgame.players, Rules.RULES, Netgame.game_state)
 	
 	# End of betting round
 	collect_all_bets()
-#	Netgame.sync_data(Netgame.players, Rules.RULES, Netgame.game_state)
 
 @rpc("authority","call_local","reliable")
 func get_bet_option(current_bet):
@@ -123,6 +120,8 @@ func get_bet_option(current_bet):
 	bet_bar.visible = true
 	# and start the timer
 	timer.start(Rules.RULES.SPEED)
+	
+	is_event_listening = true
 
 @rpc("any_peer","call_local","reliable")
 func send_option(option, value):
@@ -175,6 +174,7 @@ func button_pressed(option):
 	bet_bar.visible = false
 	send_option.rpc_id(1, option, value)
 	timer.stop()
+	is_event_listening = false
 
 func all_bets_equal(_ignore_broke = false):
 	var last_num = get_max_bet()
@@ -222,3 +222,17 @@ func redistribute_wealth(from):
 
 func _process(_delta):
 	bet_bar_timer.value = timer.time_left
+
+func _input(event):
+	if is_event_listening:
+		if event.is_action_pressed("check_call"):
+			button_pressed("CALL")
+		elif event.is_action_pressed("bet_raise"):
+			button_pressed("RAISE")
+		elif event.is_action_pressed("fold"):
+			button_pressed("FOLD")
+		# Surely there is a better way to do this, right?
+		elif event.is_action_pressed("ui_up"):
+			bet_raise_input.value += bet_raise_input.step
+		elif event.is_action_pressed("ui_down"):
+			bet_raise_input.value -= bet_raise_input.step
