@@ -208,11 +208,13 @@ func log_to_chat(this: String):
 func setup_icons(ids):
 	var icons = []
 	
-	$MultiplayerSynchronizer.synchronized.connect(update_display)
+	if not $MultiplayerSynchronizer.synchronized.is_connected(update_display):
+		$MultiplayerSynchronizer.synchronized.connect(update_display)
 	for idx in ids.size():
 		var icon = players.get_child(idx)
 		icon.setup(ids[idx])
-		$MultiplayerSynchronizer.synchronized.connect(icon.update)
+		if not $MultiplayerSynchronizer.synchronized.is_connected(icon.update):
+			$MultiplayerSynchronizer.synchronized.connect(icon.update)
 		icons.append(icon)
 	for child in players.get_children():
 		if child.id == -1:
@@ -220,4 +222,5 @@ func setup_icons(ids):
 	
 	if multiplayer.get_unique_id() == 1:
 		for i in icons:
-			host_timer.timeout.connect(i.update)
+			if not host_timer.timeout.is_connected(i.update):
+				host_timer.timeout.connect(i.update)
