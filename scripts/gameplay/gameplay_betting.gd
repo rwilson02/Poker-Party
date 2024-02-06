@@ -84,14 +84,9 @@ func do_betting_round(start_index):
 @rpc("authority","call_local","reliable")
 func get_bet_option(current_bet):
 	# Show correct labels/tooltips on buttons
-	var bet_stage = 0 if current_bet == 0 else 1
-	if Netgame.me().chips > 0:
-		check_call.text = name_tooltip_combos[bet_stage][0][0]
-		check_call.tooltip_text = name_tooltip_combos[bet_stage][0][1]
-	else:
-		check_call.text = name_tooltip_combos[0][0][0]
-		check_call.tooltip_text = name_tooltip_combos[0][0][1]
-	
+	var bet_stage = 0 if (current_bet == 0 or Netgame.me().chips <= 0) else 1
+	check_call.text = name_tooltip_combos[bet_stage][0][0]
+	check_call.tooltip_text = name_tooltip_combos[bet_stage][0][1]
 	bet_raise_button.text = name_tooltip_combos[bet_stage][1][0]
 	bet_raise_button.tooltip_text = name_tooltip_combos[bet_stage][1][1]
 	
