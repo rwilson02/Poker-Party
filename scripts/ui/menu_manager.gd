@@ -34,6 +34,7 @@ func _ready():
 		)
 	
 	end_screen.get_node("HBoxContainer/ExitButton").pressed.connect(okay_get_out)
+	pause.get_node("%PauseButton").pressed.connect(toggle_pause)
 	pause.get_node("%Exit").pressed.connect(okay_get_out)
 
 func _input(event):

@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=28 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
@@ -20,7 +20,6 @@
 [ext_resource type="Texture2D" uid="uid://dafgvxe851s1m" path="res://textures/double-arrow.png" id="11_bwsl0"]
 [ext_resource type="PackedScene" uid="uid://ct2nwwuqvympr" path="res://scenes/ui/pause_menu.tscn" id="12_d8vuc"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_music.gd" id="20_uflfd"]
-[ext_resource type="Texture2D" uid="uid://vv40vh0lqw2w" path="res://textures/pause_button.png" id="20_yah2q"]
 [ext_resource type="AudioStream" uid="uid://b5awc40y3qb2h" path="res://audio/music/Poker Party.ogg" id="22_o0l06"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_viyi8"]
@@ -68,14 +67,6 @@ border_color = Color(0.831373, 0.741176, 0, 1)
 corner_radius_top_left = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e1yy7"]
-bg_color = Color(0.831373, 0.741176, 0, 1)
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ebree"]
-bg_color = Color(0.713726, 0.635294, 0, 1)
 
 [node name="Gameplay" type="Node"]
 script = ExtResource("1_glytd")
@@ -529,39 +520,6 @@ offset_right = 0.0
 offset_bottom = 100.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_rybn0")
 
-[node name="Panel" type="Panel" parent="Menus/Pause"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_right = 40.0
-offset_bottom = 40.0
-grow_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_e1yy7")
-
-[node name="TextureButton" type="TextureButton" parent="Menus/Pause/Panel"]
-self_modulate = Color(0.235294, 0.211765, 0.0156863, 1)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture_normal = ExtResource("20_yah2q")
-
-[node name="Stem" type="Panel" parent="Menus/Pause"]
-show_behind_parent = true
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = -114.0
-offset_top = -20.0
-offset_right = 40.0
-offset_bottom = 20.0
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_ebree")
-
 [node name="Jukebox" type="Node" parent="."]
 script = ExtResource("20_uflfd")
 clips = {
@@ -576,5 +534,3 @@ stream = ExtResource("6_oplt0")
 max_polyphony = 5
 
 [node name="Timer" type="Timer" parent="."]
-
-[connection signal="pressed" from="Menus/Pause/Panel/TextureButton" to="Menus" method="toggle_pause"]

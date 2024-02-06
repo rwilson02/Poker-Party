@@ -1,8 +1,27 @@
-[gd_scene load_steps=4 format=3 uid="uid://ct2nwwuqvympr"]
+[gd_scene load_steps=7 format=3 uid="uid://ct2nwwuqvympr"]
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_biwbu"]
 [ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1_ubr7w"]
-[ext_resource type="StyleBox" uid="uid://bwa11cbuhe8wh" path="res://theming/gold_panel.tres" id="2_ofvmd"]
+[ext_resource type="Texture2D" uid="uid://vv40vh0lqw2w" path="res://textures/pause_button.png" id="3_26wpg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mso51"]
+bg_color = Color(0.235294, 0.211765, 0.0156863, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.831373, 0.741176, 0, 1)
+corner_radius_top_left = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kup6y"]
+bg_color = Color(0.831373, 0.741176, 0, 1)
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4mmed"]
+bg_color = Color(0.713726, 0.635294, 0, 1)
 
 [node name="pause_menu" type="Panel"]
 anchors_preset = 4
@@ -13,7 +32,7 @@ offset_right = 300.0
 offset_bottom = 200.0
 grow_vertical = 2
 theme = ExtResource("1_biwbu")
-theme_override_styles/panel = ExtResource("2_ofvmd")
+theme_override_styles/panel = SubResource("StyleBoxFlat_mso51")
 script = ExtResource("1_ubr7w")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -59,3 +78,38 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 text = "EXIT LOBBY"
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -1.0
+offset_right = 39.0
+offset_bottom = 40.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_kup6y")
+
+[node name="PauseButton" type="TextureButton" parent="Panel"]
+unique_name_in_owner = true
+self_modulate = Color(0.235294, 0.211765, 0.0156863, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("3_26wpg")
+
+[node name="Stem" type="Panel" parent="."]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -114.0
+offset_top = -20.0
+offset_right = 40.0
+offset_bottom = 20.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4mmed")
