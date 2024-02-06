@@ -79,15 +79,16 @@ func reset(full: bool = false):
 	var holdover
 	
 	if RULES:
-		holdover = [RULES.INITIAL_CHIPS, RULES.ANTE, RULES.GAMEPLAY_ROUNDS]
+		holdover = [RULES.INITIAL_CHIPS, RULES.MIN_BET, RULES.ANTE, RULES.GAMEPLAY_ROUNDS]
 	
 	RULES = load_json_at("res://rules/base_rules.json")
 	integerize(RULES)
 	
 	if not full:
 		RULES.INITIAL_CHIPS = holdover[0]
-		RULES.ANTE = holdover[1]
-		RULES.GAMEPLAY_ROUNDS = holdover[2]
+		RULES.MIN_BET = holdover[1]
+		RULES.ANTE = holdover[2]
+		RULES.GAMEPLAY_ROUNDS = holdover[3]
 
 func set_rule(rule: String, value: Variant):
 	if rule == "BALL" and value == 0:

@@ -39,8 +39,8 @@ func start_game(restart):
 	if restart:
 		Rules.reset()
 		
-		MENU.get_node("Pause/VBoxContainer/Restart").text = "RESTART"
-		MENU.get_node("Pause/VBoxContainer/Restart").disabled = false
+		MENU.get_node("Pause/%Restart").text = "RESTART"
+		MENU.get_node("Pause/%Restart").disabled = false
 	
 	Netgame.game_state = {
 		"pot": 0,

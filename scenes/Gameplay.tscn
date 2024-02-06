@@ -508,7 +508,7 @@ theme_override_constants/separation = 10
 [node name="RestartButton" type="Button" parent="Menus/End/HBoxContainer"]
 visible = false
 layout_mode = 2
-tooltip_text = "Give everyone a fresh set of chips and keep playing with the current ruleset."
+tooltip_text = "Give everyone a fresh set of chips and reset the rules."
 text = "RESTART GAME"
 
 [node name="ContinueButton" type="Button" parent="Menus/End/HBoxContainer"]
