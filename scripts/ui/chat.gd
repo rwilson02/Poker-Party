@@ -101,6 +101,6 @@ func move():
 		is_moving = false
 
 func _input(event):
-	if textbox.has_focus():
-		if event.is_action_pressed("send_message"):
-			send_chat_message()
+	if event.is_action_pressed("send_message"):
+		send_chat_message()
+		textbox.accept_event()

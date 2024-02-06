@@ -223,7 +223,7 @@ func redistribute_wealth(from):
 func _process(_delta):
 	bet_bar_timer.value = timer.time_left
 
-func _input(event):
+func _unhandled_input(event):
 	if is_event_listening:
 		if event.is_action_pressed("check_call"):
 			button_pressed("CALL")
