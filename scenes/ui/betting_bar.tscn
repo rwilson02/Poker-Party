@@ -25,6 +25,8 @@ grow_vertical = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+focus_neighbor_left = NodePath("../Fold")
+focus_neighbor_right = NodePath("../BetRaise/BetRaiseButton")
 text = "CHECK"
 
 [node name="BetRaise" type="VBoxContainer" parent="HBoxContainer"]
@@ -35,12 +37,17 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+focus_neighbor_left = NodePath("../../CheckCall")
+focus_neighbor_right = NodePath("../../Fold")
+focus_neighbor_bottom = NodePath("../BetRaiseInput")
 text = "BET"
 
 [node name="BetRaiseInput" type="SpinBox" parent="HBoxContainer/BetRaise"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+focus_neighbor_left = NodePath("../../CheckCall")
+focus_neighbor_right = NodePath("../../Fold")
 step = 5.0
 alignment = 1
 custom_arrow_step = 5.0
@@ -50,6 +57,8 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Forfeit the round and wait for the next one."
+focus_neighbor_left = NodePath("../BetRaise/BetRaiseButton")
+focus_neighbor_right = NodePath("../BetRaise/BetRaiseButton")
 text = "FOLD"
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
