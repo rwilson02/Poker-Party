@@ -7,15 +7,17 @@ var gameplay = preload("res://scenes/Gameplay.tscn")
 
 func _ready():
 	var actions = ["check_call", "bet_raise", "fold"]
-	var settings = ["check_ctrl, bet_ctrl, fold_ctrl"]
+	var settings = ["check_ctrl", "bet_ctrl", "fold_ctrl"]
 	var events = [KEY_V, KEY_B, KEY_N]
 	
 	var config = ConfigFile.new()
-	var err = config.open("user://config.cfg")
+	var err = config.load("user://config.cfg")
 	if not err:
 		for i in 3:
 			InputMap.action_erase_events(actions[i])
-			InputMap.action_add_event(actions[i], config.get_value("settings", settings[i], events[i]))
+			var input = InputEventKey.new()
+			input.keycode = config.get_value("settings", settings[i], events[i])
+			InputMap.action_add_event(actions[i], input)
 
 func start_game():
 	goto_scene(gameplay)

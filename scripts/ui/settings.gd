@@ -10,9 +10,9 @@ func _ready():
 		%MusicSlider.value = config.get_value("settings", "music_vol", 1)
 		%SFXSlider.value = config.get_value("settings", "sfx_vol", 1)
 		
-		%CheckHotkey.text = config.get_value("settings", "check_ctrl", InputMap.action_get_events("check_call")[0])
-		%BetHotkey.text = config.get_value("settings", "bet_ctrl", InputMap.action_get_events("bet_raise")[0])
-		%FoldHotkey.text = config.get_value("settings", "fold_ctrl", InputMap.action_get_events("fold")[0])
+		%CheckHotkey.text = config.get_value("settings", "check_ctrl", OS.get_keycode_string(InputMap.action_get_events("check_call")[0].keycode))
+		%BetHotkey.text = config.get_value("settings", "bet_ctrl", OS.get_keycode_string(InputMap.action_get_events("bet_raise")[0].keycode))
+		%FoldHotkey.text = config.get_value("settings", "fold_ctrl", OS.get_keycode_string(InputMap.action_get_events("fold")[0].keycode))
 	
 	%CheckHotkey.pressed.connect(start_listening.bind(%CheckHotkey))
 	%BetHotkey.pressed.connect(start_listening.bind(%BetHotkey))
