@@ -7,8 +7,8 @@ func _ready():
 	var config = ConfigFile.new()
 	var err = config.load("user://config.cfg")
 	if not err:
-		%MusicSlider.value = db_to_linear(config.get_value("settings", "music_vol", 0))
-		%SFXSlider.value = db_to_linear(config.get_value("settings", "sfx_vol", 0))
+		%MusicSlider.value = config.get_value("settings", "music_vol", 1)
+		%SFXSlider.value = config.get_value("settings", "sfx_vol", 1)
 		
 		%CheckHotkey.text = config.get_value("settings", "check_ctrl", InputMap.action_get_events("check_call")[0])
 		%BetHotkey.text = config.get_value("settings", "bet_ctrl", InputMap.action_get_events("bet_raise")[0])
@@ -23,8 +23,8 @@ func _exit_tree():
 		var config = ConfigFile.new()
 		var err = config.load("user://config.cfg")
 		if not err:
-			config.set_value("settings", "music_vol", linear_to_db(%MusicSlider.value))
-			config.set_value("settings", "sfx_vol", linear_to_db(%SFXSlider.value))
+			config.set_value("settings", "music_vol", %MusicSlider.value)
+			config.set_value("settings", "sfx_vol", %SFXSlider.value)
 			
 			config.set_value("settings", "check_ctrl", OS.find_keycode_from_string(%CheckHotkey.text))
 			config.set_value("settings", "bet_ctrl", OS.find_keycode_from_string(%BetHotkey.text))
