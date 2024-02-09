@@ -1,5 +1,7 @@
 extends Node
 
+signal settings_changed
+
 var lobby = preload("res://scenes/Lobby.tscn")
 var gameplay = preload("res://scenes/Gameplay.tscn")
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dml4kr48m8imv"]
+[gd_scene load_steps=13 format=3 uid="uid://dml4kr48m8imv"]
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_k7rdw"]
 [ext_resource type="Script" path="res://scripts/ui/pokerpedia.gd" id="2_vu4td"]
@@ -20,6 +20,19 @@ bg_color = Color(0.141176, 0.317647, 0.6, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bbuxl"]
 bg_color = Color(1, 0.94902, 0.823529, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_drain"]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 4.0
+expand_margin_right = 4.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iahhu"]
 bg_color = Color(1, 0.948887, 0.822917, 1)
@@ -152,15 +165,21 @@ vertical_alignment = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="PokerpediaBack/PageSep/PageL/Page1"]
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="RichTextLabel" type="RichTextLabel" parent="PokerpediaBack/PageSep/PageL/Page1/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "	Welcome to the [i]Pokerpedia.[/i] In this book, you will find all the information you need to play Poker Party. Click a section on the table of contents on the next page to go to that section, or click the tab on either side of the book to come back to the table of contents. The arrow buttons on the bottom near the page numbers will flip the pages.
+text = "	Welcome to the [i]Pokerpedia.[/i] In this book, you will find all the information you need to play Poker Party. Click a section on the table of contents on the next page to go to that section, or click the tab on the right side of the book to come back to the table of contents. The arrow buttons on the bottom near the page numbers will flip the pages.
 
 	Poker Party is a variant of Texas Hold 'em poker: Players get a certain amount of cards dealt to them that they get to know in secret (\"hole cards\") and see a certain amount of cards in the center of the table (\"community cards\"). Players use both sets of cards to create the best hand that they can (though it is put together for you)."
 fit_content = true
+
+[node name="SettingsButton" type="Button" parent="PokerpediaBack/PageSep/PageL/Page1"]
+modulate = Color(0, 0, 0.188235, 1)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_drain")
+text = "SETTINGS"
 
 [node name="Page3" type="VBoxContainer" parent="PokerpediaBack/PageSep/PageL"]
 visible = false
@@ -878,5 +897,6 @@ stretch_mode = 5
 
 [connection signal="pressed" from="CLOSE" to="." method="close"]
 [connection signal="pressed" from="PokerpediaBack/TOCTab" to="." method="set_page" binds= [1, true]]
+[connection signal="pressed" from="PokerpediaBack/PageSep/PageL/Page1/SettingsButton" to="." method="toggle_settings"]
 [connection signal="pressed" from="PokerpediaBack/ButtonBACK" to="." method="go_back"]
 [connection signal="pressed" from="PokerpediaBack/ButtonFWD" to="." method="go_forward"]

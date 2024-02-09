@@ -6,9 +6,12 @@ extends Node
 @onready var back_button = %ButtonBACK
 @onready var TOC = %Sections
 
+const SETTINGS = preload("res://scenes/ui/settings.tscn")
+
 var page = 1
 var currentL
 var currentR
+var settings_page
 
 func _ready():
 	TOC.meta_clicked.connect(set_page)
@@ -61,3 +64,13 @@ func set_page(page_num, internal = false):
 	else:
 		forward_button.disabled = false
 		back_button.disabled = false
+
+func toggle_settings():
+	right_page.visible = not right_page.visible
+	forward_button.disabled = not right_page.visible
+	
+	if right_page.visible:
+		settings_page.queue_free()
+	else:
+		settings_page = SETTINGS.instantiate()
+		left_page.get_parent().add_child(settings_page)
