@@ -186,7 +186,7 @@ func get_name():
 			hand_name = "1 pair (%ss)"
 			return hand_name % properA
 		"HC":
-			hand_name = "High card"
+			hand_name = "High card" if Rules.RULES.BALL > 0 else "Low card"
 		"":
 			hand_name = "Invalid hand"
 	return hand_name
