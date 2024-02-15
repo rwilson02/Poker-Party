@@ -1,6 +1,7 @@
 extends Panel
 
 @onready var player_name = %PlayerName
+@onready var color_picker = $ColorPickerButton
 @onready var ICON_COLUMNS = ICON_ATLAS.get_width() / ICON_SIZE
 
 @export var main_color: Color
@@ -14,11 +15,11 @@ const ICON_SIZE = 256
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	player_name.text_changed.connect(func(c): $BottomRight/Label.text = c)
-	$ColorPickerButton.color_changed.connect(func(c): color_all_children(self, c))
+	color_picker.color_changed.connect(func(c): color_all_children(self, c))
 	$HBoxContainer/FwdButton.pressed.connect(func(): diff_icon(1))
 	$HBoxContainer/BackButton.pressed.connect(func(): diff_icon(-1))
 	
-	var picker: ColorPicker = $ColorPickerButton.get_picker()
+	var picker: ColorPicker = color_picker.get_picker()
 	picker.presets_visible = false
 	
 	config = ConfigFile.new()
@@ -37,7 +38,7 @@ func _ready():
 	
 	change_icon(selected_icon)
 	color_all_children(self, main_color)
-	$ColorPickerButton.color = main_color
+	color_picker.color = main_color
 	
 	var tween = create_tween()
 	tween.tween_interval(1)
@@ -50,7 +51,7 @@ func _ready():
 
 func get_player_name(): 
 	return player_name.text if not player_name.text.is_empty() else "Player"
-func get_player_color(): return $ColorPickerButton.color
+func get_player_color(): return color_picker.color
 func get_player_icon(): return selected_icon
 
 func set_editable(can_edit: bool):
@@ -59,7 +60,7 @@ func set_editable(can_edit: bool):
 	$HBoxContainer/BackButton.disabled = not can_edit
 
 func color_all_children(node: Node, color: Color):
-	var exceptions = [$ColorPickerButton, $EditReminder]
+	var exceptions = [color_picker, $EditReminder]
 	
 	for c in node.get_children():
 		if c.get_child_count() > 0:
@@ -82,7 +83,8 @@ func change_icon(icon):
 func _exit_tree():
 	if not OS.has_feature("editor"):
 		config.set_value("cosmetic", "name", player_name.text)
-		config.set_value("cosmetic", "color", get_child(0).self_modulate)
+		config.set_value("cosmetic", "color", color_picker.color)
 		config.set_value("cosmetic", "icon", selected_icon)
 		
 		config.save(CONFIG_PATH)
+	Netgame.me().color = color_picker.color
