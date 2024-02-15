@@ -188,6 +188,7 @@ func get_changes():
 				dependent = true
 			"SPEED":
 				template = "You only have %d seconds to decide."
+				value = 40 - (10 * value)
 				dependent = true
 			_:
 				push_error("you fucked it")
