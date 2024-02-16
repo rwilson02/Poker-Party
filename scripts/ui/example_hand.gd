@@ -46,8 +46,11 @@ func setup():
 	var h = Hand.new([])
 	h.rank = hand_type
 	var full_name = h.get_name().get_slice(" (", 0)
+	var desc: String = DESCS[hand_type]
+	if "high" in desc and Rules.RULES.BALL < 0:
+		desc.replace("high", "low")
 	
-	label.text = TEMPLATE % [full_name, DESCS[hand_type]]
+	label.text = TEMPLATE % [full_name, desc]
 	
 	self.size = Vector2(84 * hand_size, 180)
 	

@@ -84,6 +84,8 @@ func set_up_rankings():
 				s = s.to_lower()
 			
 			t = t % s
+		if "high" in t and Rules.RULES.BALL < 0:
+			t.replace("high", "low")
 		ranking.tooltip_text = t
 		
 		var y = ranking.get_theme_stylebox("panel").duplicate()
