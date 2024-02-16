@@ -129,10 +129,7 @@ func hide_end_screen():
 func toggle_pause():
 	if pause_tween == null:
 		var dir = Vector2.LEFT if paused else Vector2.RIGHT
-		#if paused:
-			#dir = Vector2.LEFT
-		#else:
-			#dir = Vector2.RIGHT
+		if not paused: pause.set_up_rankings()
 		pause_tween = create_tween()
 		pause_tween.tween_property(pause, "position", pause.position + (400 * dir), 0.5).set_ease(Tween.EASE_OUT)
 		await pause_tween.finished
