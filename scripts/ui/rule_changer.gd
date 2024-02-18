@@ -43,6 +43,34 @@ enum CHANGES {
 	SPEED_DOWN,
 }
 
+const CHANGE_WEIGHTS = {
+	# Higher weight = higher chance to appear
+	# One-shot changes
+	FULL_RESET = 75,
+	# Applies once
+	HAND_UP = 40,
+	HAND_DOWN = 40,
+	HOLE_UP = 60,
+	HOLE_DOWN = 60,
+	# Applies twice
+	SUITS_UP = 100,
+	SUITS_DOWN = 100,
+	CARDS_UP = 100,
+	CARDS_DOWN = 100,
+	COMM_UP = 75,
+	COMM_DOWN = 75,
+	BALL_FLIP = 20,
+	# Dependent changes
+	# Deliberately imbalanced
+	WINNERS_UP = 30,
+	WINNERS_DOWN = 45,
+	WILD_UP = 65,
+	WILD_DOWN = 55,
+	BLINDING_UP = 30,
+	BLINDING_DOWN = 40,
+	SPEED_UP = 35,
+	SPEED_DOWN = 45,
+}
 @onready var option_container = $HBoxContainer
 
 var possible_changes = []
@@ -93,6 +121,9 @@ func compute_possible_changes():
 			else:
 				if Rules.RULES.CURRENT_CHANGES.count(change) == DEPENDENT_MAX_LIMIT: 
 					possible_changes.erase(change)
+	
+	var min_weight = randi_range(0, 100)
+	possible_changes = possible_changes.filter(func(ch): return CHANGE_WEIGHTS[ch] >= min_weight)
 
 func get_options():
 	compute_possible_changes()

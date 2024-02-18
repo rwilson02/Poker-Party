@@ -41,7 +41,7 @@ func do_betting_round(start_index):
 	if Netgame.get_live_players() == 1: return
 	
 	# Initial round of bets
-	print("Begin betting round.")
+	#print("Begin betting round.")
 	for i in Netgame.game_state.active_players.size():
 		if Netgame.get_live_players() == 1: break
 		
@@ -61,7 +61,7 @@ func do_betting_round(start_index):
 	
 	# If nobody bet, leave
 	if all_bets_equal():
-		print("Everyone checked.")
+		#print("Everyone checked.")
 		collect_all_bets()
 		return
 	
