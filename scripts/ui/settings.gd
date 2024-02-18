@@ -29,6 +29,8 @@ func _exit_tree():
 			config.set_value("settings", "check_ctrl", OS.find_keycode_from_string(%CheckHotkey.text))
 			config.set_value("settings", "bet_ctrl", OS.find_keycode_from_string(%BetHotkey.text))
 			config.set_value("settings", "fold_ctrl", OS.find_keycode_from_string(%FoldHotkey.text))
+			
+			config.save("user://config.cfg");
 	
 	get_tree().get_root().get_node("Main").settings_changed.emit()
 
