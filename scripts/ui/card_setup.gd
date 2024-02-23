@@ -7,6 +7,7 @@ const FLIP_TIME: float = 0.8
 const JACKS = preload("res://textures/cards/jack_atlas.png")
 const QUEENS = preload("res://textures/cards/queen_atlas.png")
 const KINGS = preload("res://textures/cards/king_atlas.png")
+const ACES = preload("res://textures/cards/ace_atlas.png")
 const FACE_ART_SIZE = Vector2i(210, 322)
 
 func _ready():
@@ -44,10 +45,9 @@ func setup(card: int):
 		idx.get_node("Text").text = value
 	face.modulate = color
 	
-	var face_card = "JQK".find(value)
+	var face_card = "JQKA".find(value)
 	if face_card > -1:
-#		var atlas = [JACKS, QUEENS, KINGS]
-		face.texture.atlas = [JACKS, QUEENS, KINGS][face_card]
+		face.texture.atlas = [JACKS, QUEENS, KINGS, ACES][face_card]
 		face.texture.region = Rect2(Vector2.RIGHT * FACE_ART_SIZE.x * suit, FACE_ART_SIZE)
 	
 	self.tooltip_text = Rules.get_card_string(card)
