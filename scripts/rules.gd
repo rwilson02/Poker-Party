@@ -187,7 +187,7 @@ func get_changes():
 				value *= 15
 				dependent = true
 			"SPEED":
-				template = "You only have %d seconds to decide."
+				template = "You only have %d seconds to make a decision."
 				value = 40 - (10 * value)
 				dependent = true
 			_:

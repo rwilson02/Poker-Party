@@ -4,7 +4,7 @@ extends Node
 @onready var wager_text = $Scorebug/WagerText
 @onready var hole_card_holder = $Scorebug/ClipMask/HoleCards
 @onready var comm_card_holder = $CommCards
-@onready var change_icons = $ChangeIcons
+@onready var change_icons = $ChangePanel/ChangeIcons
 @onready var showdown_panel = $ShowdownPanel
 @onready var chip_zoom = $ChipZoom
 @onready var chat = $Chat
@@ -20,6 +20,7 @@ const ICON_SIZE = 40
 
 var JUKEBOX
 var host_timer
+var redo_change_icons = false
 
 func _ready():
 	if(multiplayer.get_unique_id() == 1):
@@ -28,6 +29,10 @@ func _ready():
 		host_timer.timeout.connect(update_display)
 		add_child(host_timer)
 		host_timer.start($MultiplayerSynchronizer.replication_interval)
+		
+		Netgame.state_updated.connect(func(): 
+			redo_change_icons = true
+		)
 
 func update_display():
 	# Handle scorebug
@@ -39,8 +44,8 @@ func update_display():
 	# Handle community and hole cards
 	adjust_cards()
 	adjust_comm_holder()
-	if change_icons.get_child_count() != Rules.RULES.CURRENT_CHANGES.size():
-		adjust_change_icons()
+	if redo_change_icons:
+		adjust_change_icons.rpc()
 
 func adjust_scorebug():
 	hud_text.text = "[center]%s\n%s[/center]" % [Netgame.me().name, CHIP_TEMPLATE % Netgame.me().chips]
@@ -90,19 +95,42 @@ func adjust_comm_holder():
 @rpc("call_local", "authority", "reliable")
 func adjust_change_icons():
 	const ICON_TEMPLATE = "res://textures/rule_changes/%s.png"
-	var CHANGE_DESCS = Rules.get_changes()
-	var CHANGES = Rules.RULES.CURRENT_CHANGES
+	var CHANGE_DESCS: Dictionary = {}
+	var CHANGES: Dictionary = {}
+	
+	var curr = Rules.RULES.CURRENT_CHANGES
+	var descs = Rules.get_changes()
+	for idx in curr.size():
+		var change = curr[idx]
+		CHANGES[change] = CHANGES[change] + 1 if CHANGES.has(change) else 1
+		CHANGE_DESCS[change] = descs[idx]
+	
+	$ChangePanel.visible = curr.size() != 0
 	
 	for child in change_icons.get_children():
 		child.free()
-	for idx in CHANGES.size():
+	if curr.size() == 0: return
+	for idx in CHANGES.keys():
 		var icon = TextureRect.new()
 		icon.custom_minimum_size = Vector2.ONE * ICON_SIZE
-		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon.texture = load(ICON_TEMPLATE % CHANGES[idx])
-		icon.self_modulate = Color.INDIAN_RED if "DOWN" in CHANGES[idx] else Color.GREEN_YELLOW
+		icon.expand_mode = TextureRect.EXPAND_FIT_HEIGHT
+		icon.texture = load(ICON_TEMPLATE % idx)
+		icon.self_modulate = Color.INDIAN_RED if "DOWN" in idx else Color.GREEN_YELLOW
 		icon.tooltip_text = CHANGE_DESCS[idx]
 		change_icons.add_child(icon)
+		
+		if CHANGES[idx] > 1:
+			# Add appropriate badge
+			var path = "res://textures/rule_changes/change_x%d.png" % CHANGES[idx]
+			var badge = TextureRect.new()
+			badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			badge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			badge.texture = load(path)
+			badge.size = icon.size
+			badge.self_modulate = Color.GOLDENROD
+			icon.add_child(badge)
+	
+	redo_change_icons = false
 
 func determine_card(flavor: String, holder: Node, id: int):
 	var known_cards

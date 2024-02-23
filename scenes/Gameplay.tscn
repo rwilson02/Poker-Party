@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=29 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
@@ -16,6 +16,7 @@
 [ext_resource type="Script" path="res://scripts/ui/menu_manager.gd" id="6_jl3ny"]
 [ext_resource type="AudioStream" uid="uid://b63l3kd6711y2" path="res://audio/sfx/chips shuffle.mp3" id="6_oplt0"]
 [ext_resource type="Script" path="res://scripts/ui/chat.gd" id="9_nl5ow"]
+[ext_resource type="StyleBox" uid="uid://bwa11cbuhe8wh" path="res://theming/gold_panel.tres" id="10_emsat"]
 [ext_resource type="FontFile" uid="uid://15waa33347nr" path="res://theming/DejaVuSerifCondensed-Bold.ttf" id="10_jh3m0"]
 [ext_resource type="Texture2D" uid="uid://dafgvxe851s1m" path="res://textures/double-arrow.png" id="11_bwsl0"]
 [ext_resource type="PackedScene" uid="uid://ct2nwwuqvympr" path="res://scenes/ui/pause_menu.tscn" id="12_d8vuc"]
@@ -235,20 +236,28 @@ theme = ExtResource("6_b6hf0")
 bbcode_enabled = true
 text = "[center][img=24]res://textures/ico_chips.png[/img] 5000[/center]"
 
-[node name="ChangeIcons" type="HBoxContainer" parent="Display"]
-offset_left = 30.0
-offset_top = 30.0
-offset_right = 70.0
+[node name="ChangePanel" type="PanelContainer" parent="Display"]
+visible = false
+custom_minimum_size = Vector2(0, 40)
+offset_left = -5.0
+offset_top = 20.0
+offset_right = 45.0
 offset_bottom = 70.0
+theme_override_styles/panel = ExtResource("10_emsat")
+
+[node name="ChangeIcons" type="HBoxContainer" parent="Display/ChangePanel"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+alignment = 2
 
 [node name="ShowdownPanel" type="Panel" parent="Display"]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = 57.0
-offset_top = 60.0
+offset_top = 75.0
 offset_right = 357.0
-offset_bottom = 460.0
+offset_bottom = 475.0
 grow_horizontal = 0
 theme = ExtResource("6_b6hf0")
 theme_override_styles/panel = SubResource("StyleBoxFlat_viyi8")
@@ -515,9 +524,9 @@ text = "EXIT LOBBY"
 
 [node name="Pause" parent="Menus" instance=ExtResource("12_d8vuc")]
 offset_left = -300.0
-offset_top = -300.0
+offset_top = -285.0
 offset_right = 0.0
-offset_bottom = 100.0
+offset_bottom = 115.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_rybn0")
 
 [node name="Jukebox" type="Node" parent="."]

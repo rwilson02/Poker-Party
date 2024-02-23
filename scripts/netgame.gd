@@ -79,8 +79,8 @@ func _register_player(new_player_info):
 func _on_player_disconnected(id):
 	if id in players:
 		if game_state.active_players.size() > 0:
-			game_state.losers.append(id)
-			game_state.folded_players.append(id)
+			if id not in game_state.losers: game_state.losers.append(id)
+			if id not in game_state.folded_players: game_state.folded_players.append(id)
 			game_state.pot += players[id].chips
 			players[id].chips = 0
 		else:

@@ -97,7 +97,7 @@ func gameplay_loop():
 		# Also remove player cards because we're going to the next round
 		for id in Netgame.game_state.active_players:
 			Netgame.players[id].cards.clear()
-			if Netgame.players[id].chips <= 0:
+			if Netgame.players[id].chips <= 0 and (id not in Netgame.game_state.losers):
 				Netgame.game_state.losers.append(id)
 		clear_losers()
 		

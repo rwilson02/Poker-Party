@@ -13,7 +13,7 @@ const DEPENDENT_MAX_LIMIT = 3
 # Other constants
 const CHANGE_INFO_PATH = "res://rules/change_info.txt"
 const CHANGE_ICON_TEMPLATE = "res://textures/rule_changes/%s.png"
-const TEXT_TEMPLATE = "[font_size=20][center]%s[/center][/font_size]"
+const TEXT_TEMPLATE = "[center][font_size=20]%s[/font_size]"
 
 # Types of rule changes
 enum CHANGES {
@@ -136,6 +136,7 @@ func setup_menu():
 	for i in both_options.size():
 		var raw_info = RuleChanger.get_option_information(both_options[i])
 		var info = RuleChanger.get_info_dict(raw_info)
+		var has_counter = int(both_options[i].ends_with("UP")) - int(both_options[i].ends_with("DOWN"))
 		
 		var option_box: Node = option_container.get_child(i)
 		option_box.get_node("Title").text = TEXT_TEMPLATE % info.TITLE
@@ -143,6 +144,14 @@ func setup_menu():
 		
 		option_box.get_node("Description").text = TEXT_TEMPLATE % (info.DESC % info.VALUE) \
 			if info.FORMATTED else TEXT_TEMPLATE % info.DESC
+		if has_counter != 0:
+			var repeal_template = "\n[font_size=12](Reverses [b]%s[/b])[/font_size]"
+			var counter_change = both_options[i].left(-2) + "DOWN"\
+				if has_counter > 0 else both_options[i].left(-4) + "UP"
+			
+			if counter_change in Rules.RULES.CURRENT_CHANGES:
+				option_box.get_node("Description").text += repeal_template % \
+					RuleChanger.get_option_information(counter_change)[3]
 		
 		var option_button = option_box.get_node("Select")
 		option_button.disabled = false
