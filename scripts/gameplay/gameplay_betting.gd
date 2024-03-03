@@ -21,6 +21,8 @@ const name_tooltip_combos =[
 @onready var bet_bar_timer = bet_bar.get_node("ProgressBar")
 @onready var timer = $Timer
 
+@onready var ai_wrangler = $AI
+
 var initial_bettor_index = 0
 var bet_to_match = 0
 var awaiting_player
@@ -51,7 +53,15 @@ func do_betting_round(start_index):
 		if awaiting_player not in Netgame.game_state.folded_players:
 #			prints("paging", awaiting_player)
 			Netgame.players[awaiting_player].awaiting = true
-			get_bet_option.rpc_id(awaiting_player, 0)
+			
+			if awaiting_player > 0:
+				get_bet_option.rpc_id(awaiting_player, 0)
+			else:
+				var awaiting_ai = ai_wrangler.get_child(absi(awaiting_player))
+				awaiting_ai.think()
+				var result = await  awaiting_ai.answered
+				send_option.rpc_id(1, result[0], result[1])
+			
 			got_bet = await input_received
 			Netgame.players[awaiting_player].awaiting = false
 		

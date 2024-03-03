@@ -394,6 +394,7 @@ grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_idn42")
 
 [node name="PreGame" type="HBoxContainer" parent="LobbyControls/Control"]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -445,7 +446,6 @@ size_flags_vertical = 3
 text = "Join Game"
 
 [node name="InGame" type="HBoxContainer" parent="LobbyControls/Control"]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

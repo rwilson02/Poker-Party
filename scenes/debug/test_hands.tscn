@@ -150,6 +150,10 @@ layout_mode = 2
 layout_mode = 2
 text = "Test Hand Generation"
 
+[node name="AIGenerate" type="Button" parent="Config/Deck"]
+layout_mode = 2
+text = "Test AI Evaluation"
+
 [node name="Hand" type="VBoxContainer" parent="Config"]
 visible = false
 layout_mode = 2
@@ -208,5 +212,6 @@ text = "Quit"
 
 [connection signal="tab_changed" from="Config" to="." method="on_tab_changed"]
 [connection signal="pressed" from="Config/Deck/Generate" to="." method="do_generation_test"]
+[connection signal="pressed" from="Config/Deck/AIGenerate" to="." method="do_ai_test"]
 [connection signal="pressed" from="Config/Hand/TestHand" to="." method="do_hand_test"]
 [connection signal="pressed" from="Button" to="." method="on_quit"]

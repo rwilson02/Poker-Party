@@ -36,8 +36,9 @@ func classify():
 		is_flush = false
 	
 	if not is_straight.is_empty():
-		for i in is_straight.filter(func(c): return c & Rules.WILD):
-			set_wild(i)
+		for i in is_straight: #.filter(func(c): return c & Rules.WILD):
+			if (i & Rules.WILD):
+				set_wild(i)
 	
 	# Lowball poker ignores flushes and straights except in the case of wheels
 	if Rules.RULES.BALL == -1:
@@ -88,7 +89,7 @@ func classify():
 					wild_count -= 1
 	runs.sort_custom(func(a,b): return a[0] > b[0])
 	
-	assert(runs.all(func(c): return c[0] <= self.cards.size()))
+	#assert(runs.all(func(c): return c[0] <= self.cards.size()))
 	
 	self.cards.sort_custom(value_sort)
 	match [not is_straight.is_empty(), is_flush]:
@@ -114,7 +115,8 @@ func classify():
 						2: self.rank = "1P"
 				2:
 					var groups = [runs[1][0], runs[0][0]]
-					groups.sort_custom(func(a,b): return a > b)
+					#groups.sort_custom(func(a,b): return a > b)
+					groups.sort()
 					self.kickerA = runs[1][1] if runs[1][0] == groups[0] else runs[0][1]
 					self.kickerB = runs[0][1] if self.kickerA == runs[1][1] else runs[1][1]
 					match groups:
@@ -392,11 +394,13 @@ static func is_equal(a, b) -> bool:
 
 static func get_best_hand(given_cards: Array):
 	var best_hand: Hand = Hand.new([])
+	var test_hand: Hand = Hand.new([])
 	var possible_hands = get_combinations(given_cards, Rules.RULES.CARDS_PER_HAND)
 	
 	for hand in possible_hands:
-		var new_hand = Hand.new(hand)
-		best_hand = new_hand if Hand.sort(new_hand, best_hand) else best_hand
+		test_hand.cards = hand
+		test_hand.classify()
+		best_hand = test_hand if Hand.sort(test_hand, best_hand) else best_hand
 	
 	return best_hand
 

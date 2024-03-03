@@ -10,6 +10,7 @@ var SUIT_COLORS = [Color.SLATE_BLUE.darkened(0.2), Color.RED, Color.SLATE_BLUE.d
 	Color.GOLDENROD, Color.GOLDENROD]
 
 var regex
+var num_ai = 0
 
 func _ready():
 	regex = RegEx.new()

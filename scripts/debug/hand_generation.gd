@@ -19,13 +19,12 @@ func do_generation_test():
 	output_box.clear()
 	set_rules()
 	
-	var deck = range(0, Rules.get_deck_size())
+	var deck = range(Rules.get_deck_size())
 	for i in Rules.RULES.SUITS * Rules.RULES.WILDS:
 		deck.append(Rules.FREE_WILD)
 	deck.shuffle()
 	var pull = Rules.RULES.HOLE_CARDS + Rules.RULES.COMM_CARDS
 	
-	var current_line = 0
 	while deck.size() >= pull:
 		var start_time = Time.get_ticks_msec()
 		
@@ -42,7 +41,6 @@ func do_generation_test():
 			output_box.append_text(best_hand.get_name() + "\n")
 			output_box.append_text(("%dms" % end_time) + "\n\n")
 	#		output_box.grab_focus()
-			current_line += 5
 		else:
 			output_box.append_text("Error (Not enough cards to make a hand)")
 	
@@ -82,6 +80,38 @@ func do_hand_test():
 		output_box.append_text("%s\n" % Hand.hand_to_string(best_hand.cards))
 		output_box.append_text(best_hand.get_name() + "\n")
 	
+	Rules.reset(true)
+
+func do_ai_test():
+	output_box.clear()
+	set_rules()
+	
+	var AI = load("res://scripts/ai.gd")
+	var ai_node = Node.new()
+	ai_node.set_script(AI)
+	add_child(ai_node)
+	ai_node.setup()
+	
+	var deck = range(Rules.get_deck_size())
+	for i in Rules.RULES.SUITS * Rules.RULES.WILDS:
+		deck.append(Rules.FREE_WILD)
+	deck.shuffle()
+	ai_node.player_info.cards = deck.slice(0, Rules.RULES.HOLE_CARDS)
+	Netgame.game_state.comm_cards = deck.slice(Rules.RULES.HOLE_CARDS, Rules.RULES.CARDS_PER_HAND)
+	deck = deck.slice(Rules.RULES.CARDS_PER_HAND)
+	
+	var start_time = Time.get_ticks_msec()
+	ai_node.think()
+	var result = await ai_node.answered
+	var end_time = Time.get_ticks_msec() - start_time
+	
+	output_box.append_text("AI returns in %dms\n" % end_time)
+	output_box.append_text("%s: %d" % result)
+	output_box.append_text("\n")
+	
+	ai_node.queue_free()
+	await get_tree().process_frame
+	await get_tree().process_frame
 	Rules.reset(true)
 
 func set_rules():

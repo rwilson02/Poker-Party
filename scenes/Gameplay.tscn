@@ -400,6 +400,8 @@ grow_vertical = 0
 wait_time = 40.0
 one_shot = true
 
+[node name="AI" type="Node" parent="Betting"]
+
 [node name="Menus" type="Node" parent="."]
 script = ExtResource("6_jl3ny")
 
