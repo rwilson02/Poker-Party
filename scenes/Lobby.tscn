@@ -394,7 +394,6 @@ grow_vertical = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_idn42")
 
 [node name="PreGame" type="HBoxContainer" parent="LobbyControls/Control"]
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -446,6 +445,7 @@ size_flags_vertical = 3
 text = "Join Game"
 
 [node name="InGame" type="HBoxContainer" parent="LobbyControls/Control"]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -459,10 +459,30 @@ offset_bottom = 35.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="StartButton" type="Button" parent="LobbyControls/Control/InGame"]
+[node name="VBoxContainer" type="VBoxContainer" parent="LobbyControls/Control/InGame"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StartButton" type="Button" parent="LobbyControls/Control/InGame/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Start Game"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="LobbyControls/Control/InGame/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="LobbyControls/Control/InGame/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "AI Players:"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="AIInput" type="SpinBox" parent="LobbyControls/Control/InGame/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
 
 [node name="CancelButton" type="Button" parent="LobbyControls/Control/InGame"]
 layout_mode = 2
@@ -526,6 +546,6 @@ one_shot = true
 
 [connection signal="pressed" from="LobbyControls/Control/PreGame/Hosting/Create" to="." method="create_game"]
 [connection signal="pressed" from="LobbyControls/Control/PreGame/Joining/Join" to="." method="on_join_button"]
-[connection signal="pressed" from="LobbyControls/Control/InGame/StartButton" to="." method="on_start_button"]
+[connection signal="pressed" from="LobbyControls/Control/InGame/VBoxContainer/StartButton" to="." method="on_start_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/CancelButton" to="." method="on_cancel_button"]
 [connection signal="pressed" from="PlayerSetup/VBoxContainer/OpenPokerpedia" to="." method="show_how_to_play"]

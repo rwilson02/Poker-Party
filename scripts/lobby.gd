@@ -7,6 +7,7 @@ extends Node
 @onready var lobby_controls = $LobbyControls/Control/PreGame
 @onready var start_controls = $LobbyControls/Control/InGame
 @onready var timer = $Timer
+@onready var ai_input = %AIInput
 
 const POKERPEDIA = preload("res://scenes/Pokerpedia.tscn")
 
@@ -15,14 +16,18 @@ const POKERPEDIA = preload("res://scenes/Pokerpedia.tscn")
 func _ready():
 	Netgame.test_player_conditions.connect(update_player_display)
 	Netgame.test_player_conditions.connect(test_start)
+	ai_input.value_changed.connect(test_start)
 	Netgame.server_disconnected.connect(server_exploded)
 	timer.timeout.connect(timeout)
 	Netgame.players.clear()
 	Rules.reset()
 	$PlayerSetup/VBoxContainer/QuitButton.pressed.connect(func(): get_tree().quit())
 
-func test_start(remaining_players):
-	start_controls.get_node("StartButton").disabled = false if remaining_players >= 2 else true
+func test_start(remaining_players = 1):
+	var rem = maxi(remaining_players, Netgame.players.keys().size())
+	ai_input.max_value = 10 - rem
+	
+	start_controls.get_node("%StartButton").disabled = (rem + ai_input.value) < 2
 
 func update_player_display(_remaining = null):
 	var template_string = "%s\n"
@@ -53,7 +58,7 @@ func create_game():
 		player_inputs.set_editable(false)
 		lobby_controls.visible = false
 		start_controls.visible = true
-		start_controls.get_node("StartButton").visible = true
+		start_controls.get_node("%StartButton").visible = true
 		$LobbyControls/LobbyMenu.tabs_visible = true
 	else:
 		player_display.clear()
@@ -108,6 +113,7 @@ func set_player_info():
 
 func on_start_button():
 	set_lobby_rules()
+	Rules.num_ai = ai_input.value
 	start_game.rpc()
 
 @rpc("call_local", "reliable")

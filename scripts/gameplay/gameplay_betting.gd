@@ -56,13 +56,13 @@ func do_betting_round(start_index):
 			
 			if awaiting_player > 0:
 				get_bet_option.rpc_id(awaiting_player, 0)
+				got_bet = await input_received
 			else:
 				var awaiting_ai = ai_wrangler.get_child(absi(awaiting_player))
-				awaiting_ai.think()
-				var result = await  awaiting_ai.answered
-				send_option.rpc_id(1, result[0], result[1])
+				awaiting_ai.think(get_max_bet())
+				var result = await awaiting_ai.answered
+				got_bet = await send_option(result[0], result[1], awaiting_player)
 			
-			got_bet = await input_received
 			Netgame.players[awaiting_player].awaiting = false
 		
 		if got_bet: 
@@ -84,8 +84,16 @@ func do_betting_round(start_index):
 		if awaiting_player not in Netgame.game_state.folded_players:
 #			prints("paging", awaiting_player)
 			Netgame.players[awaiting_player].awaiting = true
-			get_bet_option.rpc_id(awaiting_player, get_max_bet())
-			await input_received
+			
+			if awaiting_player > 0:
+				get_bet_option.rpc_id(awaiting_player, get_max_bet())
+				await input_received
+			else:
+				var awaiting_ai = ai_wrangler.get_child(absi(awaiting_player))
+				awaiting_ai.think(get_max_bet())
+				var result = await awaiting_ai.answered
+				await send_option(result[0], result[1], awaiting_player)
+			
 			Netgame.players[awaiting_player].awaiting = false
 	
 	# End of betting round
@@ -129,8 +137,7 @@ func get_bet_option(current_bet):
 	is_event_listening = true
 
 @rpc("any_peer","call_local","reliable")
-func send_option(option, value):
-	var sender = multiplayer.get_remote_sender_id()
+func send_option(option, value, sender):
 	bet_to_match = get_max_bet()
 	
 	match option:
@@ -166,6 +173,7 @@ func send_option(option, value):
 			DISPLAY.log_to_chat("player(%d) disconnected." % sender)
 	
 	input_received.emit(option == "RAISE")
+	return option == "RAISE"
 
 func button_pressed(option):
 	var value = 0
@@ -177,7 +185,7 @@ func button_pressed(option):
 			value = bet_raise_input.value
 	
 	bet_bar.visible = false
-	send_option.rpc_id(1, option, value)
+	send_option.rpc_id(1, option, value, multiplayer.get_unique_id())
 	timer.stop()
 	is_event_listening = false
 
@@ -214,7 +222,7 @@ func collect_all_bets():
 func player_disconnected(disconnected_id):
 	if awaiting_player == disconnected_id and multiplayer.is_server():
 #		send_option.rpc_id(1, "DISCONNECT", null)
-		send_option("DISCONNECT", null)
+		send_option("DISCONNECT", null, disconnected_id)
 
 func redistribute_wealth(from):
 	var free_money = Netgame.players[from].chips

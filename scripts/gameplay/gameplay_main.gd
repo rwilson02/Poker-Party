@@ -3,6 +3,8 @@ extends Node
 signal all_responses_received
 signal next_round
 
+const AI = preload("res://scripts/ai.gd")
+
 @onready var DISPLAY = $Display
 @onready var BETTING = $Betting
 @onready var MENU = $Menus
@@ -31,6 +33,14 @@ func player_ready():
 		player_responses = 0
 		
 		DISPLAY.get_node("MultiplayerSynchronizer").set_visibility_for(0, true)
+		
+		for id in range(0, -Rules.num_ai, -1):
+			var ai_player = Node.new()
+			ai_player.set_script(AI)
+			BETTING.get_node("AI").add_child(ai_player)
+			ai_player.setup()
+			
+			Netgame.players[id] = ai_player.player_info
 		
 		start_game(false)
 
@@ -147,10 +157,11 @@ func get_winners() -> Array:
 	for id in Netgame.game_state.active_players:
 		if id not in Netgame.game_state.folded_players:
 #			prints("All possible hands from", id)
-			var combined_cards = Netgame.players[id].cards.duplicate() + Netgame.game_state.comm_cards.duplicate()
+			var combined_cards = Netgame.players[id].cards.duplicate()
+			combined_cards.append_array(Netgame.game_state.comm_cards.duplicate())
 #			print(Hand.hand_to_string(combined_cards))
 			var best = Hand.get_best_hand(combined_cards)
-#			prints("Best hand:", Hand.hand_to_string(best.cards))
+			#prints("Best hand:", Hand.hand_to_string(best.cards))
 			winners.append([id, best])
 	winners.sort_custom(func(a,b): return Hand.sort(a[1], b[1]))
 	
@@ -244,8 +255,17 @@ func do_rule_change():
 			if losingest_player in Netgame.game_state.active_players \
 			and not losingest_player in Netgame.game_state.losers:
 				Netgame.players[losingest_player].awaiting = true
-				MENU.show_rule_changer.rpc_id(losingest_player)
-				valid = await MENU.okay_continue
+				
+				if losingest_player > 0:
+					MENU.show_rule_changer.rpc_id(losingest_player)
+					valid = await MENU.okay_continue
+				else:
+					var rule_changer = MENU.get_node("RuleChange")
+					var options = rule_changer.get_options()
+					var choice = await BETTING.get_node("AI").get_child(losingest_player).do_rule_change(options[0], options[1])
+					
+					rule_changer.on_receive_button_press(choice[0], choice[1], choice[2], losingest_player)
+					valid = true
 				
 				if valid: Netgame.players[losingest_player].awaiting = false
 		else: break

@@ -200,13 +200,16 @@ func on_button_pressed(rule, value, change):
 	option_selected.emit(change != "DISCONNECT")
 
 @rpc("any_peer", "call_local", "reliable")
-func on_receive_button_press(rule, value, change):
+func on_receive_button_press(rule, value, change, sender = null):
+	if sender == null:
+		sender = multiplayer.get_remote_sender_id()
+	
 	if change != "DISCONNECT":
 		# really hacky, but good enough
 		var change_title = RuleChanger.get_option_information(change)
 		if not change_title.is_empty():
 			change_title = change_title[3]
-			$"../../Display".log_to_chat("player(%d) chose %s." % [multiplayer.get_remote_sender_id(), change_title])
+			$"../../Display".log_to_chat("player(%d) chose %s." % [sender, change_title])
 		
 		Rules.add_change(change)
 		Rules.set_rule(rule, value)

@@ -23,6 +23,7 @@ var think_timer: Timer
 var keep_thinking: bool
 var combo_base: Array
 var remaining_cards: Array
+var current_max_bet: int
 
 var thread_BF: Thread
 var thread_MC: Thread
@@ -53,8 +54,9 @@ func setup():
 	
 	done.connect(answer)
 
-func think():
+func think(bet):
 	keep_thinking = true
+	current_max_bet = bet
 	think_timer.start(get_think_time())
 	
 	var all_cards = range(Rules.get_deck_size())
@@ -70,7 +72,7 @@ func think():
 	for n in range(remaining_cards.size(), remaining_cards.size() - cards_to_guess, -1):
 		combinations *= n
 	for n in (cards_to_guess + 1):
-		combinations /= 1
+		combinations /= maxi(1, n)
 	
 	if combinations >= MAX_MONTE_CARLO_TESTS:
 		print("Running Monte Carlo simulation...")
@@ -85,8 +87,9 @@ func answer():
 	mutex.lock()
 	keep_thinking = false
 	mutex.unlock()
-	# ↕ Need to be separate?
+	
 	await get_tree().create_timer(0.5).timeout
+	
 	mutex.lock()
 	var thread_result = result
 	mutex.unlock()
@@ -96,20 +99,20 @@ func answer():
 	
 	# If thread found better average score than overall average
 	if thread_result[0] > AVERAGE_SCORES[Rules.RULES.CARDS_PER_HAND]:
-		var a = thread_result[0] / thread_result[1] # average score / max score
-		var b = inverse_lerp(a, thread_result[1], thread_result[0]) # find place between ovr.avg and max
+		# find place between ovr.avg and max
+		var b = inverse_lerp(AVERAGE_SCORES[Rules.RULES.CARDS_PER_HAND], thread_result[1], thread_result[0])
 		
 		if randf() * certainty < optimism:
-			var value = maxi(
-				snappedi(Netgame.game_state.pot * b, 5), 
+			var value = mini(maxi(
+				snappedi(Netgame.game_state.pot * (b / 3.0), 5) + player_info.current_bet, 
 				Rules.RULES.MIN_BET
-			)
+			), player_info.chips)
 			answered.emit("RAISE", value)
 		else:
-			answered.emit("CALL", 0)
+			answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
 	else:
 		if randf() * certainty < optimism:
-			answered.emit("CALL", 0)
+			answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
 		else:
 			answered.emit("FOLD", 0)
 
@@ -124,6 +127,7 @@ func get_think_time():
 	
 	return minf(max_move_time, estimated_think_time)
 
+#region AI think types
 func think_brute_force():
 	while run_threads:
 		sem_BF.wait()
@@ -134,23 +138,31 @@ func think_brute_force():
 		var cards_to_guess = Rules.RULES.COMM_CARDS - Netgame.game_state.comm_cards.size()
 		var card_tests = range(cards_to_guess)
 		
-		while keep_thinking and card_tests[0] <= (remaining_cards.size() - cards_to_guess):
-			var trial_combo = combo_base.duplicate()
-			for idx in card_tests:
-				trial_combo.append(remaining_cards[idx])
-			var combo_score = evaluate(Hand.get_best_hand(trial_combo))
-			
-			avg_score = (combo_score + combos_evaluated * avg_score) / (combos_evaluated + 1)
-			max_score = maxf(max_score, combo_score)
-			combos_evaluated += 1
-			print("#%d: %s: %.4f (%.4f)" % [combos_evaluated, trial_combo, combo_score, avg_score])
-			
-			card_tests[-1] += 1
-			for i in range(-1, -cards_to_guess, -1):
-				if card_tests[i] % (remaining_cards.size() + i + 1) == 0:
-					card_tests[i - 1] += 1
-					for j in range(i, 0):
-						card_tests[j] = card_tests[j - 1] + 1
+		if cards_to_guess > 0:
+			while keep_thinking and card_tests[0] <= (remaining_cards.size() - cards_to_guess):
+				var trial_combo = combo_base.duplicate()
+				for idx in card_tests:
+					trial_combo.append(remaining_cards[idx])
+				for card in trial_combo:
+					if card & Rules.HIDDEN:
+						card = randi_range(0, Rules.get_deck_size())
+				
+				var combo_score = evaluate(Hand.get_best_hand(trial_combo))
+				
+				avg_score = (combo_score + combos_evaluated * avg_score) / (combos_evaluated + 1)
+				max_score = maxf(max_score, combo_score)
+				combos_evaluated += 1
+				print("#%d: %s: %.4f (%.4f)" % [combos_evaluated, trial_combo, combo_score, avg_score])
+				
+				card_tests[-1] += 1
+				for i in range(-1, -cards_to_guess, -1):
+					if card_tests[i] % (remaining_cards.size() + i + 1) == 0:
+						card_tests[i - 1] += 1
+						for j in range(i, 0):
+							card_tests[j] = card_tests[j - 1] + 1
+		else:
+			avg_score = evaluate(Hand.new(combo_base))
+			max_score = avg_score
 		
 		mutex.lock()
 		result = [avg_score, max_score]
@@ -159,7 +171,6 @@ func think_brute_force():
 		print("Brute Force complete")
 		print(str(result))
 		call_thread_safe("emit_signal", "done")
-
 func think_monte_carlo():
 	while run_threads:
 		sem_MC.wait()
@@ -179,6 +190,13 @@ func think_monte_carlo():
 			
 			var combo = combo_base.duplicate()
 			combo.append_array(extras)
+			
+			var i = 0
+			for card in combo:
+				if card & Rules.HIDDEN:
+					card = remaining_cards[idx + cards_to_guess + i]
+					i += 1
+			
 			var combo_score = evaluate(Hand.get_best_hand(combo))
 			
 			avg_score = (combo_score + combos_evaluated * avg_score) / (combos_evaluated + 1)
@@ -186,7 +204,7 @@ func think_monte_carlo():
 			combos_evaluated += 1
 			print("#%d: %s: %.4f (%.4f)" % [combos_evaluated, combo, combo_score, avg_score])
 			
-			idx += cards_to_guess
+			idx += (cards_to_guess + i)
 		
 		mutex.lock()
 		result = [avg_score, max_score]
@@ -195,6 +213,18 @@ func think_monte_carlo():
 		print("Performed %d Monte Carlo iterations" % combos_evaluated)
 		print(str(result))
 		call_thread_safe("emit_signal", "done")
+#endregion
+
+# AI rule change decision making
+func do_rule_change(option_a, option_b):
+	var choice = [option_a, option_b].pick_random()
+	var info_dict = RuleChanger.get_info_dict(RuleChanger.get_option_information(choice))
+	
+	var rule = info_dict.RULE
+	var value = info_dict.VALUE if typeof(info_dict.VALUE) == TYPE_INT else 0
+	
+	await get_tree().create_timer(randf_range(0.8, 2.4)).timeout
+	return [rule, value, choice]
 
 func array_subtract(A: Array, B: Array):
 	var AA = A.duplicate()
@@ -203,7 +233,14 @@ func array_subtract(A: Array, B: Array):
 	return AA
 
 func evaluate(hand: Hand):
-	var score: float = Rules.RULES.HAND_RANKS[hand.rank]
+	var score: float
+	
+	if hand.rank in Rules.RULES.HAND_RANKS:
+		score = Rules.RULES.HAND_RANKS[hand.rank]
+	else:
+		score = -INF
+	
+	
 	for i in hand.cards.size():
 		score += float(Rules.get_value(hand.cards[i])) / (i + 1)
 	return score
