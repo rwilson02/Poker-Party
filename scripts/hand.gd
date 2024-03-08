@@ -394,12 +394,15 @@ static func is_equal(a, b) -> bool:
 
 static func get_best_hand(given_cards: Array):
 	var best_hand: Hand = Hand.new([])
-	var test_hand: Hand = Hand.new([])
+	var test_hand: Hand
 	var possible_hands = get_combinations(given_cards, Rules.RULES.CARDS_PER_HAND)
 	
 	for hand in possible_hands:
-		test_hand.cards = hand
-		test_hand.classify()
+		test_hand = Hand.new(hand)
+		
+		if test_hand.rank not in Rules.RULES.HAND_RANKS: 
+			continue
+		
 		best_hand = test_hand if Hand.sort(test_hand, best_hand) else best_hand
 	
 	return best_hand
