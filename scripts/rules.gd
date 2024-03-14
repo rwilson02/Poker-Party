@@ -6,8 +6,9 @@ const FREE_WILD = 0x2_0000
 const WILD = 0x1_0000
 const VALUE = 0xFFFF
 # Spades, Hearts, Clubs, Diamonds, Stars, Moons
-var SUIT_COLORS = [Color.SLATE_BLUE.darkened(0.2), Color.RED, Color.SLATE_BLUE.darkened(0.2), Color.RED, \
-	Color.GOLDENROD, Color.GOLDENROD]
+var SUIT_COLORS = [Color.SLATE_BLUE.darkened(0.2), Color.RED.lightened(0.2),
+					Color.SLATE_BLUE.darkened(0.2), Color.RED.lightened(0.2),
+					Color.GOLDENROD, Color.GOLDENROD]
 
 var regex
 var num_ai = 0
