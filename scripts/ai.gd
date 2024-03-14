@@ -95,6 +95,7 @@ func answer():
 	mutex.unlock()
 	
 	var cards_guessed = Rules.RULES.COMM_CARDS - Netgame.game_state.comm_cards.size()
+	cards_guessed += combo_base.filter(func(c): return c & Rules.HIDDEN).size()
 	var certainty = clampf((5 - cards_guessed) / 3.0, 0, 1)
 	
 	# If thread found better average score than overall average
@@ -107,9 +108,12 @@ func answer():
 				snappedi(Netgame.game_state.pot * (b / 3.0), 5) + player_info.current_bet, 
 				Rules.RULES.MIN_BET
 			), player_info.chips)
+			value += current_max_bet
+			
 			answered.emit("RAISE", value)
 		else:
 			answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
+	# If it didn't
 	else:
 		if randf() * certainty < optimism:
 			answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
@@ -143,9 +147,9 @@ func think_brute_force():
 				var trial_combo = combo_base.duplicate()
 				for idx in card_tests:
 					trial_combo.append(remaining_cards[idx])
-				for card in trial_combo:
-					if card & Rules.HIDDEN:
-						card = randi_range(0, Rules.get_deck_size())
+				for i in trial_combo.size():
+					if trial_combo[i] & Rules.HIDDEN:
+						trial_combo[i] = randi_range(0, Rules.get_deck_size())
 				
 				var combo_score = evaluate(Hand.get_best_hand(trial_combo))
 				
@@ -192,9 +196,9 @@ func think_monte_carlo():
 			combo.append_array(extras)
 			
 			var i = 0
-			for card in combo:
-				if card & Rules.HIDDEN:
-					card = remaining_cards[idx + cards_to_guess + i]
+			for ix in combo.size():
+				if combo[ix] & Rules.HIDDEN:
+					combo[ix] = remaining_cards[idx + cards_to_guess + i]
 					i += 1
 			
 			var combo_score = evaluate(Hand.get_best_hand(combo))
