@@ -24,6 +24,7 @@ var keep_thinking: bool
 var combo_base: Array
 var remaining_cards: Array
 var current_max_bet: int
+var high_ball = true
 
 var thread_BF: Thread
 var thread_MC: Thread
@@ -57,6 +58,7 @@ func setup():
 func think(bet):
 	keep_thinking = true
 	current_max_bet = bet
+	high_ball = Rules.RULES.BALL == 1
 	think_timer.start(get_think_time())
 	
 	var all_cards = range(Rules.get_deck_size())
@@ -96,10 +98,11 @@ func answer():
 	
 	var cards_guessed = Rules.RULES.COMM_CARDS - Netgame.game_state.comm_cards.size()
 	cards_guessed += combo_base.filter(func(c): return c & Rules.HIDDEN).size()
-	var certainty = clampf((5 - cards_guessed) / 3.0, 0, 1)
+	var certainty = clampf((5 - cards_guessed) / 3.0, 0.125, 1)
 	
 	# If thread found better average score than overall average
-	if thread_result[0] > AVERAGE_SCORES[Rules.RULES.CARDS_PER_HAND]:
+	if (high_ball and thread_result[0] > AVERAGE_SCORES[Rules.RULES.CARDS_PER_HAND]) \
+	or (not high_ball and thread_result[0] < AVERAGE_SCORES[Rules.RULES.CARDS_PER_HAND]):
 		# find place between ovr.avg and max
 		var b = inverse_lerp(AVERAGE_SCORES[Rules.RULES.CARDS_PER_HAND], thread_result[1], thread_result[0])
 		
@@ -110,7 +113,10 @@ func answer():
 			), player_info.chips)
 			value += current_max_bet
 			
-			answered.emit("RAISE", value)
+			if value > 0 and player_info.chips > 0:
+				answered.emit("RAISE", value)
+			else:
+				answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
 		else:
 			answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
 	# If it didn't
@@ -128,6 +134,8 @@ func get_think_time():
 			estimated_think_time += 1.5
 		else:
 			estimated_think_time += 0.5
+	if not high_ball:
+		estimated_think_time += 1.0
 	
 	return minf(max_move_time, estimated_think_time)
 
@@ -154,7 +162,7 @@ func think_brute_force():
 				var combo_score = evaluate(Hand.get_best_hand(trial_combo))
 				
 				avg_score = (combo_score + combos_evaluated * avg_score) / (combos_evaluated + 1)
-				max_score = maxf(max_score, combo_score)
+				max_score = maxf(max_score, combo_score) if high_ball else minf(max_score, avg_score)
 				combos_evaluated += 1
 				print("#%d: %s: %.4f (%.4f)" % [combos_evaluated, trial_combo, combo_score, avg_score])
 				
@@ -204,7 +212,7 @@ func think_monte_carlo():
 			var combo_score = evaluate(Hand.get_best_hand(combo))
 			
 			avg_score = (combo_score + combos_evaluated * avg_score) / (combos_evaluated + 1)
-			max_score = maxf(max_score, combo_score)
+			max_score = maxf(max_score, combo_score) if high_ball else minf(max_score, avg_score)
 			combos_evaluated += 1
 			print("#%d: %s: %.4f (%.4f)" % [combos_evaluated, combo, combo_score, avg_score])
 			

@@ -101,7 +101,7 @@ func do_ai_test():
 	deck = deck.slice(Rules.RULES.CARDS_PER_HAND)
 	
 	var start_time = Time.get_ticks_msec()
-	ai_node.think()
+	ai_node.think(0)
 	var result = await ai_node.answered
 	var end_time = Time.get_ticks_msec() - start_time
 	
