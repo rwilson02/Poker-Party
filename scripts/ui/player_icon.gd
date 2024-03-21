@@ -11,7 +11,7 @@ const BET_TEMPLATE = "%s / %s"
 const ICON_ATLAS = preload("res://textures/lobby/icon_atlas.png")
 const ICON_SIZE = 256
 
-var id: int = -1
+var id: int = -17160
 
 func setup(this_player: int):
 	id = this_player

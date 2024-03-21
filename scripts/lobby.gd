@@ -25,7 +25,7 @@ func _ready():
 
 func test_start(remaining_players = 1):
 	var rem = maxi(remaining_players, Netgame.players.keys().size())
-	ai_input.max_value = 10 - rem
+	ai_input.max_value = Netgame.MAX_CONNECTIONS - Netgame.players.keys().filter(func(c): return c > 0).size()
 	
 	start_controls.get_node("%StartButton").disabled = (rem + ai_input.value) < 2
 

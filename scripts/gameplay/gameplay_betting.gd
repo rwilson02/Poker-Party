@@ -217,7 +217,7 @@ func collect_all_bets():
 		if Netgame.players[id].current_bet > 0:
 			Netgame.game_state.pot += absi(Netgame.players[id].current_bet)
 			Netgame.players[id].current_bet = 0
-			DISPLAY.chip_zoom_anim.rpc_id(id, true)
+			if id > 0: DISPLAY.chip_zoom_anim.rpc_id(id, true)
 
 func player_disconnected(disconnected_id):
 	if awaiting_player == disconnected_id and multiplayer.is_server():

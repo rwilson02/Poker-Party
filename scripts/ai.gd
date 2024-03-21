@@ -9,6 +9,8 @@ const ANSWER_MARGIN = 3.0
 const MAX_MONTE_CARLO_TESTS = 5000
 const AVERAGE_SCORES = [0, 0, 0, 0, 46.8, 61.7, 85.0]
 
+const NAMES = ["Pique", "Jessie", "Andy", "Hans", "Chippy", "Luna", "Sol", "Ruby", "Clover", "Cardia"]
+
 var player_info = {
 	"name": "Player",
 	"cards": [],
@@ -34,11 +36,14 @@ var mutex: Mutex
 var run_threads = true
 var result = [0, 0]
 
-var optimism: float
+var optimism: float # Expectation that things will go in your favor
+var confidence: float # A measure of risk-taking, really; higher confidence -> bigger bets
 
-func setup():
-	player_info.name = "AI Player"
+# ID parameter really just for indexing into names array; from 0 to -9
+func setup(id):
+	player_info.name = NAMES[id]
 	optimism = randf()
+	confidence = randf() + 0.25 # [0.25, 1.25]
 	
 	think_timer = Timer.new()
 	think_timer.timeout.connect(answer)
@@ -60,6 +65,10 @@ func think(bet):
 	current_max_bet = bet
 	high_ball = Rules.RULES.BALL == 1
 	think_timer.start(get_think_time())
+	
+	if bet >= player_info.chips + player_info.current_bet:
+		answer()
+		return
 	
 	var all_cards = range(Rules.get_deck_size())
 	for i in (Rules.RULES.SUITS * Rules.RULES.WILDS):
@@ -107,6 +116,7 @@ func answer():
 		var b = inverse_lerp(AVERAGE_SCORES[Rules.RULES.CARDS_PER_HAND], thread_result[1], thread_result[0])
 		
 		if randf() * certainty < optimism:
+			# Sure I want to bet
 			var value = mini(maxi(
 				snappedi(Netgame.game_state.pot * (b / 3.0), 5) + player_info.current_bet, 
 				Rules.RULES.MIN_BET
@@ -114,17 +124,26 @@ func answer():
 			value += current_max_bet
 			
 			if value > 0 and player_info.chips > 0:
-				answered.emit("RAISE", value)
-			else:
-				answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
-		else:
-			answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
+				# Definitely can bet
+				if value <= Netgame.game_state.pot * confidence:
+					# Take my chips
+					answered.emit("RAISE", mini(value, player_info.chips))
+				else:
+					# ... but not that much
+					answered.emit("FOLD", 0)
+		
+		# Fallthrough call
+		answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
 	# If it didn't
 	else:
 		if randf() * certainty < optimism:
-			answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
-		else:
-			answered.emit("FOLD", 0)
+			# Sure I'll stick around
+			if current_max_bet - player_info.current_bet <= Netgame.game_state.pot * confidence:
+				# Not much more to stake, so
+				answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
+		
+		# Fallthrough fold
+		answered.emit("FOLD", 0)
 
 func get_think_time():
 	var max_move_time = Rules.RULES.SPEED - ANSWER_MARGIN

@@ -245,7 +245,7 @@ func setup_icons(ids):
 			$MultiplayerSynchronizer.synchronized.connect(icon.update)
 		icons.append(icon)
 	for child in players.get_children():
-		if child.id == -1:
+		if child.id == -17160:
 			child.visible = false
 	
 	if multiplayer.get_unique_id() == 1:

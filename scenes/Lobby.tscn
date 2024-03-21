@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="1_vmmqq"]
 [ext_resource type="PackedScene" uid="uid://dqf80ncy8fmxq" path="res://scenes/ui/id_card.tscn" id="3_6nbw5"]
 [ext_resource type="Texture2D" uid="uid://cxm8mmggjakdc" path="res://textures/lobby/bg_lobby.png" id="3_sm14j"]
-[ext_resource type="Texture2D" uid="uid://b7nrb42wiwyru" path="res://textures/logo.png" id="4_qo7dv"]
+[ext_resource type="Texture2D" uid="uid://krcwl10ikm4" path="res://textures/lobby/logo_neon.png" id="4_p4ilm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b4umi"]
 bg_color = Color(0.713726, 0.635294, 0, 1)
@@ -505,7 +505,7 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
-texture = ExtResource("4_qo7dv")
+texture = ExtResource("4_p4ilm")
 expand_mode = 5
 
 [node name="IDCard" parent="PlayerSetup" instance=ExtResource("3_6nbw5")]

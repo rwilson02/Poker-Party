@@ -6,7 +6,7 @@ extends Node
 var chat_scroll
 
 #const MESSAGE_LIMIT = 50
-const REGEX_TEMPLATE = "(player|chat)\\((\\d+)\\)"
+const REGEX_TEMPLATE = "(player|chat)\\((-?\\d+)\\)"
 
 var regex: RegEx
 var messages = 0
