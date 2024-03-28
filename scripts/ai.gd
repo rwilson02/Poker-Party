@@ -10,6 +10,8 @@ const MAX_MONTE_CARLO_TESTS = 5000
 const AVERAGE_SCORES = [0, 0, 0, 0, 46.8, 61.7, 85.0]
 
 const NAMES = ["Pique", "Jessie", "Andy", "Hans", "Chippy", "Luna", "Sol", "Ruby", "Clover", "Cardia"]
+const COLORS = ["1C1469", "8C008C", "FF7A38", "B0B0B0", "FF3232", "BA6B04", "FFE559", "FF420D", "257312", "FF458C"]
+const ICONS = [0, 6, -1, 7, -1, 5, 4, 3, 2, 1]
 
 var player_info = {
 	"name": "Player",
@@ -42,6 +44,8 @@ var confidence: float # A measure of risk-taking, really; higher confidence -> b
 # ID parameter really just for indexing into names array; from 0 to -9
 func setup(id):
 	player_info.name = NAMES[id]
+	player_info.color = Color.html(COLORS[id])
+	player_info.icon = ICONS[id] if ICONS[id] >= 0 else randi_range(0, 7)
 	optimism = randf()
 	confidence = randf() + 0.25 # [0.25, 1.25]
 	
@@ -86,10 +90,10 @@ func think(bet):
 		combinations /= maxi(1, n)
 	
 	if combinations >= MAX_MONTE_CARLO_TESTS:
-		print("Running Monte Carlo simulation...")
+		#print("Running Monte Carlo simulation...")
 		sem_MC.post()
 	else:
-		print("Running brute force algorithm...")
+		#print("Running brute force algorithm...")
 		sem_BF.post()
 
 func answer():
@@ -108,6 +112,7 @@ func answer():
 	var cards_guessed = Rules.RULES.COMM_CARDS - Netgame.game_state.comm_cards.size()
 	cards_guessed += combo_base.filter(func(c): return c & Rules.HIDDEN).size()
 	var certainty = clampf((5 - cards_guessed) / 3.0, 0.125, 1)
+	var all_player_chips = player_info.chips + player_info.current_bet
 	
 	# If thread found better average score than overall average
 	if (high_ball and thread_result[0] > AVERAGE_SCORES[Rules.RULES.CARDS_PER_HAND]) \
@@ -127,13 +132,18 @@ func answer():
 				# Definitely can bet
 				if value <= Netgame.game_state.pot * confidence:
 					# Take my chips
-					answered.emit("RAISE", mini(value, player_info.chips))
+					answered.emit("RAISE", mini(value, all_player_chips))
+					print("%d <= %.2f: Raise to %d" % [value, Netgame.game_state.pot * confidence, mini(value, all_player_chips)])
+					return
 				else:
 					# ... but not that much
 					answered.emit("FOLD", 0)
+					print("%d > %.2f: Fold" % [value, Netgame.game_state.pot * confidence])
+					return
 		
 		# Fallthrough call
 		answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
+		print("Not betting yet: Check" if current_max_bet == 0 else "Can meet that bet: Call")
 	# If it didn't
 	else:
 		if randf() * certainty < optimism:
@@ -141,9 +151,12 @@ func answer():
 			if current_max_bet - player_info.current_bet <= Netgame.game_state.pot * confidence:
 				# Not much more to stake, so
 				answered.emit("CALL", maxi(current_max_bet - player_info.current_bet, 0))
+				print("Staying in the round: Call")
+				return
 		
 		# Fallthrough fold
 		answered.emit("FOLD", 0)
+		print("Fold")
 
 func get_think_time():
 	var max_move_time = Rules.RULES.SPEED - ANSWER_MARGIN
@@ -183,7 +196,7 @@ func think_brute_force():
 				avg_score = (combo_score + combos_evaluated * avg_score) / (combos_evaluated + 1)
 				max_score = maxf(max_score, combo_score) if high_ball else minf(max_score, avg_score)
 				combos_evaluated += 1
-				print("#%d: %s: %.4f (%.4f)" % [combos_evaluated, trial_combo, combo_score, avg_score])
+				#print("#%d: %s: %.4f (%.4f)" % [combos_evaluated, trial_combo, combo_score, avg_score])
 				
 				card_tests[-1] += 1
 				for i in range(-1, -cards_to_guess, -1):
@@ -199,9 +212,11 @@ func think_brute_force():
 		result = [avg_score, max_score]
 		mutex.unlock()
 		
-		print("Brute Force complete")
-		print(str(result))
-		call_thread_safe("emit_signal", "done")
+		#print("Brute Force complete")
+		#print(str(result))
+		if keep_thinking:
+			think_timer.call_thread_safe("stop")
+			call_thread_safe("emit_signal", "done")
 func think_monte_carlo():
 	while run_threads:
 		sem_MC.wait()
@@ -233,7 +248,7 @@ func think_monte_carlo():
 			avg_score = (combo_score + combos_evaluated * avg_score) / (combos_evaluated + 1)
 			max_score = maxf(max_score, combo_score) if high_ball else minf(max_score, avg_score)
 			combos_evaluated += 1
-			print("#%d: %s: %.4f (%.4f)" % [combos_evaluated, combo, combo_score, avg_score])
+			#print("#%d: %s: %.4f (%.4f)" % [combos_evaluated, combo, combo_score, avg_score])
 			
 			idx += (cards_to_guess + i)
 		
@@ -241,9 +256,11 @@ func think_monte_carlo():
 		result = [avg_score, max_score]
 		mutex.unlock()
 		
-		print("Performed %d Monte Carlo iterations" % combos_evaluated)
-		print(str(result))
-		call_thread_safe("emit_signal", "done")
+		#print("Performed %d Monte Carlo iterations" % combos_evaluated)
+		#print(str(result))
+		if keep_thinking:
+			think_timer.call_thread_safe("stop")
+			call_thread_safe("emit_signal", "done")
 #endregion
 
 # AI rule change decision making
