@@ -185,9 +185,10 @@ func display_showdown(results: Array):
 	
 	var any_flips = false
 	for marker in (comm_card_holder.get_children() + hole_card_holder.get_children()):
-		if marker.get_child(0).flipped:
+		var possible_card = marker.get_child(0)
+		if possible_card != null and possible_card.flipped:
 			any_flips = true
-			marker.get_child(0).flip()
+			possible_card.flip()
 			await get_tree().create_timer(0.5).timeout
 	if any_flips:
 		await get_tree().create_timer(1).timeout

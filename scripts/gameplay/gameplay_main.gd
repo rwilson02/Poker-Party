@@ -210,7 +210,7 @@ func credit_winners(winners: Array):
 				var value = roundi(original_pot * divisions[idx] * (1.0 / group.size()))
 				Netgame.players[winner].chips += value
 				Netgame.game_state.pot -= value
-				DISPLAY.chip_zoom_anim.rpc_id(winner, false)
+				if winner > 0: DISPLAY.chip_zoom_anim.rpc_id(winner, false)
 	# What to do with leftovers
 	if Netgame.game_state.pot > 0:
 		Netgame.players[players[-1]].chips += Netgame.game_state.pot
