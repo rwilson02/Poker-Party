@@ -4,6 +4,7 @@ signal settings_changed
 
 var lobby = preload("res://scenes/Lobby.tscn")
 var gameplay = preload("res://scenes/Gameplay.tscn")
+var first_boot = true
 
 func _ready():
 	var actions = ["check_call", "bet_raise", "fold"]
@@ -20,6 +21,7 @@ func _ready():
 			InputMap.action_add_event(actions[i], input)
 
 func start_game():
+	first_boot = false
 	goto_scene(gameplay)
 
 func end_game():

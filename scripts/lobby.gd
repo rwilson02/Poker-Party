@@ -22,6 +22,13 @@ func _ready():
 	Netgame.players.clear()
 	Rules.reset()
 	$PlayerSetup/VBoxContainer/QuitButton.pressed.connect(func(): get_tree().quit())
+	$Background/Logo/Button.pressed.connect(func(): $AnimationPlayer.play("go_to_lobby"))
+	
+	if not get_parent().first_boot:
+		$Background/CurtainL.visible = false
+		$Background/CurtainR.visible = false
+		$Camera2D.position = Vector2.DOWN * 1440
+		player_inputs.show_anim()
 
 func test_start(remaining_players = 1):
 	var rem = maxi(remaining_players, Netgame.players.keys().size())

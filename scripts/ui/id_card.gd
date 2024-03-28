@@ -5,6 +5,7 @@ extends Panel
 @onready var ICON_COLUMNS = ICON_ATLAS.get_width() / ICON_SIZE
 
 @export var main_color: Color
+@export var do_show_anim = false
 
 var config: ConfigFile
 var selected_icon: int
@@ -40,14 +41,8 @@ func _ready():
 	color_all_children(self, main_color)
 	color_picker.color = main_color
 	
-	var tween = create_tween()
-	tween.tween_interval(1)
-	tween.tween_property(self, "position", Vector2(position.x, position.y - 400), 1)\
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	
-	if $EditReminder.visible:
-		tween.tween_interval(2)
-		tween.tween_property($EditReminder, "modulate", Color.TRANSPARENT, 1)
+	if do_show_anim:
+		position += Vector2.DOWN * 1100
 
 func get_player_name(): 
 	return player_name.text if not player_name.text.is_empty() else "Player"
@@ -79,6 +74,15 @@ func change_icon(icon):
 	for c in get_children():
 		if c is TextureRect:
 			c.texture.region = region
+
+func show_anim():
+	var tween = create_tween()
+	tween.tween_property(self, "position", Vector2(47, 50), 1)\
+		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	
+	if $EditReminder.visible:
+		tween.tween_interval(2)
+		tween.tween_property($EditReminder, "modulate", Color.TRANSPARENT, 1)
 
 func _exit_tree():
 	if not OS.has_feature("editor"):
