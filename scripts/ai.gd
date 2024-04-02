@@ -296,6 +296,7 @@ func evaluate(hand: Hand):
 func _exit_tree():
 	mutex.lock()
 	run_threads = false
+	keep_thinking = false
 	mutex.unlock()
 	
 	sem_BF.post()
