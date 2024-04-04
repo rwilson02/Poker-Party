@@ -1,6 +1,7 @@
 extends Node
 
 signal input_received(player_bet)
+signal betting_round_ended
 
 const name_tooltip_combos =[
 	[
@@ -98,6 +99,7 @@ func do_betting_round(start_index):
 	
 	# End of betting round
 	collect_all_bets()
+	betting_round_ended.emit()
 
 @rpc("authority","call_local","reliable")
 func get_bet_option(current_bet):
