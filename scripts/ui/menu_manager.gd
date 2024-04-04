@@ -21,9 +21,10 @@ func _ready():
 	if multiplayer.is_server():
 		Netgame.player_disconnected.connect(begone_thot)
 		end_screen.get_node("HBoxContainer/RestartButton").visible = true
-		end_screen.get_node("HBoxContainer/RestartButton").pressed.connect(func(): do_it_again.emit(true))
+		end_screen.get_node("HBoxContainer/RestartButton").pressed.connect(func():
+			do_it_again.emit(true)
+		)
 		end_screen.get_node("HBoxContainer/ContinueButton").visible = true
-		end_screen.get_node("HBoxContainer/ContinueButton").pressed.connect(func(): do_it_again.emit(false))
 		var pause_restart: Button = pause.get_node("%Restart")
 		pause_restart.visible = true
 		pause_restart.pressed.connect(
@@ -85,11 +86,12 @@ func begone_thot(id):
 		done_here(false)
 
 @rpc("authority", "call_local", "reliable")
-func show_end_screen():
+func show_end_screen(game_over = true):
 	const TEMPLATE = "[center][font_size=24]🥇 %s[/font_size]\n🥈 %s"
 	const THIRD = "\n🥉 %s"
 	
 	var players = []
+	var continue_button = end_screen.get_node("HBoxContainer/ContinueButton")
 	
 	var get_player_name = func(id: int):
 		return Netgame.players[id].name
@@ -97,20 +99,36 @@ func show_end_screen():
 	players.append(get_player_name.call(Netgame.game_state.active_players[0]))
 	players.append(get_player_name.call(Netgame.game_state.losers[-1]))
 	
-	var end_text = TEMPLATE % [players[0], players[1]]
-	if Netgame.game_state.losers.size() >= 2:
-		end_text += THIRD % get_player_name.call(Netgame.game_state.losers[-2])
-	end_screen.get_node("Ranking").text = end_text
+	for conn in continue_button.pressed.get_connections():
+		continue_button.pressed.disconnect(conn.callable)
 	
 	toggle_shadow()
 	await animation_complete
-	if Netgame.game_state.active_players.has(multiplayer.get_unique_id()):
-		end_screen.get_node("BigText").text = "YOU WIN"
-	if multiplayer.is_server():
-		end_screen.get_node("Message").text = "You decide what's next!"
-	else:
-		end_screen.get_node("Message").text = "Waiting for the host's decision..."
+	
+	if game_over:
+		var end_text = TEMPLATE % [players[0], players[1]]
+		if Netgame.game_state.losers.size() >= 2:
+			end_text += THIRD % get_player_name.call(Netgame.game_state.losers[-2])
+		end_screen.get_node("Ranking").text = end_text
 		
+		if Netgame.game_state.active_players.has(multiplayer.get_unique_id()):
+			end_screen.get_node("BigText").text = "YOU WIN"
+		if multiplayer.is_server():
+			end_screen.get_node("Message").text = "You decide what's next!"
+			
+			continue_button.pressed.connect(func(): 
+				do_it_again.emit(false)
+			)
+		else:
+			end_screen.get_node("Message").text = "Waiting for the host's decision..."
+	else:
+		end_screen.get_node("Ranking").text = "[center][font_size=24]All human players knocked out!"
+		end_screen.get_node("Message").text = "You can continue to watch, or leave the lobby."
+		
+		continue_button.visible = true
+		continue_button.pressed.connect(func(): 
+			hide_end_screen()
+		)
 	
 	var tween = create_tween()
 	tween.tween_property(end_screen, "position", screen_center(end_screen), 1).set_trans(Tween.TRANS_BOUNCE)

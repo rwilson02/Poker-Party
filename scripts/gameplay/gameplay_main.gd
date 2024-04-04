@@ -39,6 +39,7 @@ func player_ready():
 			ai_player.set_script(AI)
 			BETTING.get_node("AI").add_child(ai_player)
 			ai_player.setup(id)
+			BETTING.betting_round_ended.connect(ai_player.round_reset)
 			
 			Netgame.players[id] = ai_player.player_info
 		
@@ -69,10 +70,14 @@ func start_game(restart):
 	
 	while Netgame.game_state.active_players.size() > 1 and round_start_index < Rules.RULES.GAMEPLAY_ROUNDS:
 		await gameplay_loop()
+		
+		if Netgame.game_state.active_players.all(func(c): return c < 1):
+			MENU.show_end_screen.rpc(false)
+		
 		if restart_requested: break
 	
 	if not restart_requested:
-		MENU.show_end_screen.rpc()
+		MENU.show_end_screen.rpc(true)
 	else:
 		start_game(true)
 
