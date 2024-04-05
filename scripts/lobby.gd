@@ -189,4 +189,6 @@ func get_rule_change(rule_name):
 	return ""
 
 func show_how_to_play():
-	add_child(POKERPEDIA.instantiate())
+	var polka = POKERPEDIA.instantiate()
+	add_child(polka)
+	polka.position = Vector2.DOWN * get_tree().root.content_scale_size.y * 2

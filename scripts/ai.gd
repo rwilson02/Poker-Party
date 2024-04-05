@@ -37,6 +37,7 @@ var sem_BF: Semaphore
 var mutex: Mutex
 var run_threads = true
 var result = [0, 0]
+var previous_answers = [null, null]
 
 var optimism: float # Expectation that things will go in your favor
 var confidence: float # A measure of risk-taking, really; higher confidence -> bigger bets
@@ -89,12 +90,16 @@ func think(bet):
 	for n in (cards_to_guess + 1):
 		combinations /= maxi(1, n)
 	
-	if combinations >= MAX_MONTE_CARLO_TESTS:
-		#print("Running Monte Carlo simulation...")
-		sem_MC.post()
+	if previous_answers[0] == null:
+		if combinations >= MAX_MONTE_CARLO_TESTS:
+			#print("Running Monte Carlo simulation...")
+			sem_MC.post()
+		else:
+			#print("Running brute force algorithm...")
+			sem_BF.post()
 	else:
-		#print("Running brute force algorithm...")
-		sem_BF.post()
+		await get_tree().create_timer(3.0 - (1.6 * confidence)).timeout
+		answer()
 
 func answer():
 	think_timer.stop()
@@ -108,6 +113,9 @@ func answer():
 	mutex.lock()
 	var thread_result = result
 	mutex.unlock()
+	
+	if thread_result != previous_answers:
+		previous_answers = thread_result.duplicate()
 	
 	var cards_guessed = Rules.RULES.COMM_CARDS - Netgame.game_state.comm_cards.size()
 	cards_guessed += combo_base.filter(func(c): return c & Rules.HIDDEN).size()
@@ -293,9 +301,14 @@ func evaluate(hand: Hand):
 		score += float(Rules.get_value(hand.cards[i])) / (i + 1)
 	return score
 
+func round_reset():
+	current_max_bet = 0
+	previous_answers = [null, null]
+
 func _exit_tree():
 	mutex.lock()
 	run_threads = false
+	keep_thinking = false
 	mutex.unlock()
 	
 	sem_BF.post()

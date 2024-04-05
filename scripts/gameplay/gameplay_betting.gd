@@ -1,6 +1,7 @@
 extends Node
 
 signal input_received(player_bet)
+signal betting_round_ended
 
 const name_tooltip_combos =[
 	[
@@ -34,7 +35,10 @@ func _ready():
 	bet_raise_button.pressed.connect(button_pressed.bind("RAISE"))
 	fold.pressed.connect(button_pressed.bind("FOLD"))
 	timer.timeout.connect(
-		func(): self.send_option.rpc_id(1, "FOLD", -1)
+		func(): 
+			self.send_option.rpc_id(1, "FOLD", -1, multiplayer.get_unique_id())
+			bet_bar.visible = false
+			is_event_listening = false
 	)
 	
 	Netgame.player_disconnected.connect(player_disconnected)
@@ -98,6 +102,7 @@ func do_betting_round(start_index):
 	
 	# End of betting round
 	collect_all_bets()
+	betting_round_ended.emit()
 
 @rpc("authority","call_local","reliable")
 func get_bet_option(current_bet):
