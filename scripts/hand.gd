@@ -355,8 +355,8 @@ func set_wild(value: int, set_all: bool = false):
 			if not set_all: return
 
 static func sort(a: Hand, b:Hand) -> bool:
-	if a.rank.is_empty(): return false
-	if b.rank.is_empty(): return true
+	if a == null or a.rank.is_empty(): return false
+	if b == null or b.rank.is_empty(): return true
 	
 	if Rules.RULES.BALL == 1:
 		# Highball

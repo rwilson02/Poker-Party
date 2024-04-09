@@ -1,7 +1,6 @@
 extends Node
 
 @onready var hud_text = $Scorebug/HUDText
-@onready var wager_text = $Scorebug/WagerText
 @onready var hole_card_holder = $Scorebug/ClipMask/HoleCards
 @onready var comm_card_holder = $CommCards
 @onready var change_icons = $ChangePanel/ChangeIcons
@@ -48,12 +47,11 @@ func update_display():
 		adjust_change_icons.rpc()
 
 func adjust_scorebug():
-	hud_text.text = "[center]%s\n%s[/center]" % [Netgame.me().name, CHIP_TEMPLATE % Netgame.me().chips]
+	var chips_string = "[img=20]res://textures/ico_chips.png[/img] %d" % Netgame.me().chips
 	var betted = absi(Netgame.me().current_bet)
 	if betted > 0:
-		wager_text.visible = true
-		wager_text.text = "[center]%s[/center]" % (CHIP_TEMPLATE % betted)
-	else: wager_text.visible = false
+		chips_string += "\n[img=20]res://textures/ico_chips_bet.png[/img] %d" % betted
+	hud_text.text = "[center]%s\n%s[/center]" % [Netgame.me().name, chips_string]
 
 func adjust_cards():
 	var comm_difference = comm_card_holder.get_child_count() - Rules.RULES.COMM_CARDS
@@ -196,18 +194,23 @@ func display_showdown(results: Array):
 	var showdown_text: RichTextLabel = showdown_panel.find_child("RichTextLabel")
 	showdown_text.clear()
 	
+	var proper = 0
 	for pair in results:
 		var id = pair[0]
 		var hand = Hand.new(pair[1])
 		
 		showdown_text.append_text("%s:\n" % Netgame.players[id].name)
-		showdown_text.append_text("[b]%s[/b]\n" % Hand.hand_to_string(hand))
-		showdown_text.append_text("[i]%s[/i]\n\n" % hand.get_name())
+		if not pair[1].is_empty():
+			showdown_text.append_text("[b]%s[/b]\n" % Hand.hand_to_string(hand))
+			showdown_text.append_text("[i]%s[/i]\n\n" % hand.get_name())
+			proper += 1
+		else:
+			showdown_text.append_text("[i]Folded[/i]\n\n")
 	
 	var in_tween = create_tween()
 	in_tween.tween_property(showdown_panel, "position", showdown_panel.position + (Vector2.LEFT * 400), 0.5)
 	await in_tween.finished
-	await get_tree().create_timer(3 + results.size()).timeout
+	await get_tree().create_timer(3 + proper).timeout
 	var out_tween = create_tween()
 	out_tween.tween_property(showdown_panel, "position", showdown_panel.position + (Vector2.RIGHT * 400), 0.5)
 	
@@ -216,10 +219,10 @@ func display_showdown(results: Array):
 @rpc("authority", "call_local", "reliable")
 func chip_zoom_anim(to_pot: bool):
 	var pot_loc = $PotText.get_global_transform_with_canvas().origin + ($PotText.size / 2)
-	var wager_loc = wager_text.get_global_transform_with_canvas().origin + (wager_text.size / 2)
+	var player_chips_loc = hud_text.get_global_transform_with_canvas().origin + (hud_text.size / 2)
 	var location_pair
 	
-	location_pair = [wager_loc, pot_loc] if to_pot else [pot_loc, wager_loc]
+	location_pair = [player_chips_loc, pot_loc] if to_pot else [pot_loc, player_chips_loc]
 	
 	chip_zoom.position = location_pair[0]
 	chip_zoom.visible = true

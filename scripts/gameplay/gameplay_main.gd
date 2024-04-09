@@ -15,6 +15,7 @@ var player_responses = 0
 var round_start_index = -1
 var restart_requested = false
 var deck: Array
+var showed_KO = false
 
 func _ready():
 	Netgame.server_disconnected.connect(MENU.okay_get_out)
@@ -47,6 +48,8 @@ func player_ready():
 
 func start_game(restart):
 	MENU.hide_end_screen.rpc()
+	showed_KO = false
+	
 	if restart:
 		Rules.reset()
 		
@@ -67,12 +70,14 @@ func start_game(restart):
 	Netgame.game_state.active_players.shuffle()
 	
 	DISPLAY.setup_icons.rpc(Netgame.game_state.active_players)
+	DISPLAY.redo_change_icons = true
 	
 	while Netgame.game_state.active_players.size() > 1 and round_start_index < Rules.RULES.GAMEPLAY_ROUNDS:
 		await gameplay_loop()
 		
-		if Netgame.game_state.active_players.all(func(c): return c < 1):
+		if not showed_KO and Netgame.game_state.active_players.all(func(c): return c < 1):
 			MENU.show_end_screen.rpc(false)
+			showed_KO = true
 		
 		if restart_requested: break
 	
@@ -103,9 +108,9 @@ func gameplay_loop():
 	
 	if not restart_requested:
 		var winners = get_winners()
-		if winners.size() > 1:
-			DISPLAY.display_showdown.rpc(winners)
-			await DISPLAY.done
+		#if winners.size() > 1:
+		DISPLAY.display_showdown.rpc(winners)
+		await DISPLAY.done
 		credit_winners(winners)
 		
 		# Anyone with no chips by now has lost the game
@@ -168,6 +173,8 @@ func get_winners() -> Array:
 			var best = Hand.get_best_hand(combined_cards)
 			#prints("Best hand:", Hand.hand_to_string(best.cards))
 			winners.append([id, best])
+		else:
+			winners.append([id, Hand.new([])])
 	winners.sort_custom(func(a,b): return Hand.sort(a[1], b[1]))
 	
 	# All wild should still win in lowball

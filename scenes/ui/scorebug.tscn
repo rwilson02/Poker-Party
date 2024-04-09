@@ -28,25 +28,8 @@ offset_bottom = 23.5
 grow_vertical = 2
 bbcode_enabled = true
 text = "[center]Player Name
-[img=24]res://textures/ico_chips.png[/img] XXX[/center]"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
-shortcut_keys_enabled = false
-
-[node name="WagerText" type="RichTextLabel" parent="."]
-editor_description = "max width is roughly 13 characters, maybe adjust"
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -61.5
-offset_right = 120.0
-offset_bottom = -37.5
-grow_vertical = 2
-bbcode_enabled = true
-text = "[center][img=24]res://textures/ico_chips.png[/img] XXX[/center]"
+[img=20]res://textures/ico_chips.png[/img] XXX
+[img=20]res://textures/ico_chips_bet.png[/img] XXX[/center]"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0

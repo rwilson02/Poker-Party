@@ -42,10 +42,10 @@ func _input(event):
 	if event.is_action_pressed("pause"):
 		toggle_pause()
 
-func toggle_shadow():
+func toggle_shadow(show: bool):
 	var tween = create_tween()
 	
-	if shade.visible:
+	if not show:
 		tween.tween_property(shade, "modulate", Color.hex(0xFFFFFF00), 0.25)
 		await tween.finished
 		shade.visible = false
@@ -59,7 +59,7 @@ func toggle_shadow():
 @rpc("authority", "call_local", "reliable")
 func show_rule_changer():
 	rule_changer.setup_menu()
-	toggle_shadow()
+	toggle_shadow(true)
 	await animation_complete
 	rule_changer.position = screen_center(rule_changer) + (Vector2.UP * 720)
 	if not rule_changer.visible: rule_changer.visible = true
@@ -73,7 +73,7 @@ func hide_rule_changer(_value):
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	await tween.finished
 	if rule_changer.visible: rule_changer.visible = false
-	toggle_shadow()
+	toggle_shadow(false)
 	await animation_complete
 
 @rpc("any_peer","call_local","reliable")
@@ -102,7 +102,7 @@ func show_end_screen(game_over = true):
 	for conn in continue_button.pressed.get_connections():
 		continue_button.pressed.disconnect(conn.callable)
 	
-	toggle_shadow()
+	toggle_shadow(true)
 	await animation_complete
 	
 	if game_over:
@@ -141,7 +141,7 @@ func hide_end_screen():
 			.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		await tween.finished
 		end_screen.position = screen_center(end_screen) + (Vector2.UP * 720)
-		toggle_shadow()
+		toggle_shadow(false)
 		await animation_complete
 
 func toggle_pause():
