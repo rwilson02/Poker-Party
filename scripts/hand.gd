@@ -25,30 +25,26 @@ func classify():
 	var is_straight = sequential(clean_values)
 	var is_flush = test_flush(self.cards.map(Rules.get_suit))
 	
-	# 5K > SF, always
-	# 4K > FL and 4K > ST, always
-	if Rules.RULES.BALL == 1 and ((wild_count >= 4 and Rules.RULES.CARDS_PER_HAND >= 5) or wild_count >= 3):
-		is_straight.clear()
-		is_flush = false
-	
 	if not is_straight.is_empty():
-		for i in is_straight: #.filter(func(c): return c & Rules.WILD):
+		for i in is_straight:
 			if (i & Rules.WILD):
 				set_wild(i)
 	
 	# Lowball poker ignores flushes and straights except in the case of wheels
 	if Rules.RULES.BALL == -1:
 		if not is_straight.is_empty():
-			var clean_straight = is_straight.map(func(c): return Rules.get_value(c))
-			clean_straight.sort()
-			
-			if clean_straight[0] == Rules.RULES.VALS_PER_SUIT - 1 and \
-			clean_straight[1] == Rules.RULES.CARDS_PER_HAND - 2:
+			if is_straight[0] == Rules.RULES.VALS_PER_SUIT - 1 and \
+			is_straight[1] == Rules.RULES.CARDS_PER_HAND - 2:
 				self.rank = "SW" if is_flush else "WH"
 				return
 		# If it hasn't returned by now, clear it all
 		is_straight.clear()
 		is_flush = false
+	# 5K > SF, always
+	# 4K > FL and 4K > ST, always
+	elif (wild_count >= 4 and Rules.RULES.CARDS_PER_HAND >= 5) or wild_count >= 3:
+			is_straight.clear()
+			is_flush = false
 	
 	for value in Rules.RULES.VALS_PER_SUIT:
 		var val_count = clean_values.count(value)
@@ -79,7 +75,7 @@ func classify():
 		else:
 			# Lowball: Just add the lowest values that aren't already in the hand
 			for i in Rules.RULES.VALS_PER_SUIT:
-				if wild_count > 0 and not i in self.cards.map(Rules.get_value):
+				if wild_count > 0 and not i in clean_values:
 					set_wild(i)
 					wild_count -= 1
 	runs.sort_custom(func(a,b): return a[0] > b[0])

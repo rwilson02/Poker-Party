@@ -95,7 +95,7 @@ func think(bet):
 			#print("Running Monte Carlo simulation...")
 			sem_MC.post()
 		else:
-			#print("Running brute force algorithm...")
+			print("Running brute force algorithm...")
 			sem_BF.post()
 	else:
 		await get_tree().create_timer(3.0 - (1.6 * confidence)).timeout

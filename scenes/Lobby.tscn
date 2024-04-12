@@ -127,7 +127,6 @@ offset_bottom = 2160.0
 texture = ExtResource("3_3ya66")
 
 [node name="CurtainL" type="TextureRect" parent="Background"]
-visible = false
 top_level = true
 layout_mode = 1
 offset_left = -350.0
@@ -137,7 +136,6 @@ offset_bottom = 2160.0
 texture = ExtResource("4_qaqqp")
 
 [node name="CurtainR" type="TextureRect" parent="Background"]
-visible = false
 top_level = true
 layout_mode = 1
 anchors_preset = 1
