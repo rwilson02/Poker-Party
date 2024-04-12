@@ -20,13 +20,10 @@ func _ready():
 	reset(true)
 
 func get_value(card): 
-	if card is int:
-		if card == FREE_WILD:
-			return FREE_WILD
-		else:
-			return (card & VALUE) % RULES.VALS_PER_SUIT
+	if card == FREE_WILD:
+		return FREE_WILD
 	else:
-		return -1
+		return (card & VALUE) % RULES.VALS_PER_SUIT
 
 func get_suit(card): 
 	if not card is int:
@@ -51,8 +48,10 @@ func get_suit_loc(suit):
 func get_deck_size(): return RULES.SUITS * RULES.VALS_PER_SUIT
 
 func get_proper_value(card):
+	if card == -1: return -1
+	
 	var values = "JQKA"
-	var card_value = get_value(card) if card != null else -1
+	var card_value = get_value(card)
 	var end_diff = card_value - RULES.VALS_PER_SUIT
 	
 	if card == FREE_WILD:

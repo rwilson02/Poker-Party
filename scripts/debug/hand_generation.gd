@@ -91,6 +91,7 @@ func do_ai_test():
 	ai_node.set_script(AI)
 	add_child(ai_node)
 	ai_node.setup(0)
+	ai_node.player_info.chips = 200
 	
 	var deck = range(Rules.get_deck_size())
 	for i in Rules.RULES.SUITS * Rules.RULES.WILDS:

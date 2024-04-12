@@ -2,9 +2,9 @@ class_name Hand
 
 var cards = []
 var rank = ""
-var kickerA = null
-var kickerB = null
-var kickerC = null
+var kickerA = -1
+var kickerB = -1
+var kickerC = -1
 
 func _init(given_cards: Array):
 	if not given_cards.is_empty():
@@ -13,15 +13,11 @@ func _init(given_cards: Array):
 #		prints(self.rank, Hand.hand_to_string(self.cards))
 
 func classify():
-	var value_sort = func(a,b): return Rules.get_value(a) > Rules.get_value(b)
-	
-	self.cards.sort_custom(value_sort)
-	
 	var clean_values = self.cards.map(Rules.get_value)
+	clean_values.sort();
 	var runs = []
 	
 	var wild_count = self.cards.count(Rules.FREE_WILD)
-	
 	if wild_count == Rules.RULES.CARDS_PER_HAND:
 		self.rank = "AW"
 		return
@@ -44,12 +40,11 @@ func classify():
 	if Rules.RULES.BALL == -1:
 		if not is_straight.is_empty():
 			var clean_straight = is_straight.map(func(c): return Rules.get_value(c))
-			clean_straight.sort_custom(value_sort)
+			clean_straight.sort()
 			
 			if clean_straight[0] == Rules.RULES.VALS_PER_SUIT - 1 and \
 			clean_straight[1] == Rules.RULES.CARDS_PER_HAND - 2:
 				self.rank = "SW" if is_flush else "WH"
-				self.cards.sort_custom(value_sort)
 				return
 		# If it hasn't returned by now, clear it all
 		is_straight.clear()
@@ -91,13 +86,13 @@ func classify():
 	
 	#assert(runs.all(func(c): return c[0] <= self.cards.size()))
 	
-	self.cards.sort_custom(value_sort)
 	match [not is_straight.is_empty(), is_flush]:
 		[true, var also_flush]:
-			self.kickerA = self.cards.front()
-			if Rules.get_value(self.kickerA) == Rules.RULES.VALS_PER_SUIT - 1 and \
-				Rules.get_value(self.cards[1]) == Rules.RULES.CARDS_PER_HAND - 2:
-					self.kickerA = self.cards[1]
+			if Rules.get_value(clean_values[0]) == Rules.RULES.VALS_PER_SUIT - 1 and \
+				Rules.get_value(clean_values[1]) == Rules.RULES.CARDS_PER_HAND - 2:
+					self.kickerA = clean_values[1]
+			else:
+				self.kickerA = clean_values.front()
 			
 			self.rank = "SF" if also_flush else "ST"
 		[false, true]:
@@ -125,7 +120,7 @@ func classify():
 						[3, 3]:
 							self.rank = "2T"
 						[_, _]:
-							if groups[0] + groups[1] < self.cards.size():
+							if groups[0] + groups[1] < clean_values.size():
 								self.rank = "CR"
 							else: 
 								self.rank = "FH"
@@ -362,24 +357,24 @@ static func sort(a: Hand, b:Hand) -> bool:
 		# Highball
 		if a.rank != b.rank:
 			return Rules.RULES.HAND_RANKS[a.rank] > Rules.RULES.HAND_RANKS[b.rank]
-		elif Rules.get_value(a.kickerA) != Rules.get_value(b.kickerA):
-			return Rules.get_value(a.kickerA) > Rules.get_value(b.kickerA)
-		elif Rules.get_value(a.kickerB) != Rules.get_value(b.kickerB):
-			return Rules.get_value(a.kickerB) > Rules.get_value(b.kickerB)
-		elif Rules.get_value(a.kickerC) != Rules.get_value(b.kickerC):
-			return Rules.get_value(a.kickerC) > Rules.get_value(b.kickerC)
+		elif a.kickerA != b.kickerA:
+			return a.kickerA > b.kickerA
+		elif a.kickerB != b.kickerB:
+			return a.kickerB > b.kickerB
+		elif a.kickerC != b.kickerC:
+			return a.kickerC > b.kickerC
 		else:
 			return a.cards.map(Rules.get_value) > b.cards.map(Rules.get_value)
 	else:
 		# Lowball
 		if a.rank != b.rank:
 			return Rules.RULES.HAND_RANKS[a.rank] < Rules.RULES.HAND_RANKS[b.rank]
-		elif Rules.get_value(a.kickerA) != Rules.get_value(b.kickerA):
-			return Rules.get_value(a.kickerA) < Rules.get_value(b.kickerA)
-		elif Rules.get_value(a.kickerB) != Rules.get_value(b.kickerB):
-			return Rules.get_value(a.kickerB) < Rules.get_value(b.kickerB)
-		elif Rules.get_value(a.kickerC) != Rules.get_value(b.kickerC):
-			return Rules.get_value(a.kickerC) < Rules.get_value(b.kickerC)
+		elif a.kickerA != b.kickerA:
+			return a.kickerA < b.kickerA
+		elif a.kickerB != b.kickerB:
+			return a.kickerB < b.kickerB
+		elif a.kickerC != b.kickerC:
+			return a.kickerC < b.kickerC
 		else:
 			return a.cards.map(Rules.get_value) < b.cards.map(Rules.get_value)
 
@@ -426,6 +421,7 @@ static func get_combinations(n: Array, k: int):
 static func hand_to_string(hand):
 	if hand is Hand:
 		hand = hand.cards
+	hand.sort_custom(func(a,b): return Rules.get_value(a) > Rules.get_value(b))
 	
 	var hand_string = "["
 	for card in hand:
