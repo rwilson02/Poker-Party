@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://3qprhn0jes4i"]
+[gd_scene load_steps=19 format=3 uid="uid://3qprhn0jes4i"]
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_6mw0b"]
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="1_vmmqq"]
@@ -7,6 +7,8 @@
 [ext_resource type="Texture2D" uid="uid://krcwl10ikm4" path="res://textures/lobby/logo_neon.png" id="4_p4ilm"]
 [ext_resource type="Texture2D" uid="uid://bi4pkxxksssk4" path="res://textures/lobby/bg_lobby_curtain.png" id="4_qaqqp"]
 [ext_resource type="StyleBox" uid="uid://dvekrj5kb734i" path="res://theming/card_panel.tres" id="6_6dq0q"]
+[ext_resource type="Texture2D" uid="uid://boh37g733xhda" path="res://textures/lobby/ico_exit_sign.png" id="7_dnmwq"]
+[ext_resource type="Texture2D" uid="uid://dhad5jg0dqc57" path="res://textures/pokerpedia_icon.png" id="8_mxpqv"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b4umi"]
 bg_color = Color(0.713726, 0.635294, 0, 1)
@@ -125,6 +127,7 @@ offset_bottom = 2160.0
 texture = ExtResource("3_3ya66")
 
 [node name="CurtainL" type="TextureRect" parent="Background"]
+visible = false
 top_level = true
 layout_mode = 1
 offset_left = -350.0
@@ -134,6 +137,7 @@ offset_bottom = 2160.0
 texture = ExtResource("4_qaqqp")
 
 [node name="CurtainR" type="TextureRect" parent="Background"]
+visible = false
 top_level = true
 layout_mode = 1
 anchors_preset = 1
@@ -181,6 +185,20 @@ theme_override_styles/hover = ExtResource("6_6dq0q")
 theme_override_styles/pressed = ExtResource("6_6dq0q")
 theme_override_styles/focus = ExtResource("6_6dq0q")
 text = "PLAY"
+
+[node name="QuitButton" type="TextureButton" parent="Background"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -158.0
+offset_top = 40.0
+offset_right = -40.0
+offset_bottom = 112.0
+grow_horizontal = 0
+texture_normal = ExtResource("7_dnmwq")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="LobbyControls" type="ReferenceRect" parent="."]
 layout_mode = 1
@@ -632,7 +650,7 @@ grow_horizontal = 2
 scale = Vector2(1.5, 1.5)
 do_show_anim = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PlayerSetup"]
+[node name="VBoxContainer" type="HBoxContainer" parent="PlayerSetup"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -643,13 +661,19 @@ offset_right = 190.0
 offset_bottom = -20.0
 grow_vertical = 0
 
-[node name="OpenPokerpedia" type="Button" parent="PlayerSetup/VBoxContainer"]
+[node name="OpenPokerpedia" type="TextureButton" parent="PlayerSetup/VBoxContainer"]
+custom_minimum_size = Vector2(125, 100)
 layout_mode = 2
-text = "POKERPEDIA"
+texture_normal = ExtResource("8_mxpqv")
+ignore_texture_size = true
+stretch_mode = 4
 
-[node name="QuitButton" type="Button" parent="PlayerSetup/VBoxContainer"]
+[node name="QuitButton" type="TextureButton" parent="PlayerSetup/VBoxContainer"]
+custom_minimum_size = Vector2(125, 0)
 layout_mode = 2
-text = "QUIT"
+texture_normal = ExtResource("7_dnmwq")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="Timer" type="Timer" parent="."]
 one_shot = true

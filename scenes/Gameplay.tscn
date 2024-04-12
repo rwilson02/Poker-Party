@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://bdhun1e2i03cn"]
+[gd_scene load_steps=30 format=3 uid="uid://bdhun1e2i03cn"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_main.gd" id="1_glytd"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_display.gd" id="2_lvqcw"]
@@ -18,8 +18,9 @@
 [ext_resource type="Script" path="res://scripts/ui/chat.gd" id="9_nl5ow"]
 [ext_resource type="StyleBox" uid="uid://bwa11cbuhe8wh" path="res://theming/gold_panel.tres" id="10_emsat"]
 [ext_resource type="FontFile" uid="uid://15waa33347nr" path="res://theming/DejaVuSerifCondensed-Bold.ttf" id="10_jh3m0"]
-[ext_resource type="Texture2D" uid="uid://dafgvxe851s1m" path="res://textures/double-arrow.png" id="11_bwsl0"]
 [ext_resource type="PackedScene" uid="uid://ct2nwwuqvympr" path="res://scenes/ui/pause_menu.tscn" id="12_d8vuc"]
+[ext_resource type="Texture2D" uid="uid://c2dd6p58oav1l" path="res://textures/ico_chat.png" id="14_m6bvy"]
+[ext_resource type="Texture2D" uid="uid://dj8cgve5rmnov" path="res://textures/gameplay/double_arrow.png" id="15_dhna4"]
 [ext_resource type="Script" path="res://scripts/gameplay/gameplay_music.gd" id="20_uflfd"]
 [ext_resource type="AudioStream" uid="uid://b5awc40y3qb2h" path="res://audio/music/Poker Party.ogg" id="22_o0l06"]
 
@@ -360,17 +361,23 @@ offset_bottom = 2.0
 grow_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_7acnl")
 
-[node name="TextureButton" type="TextureButton" parent="Display/Chat/Panel"]
+[node name="TextureRect" type="TextureRect" parent="Display/Chat/Panel"]
 modulate = Color(0.235294, 0.211765, 0.0156863, 1)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("14_m6bvy")
+
+[node name="TextureButton" type="TextureButton" parent="Display/Chat/Panel"]
+modulate = Color(0.831373, 0.741176, 0, 1)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-rotation = 3.14159
 pivot_offset = Vector2(20, 20)
-texture_normal = ExtResource("11_bwsl0")
+texture_normal = ExtResource("15_dhna4")
 ignore_texture_size = true
 stretch_mode = 0
 

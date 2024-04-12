@@ -22,6 +22,7 @@ func _ready():
 	Netgame.players.clear()
 	Rules.reset()
 	$PlayerSetup/VBoxContainer/QuitButton.pressed.connect(func(): get_tree().quit())
+	$Background/QuitButton.pressed.connect(func(): get_tree().quit())
 	$Background/Logo/Button.pressed.connect(func(): $AnimationPlayer.play("go_to_lobby"))
 	
 	if not get_parent().first_boot:

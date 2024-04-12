@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dafgvxe851s1m"
-path="res://.godot/imported/double-arrow.png-5a2a24689ace1c7b45e524666f87cf9e.ctex"
+uid="uid://c2dd6p58oav1l"
+path="res://.godot/imported/ico_chat.png-731172b4c23e95cfbebe1eaa85c7df1e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://textures/double-arrow.png"
-dest_files=["res://.godot/imported/double-arrow.png-5a2a24689ace1c7b45e524666f87cf9e.ctex"]
+source_file="res://textures/ico_chat.png"
+dest_files=["res://.godot/imported/ico_chat.png-731172b4c23e95cfbebe1eaa85c7df1e.ctex"]
 
 [params]
 
