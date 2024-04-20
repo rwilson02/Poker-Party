@@ -363,20 +363,28 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_7acnl")
 
 [node name="TextureRect" type="TextureRect" parent="Display/Chat/Panel"]
 modulate = Color(0.235294, 0.211765, 0.0156863, 1)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -17.5
+offset_right = 17.5
+offset_bottom = 35.0
+grow_horizontal = 2
 texture = ExtResource("14_m6bvy")
+expand_mode = 1
 
 [node name="TextureButton" type="TextureButton" parent="Display/Chat/Panel"]
 modulate = Color(0.831373, 0.741176, 0, 1)
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -17.5
+offset_right = 17.5
+offset_bottom = 35.0
 grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(20, 20)
+pivot_offset = Vector2(17.5, 17.5)
 texture_normal = ExtResource("15_dhna4")
 ignore_texture_size = true
 stretch_mode = 0
@@ -546,9 +554,11 @@ clips = {
 
 [node name="Music" type="AudioStreamPlayer" parent="Jukebox"]
 stream = ExtResource("22_o0l06")
+bus = &"MUSIC"
 
 [node name="SFX" type="AudioStreamPlayer" parent="Jukebox"]
 stream = ExtResource("6_oplt0")
 max_polyphony = 5
+bus = &"SFX"
 
 [node name="Timer" type="Timer" parent="."]
