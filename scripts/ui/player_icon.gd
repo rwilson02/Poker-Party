@@ -1,6 +1,7 @@
 extends ReferenceRect
 
 @onready var icon = $TextureRect
+@onready var overlay = $TextureRect/TextureRect
 @onready var text = $RichTextLabel
 
 const TEXT_TEMPLATE = "[center]%s\n%s"
@@ -28,11 +29,35 @@ func setup(this_player: int):
 	
 	update()
 
-func update():
+func update(state = null):
+	if id == -17160: return
+	
 	var player = Netgame.players[id]
-	icon.modulate = player.color if not id in Netgame.game_state.losers else Color.DIM_GRAY
-	var top_line = AWAIT_TEMPLATE % player.name if player.awaiting else player.name
-	var bottom_line = BET_TEMPLATE % [CHIP_TEMPLATE % player.chips, CHIP_BET_TEMPLATE % player.current_bet] \
-		if player.current_bet else CHIP_TEMPLATE % player.chips
+	var top_line: String
+	var bottom_line: String
+	
+	if state != null:
+		var flavor = ["CALL", null, "RAISE", "FOLD"].find(state)
+		if flavor == 0:
+			flavor += int(player.current_bet > 0)
+		if id in Netgame.game_state.folded_players:
+			flavor = 3
+		if id in Netgame.game_state.losers:
+			flavor = 4
+		
+		overlay.texture.region = Rect2i(Vector2i.RIGHT * ICON_SIZE * flavor, Vector2i.ONE * ICON_SIZE)
+	
+	if id in Netgame.game_state.losers:
+		icon.self_modulate = Color.DIM_GRAY
+		overlay.self_modulate = player.color.darkened(0.5) if player.color.get_luminance() > 0.5 \
+			else player.color.lightened(0.5)
+		bottom_line = "ELIMINATED"
+	else:
+		icon.self_modulate = player.color
+		bottom_line = BET_TEMPLATE % [CHIP_TEMPLATE % player.chips, CHIP_BET_TEMPLATE % player.current_bet] \
+			if player.current_bet else CHIP_TEMPLATE % player.chips
+		overlay.self_modulate = Color.WHITE
+	
+	top_line = AWAIT_TEMPLATE % player.name if player.awaiting else player.name
 	
 	text.text = TEXT_TEMPLATE % [top_line, bottom_line]

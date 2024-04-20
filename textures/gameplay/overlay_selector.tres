@@ -1,0 +1,8 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://du6l3htcy2xsq"]
+
+[ext_resource type="Texture2D" uid="uid://c72rmln7i2dm1" path="res://textures/gameplay/player_overlays.png" id="1_y73pe"]
+
+[resource]
+resource_local_to_scene = true
+atlas = ExtResource("1_y73pe")
+region = Rect2(-256, 0, 256, 256)
