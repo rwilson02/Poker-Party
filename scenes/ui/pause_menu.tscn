@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://ct2nwwuqvympr"]
+[gd_scene load_steps=11 format=3 uid="uid://ct2nwwuqvympr"]
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_biwbu"]
 [ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1_ubr7w"]
 [ext_resource type="Texture2D" uid="uid://bp1p1f7dygg32" path="res://textures/ico_pokerpedia_logo.png" id="3_27o0f"]
 [ext_resource type="Texture2D" uid="uid://4yal50qmoo8f" path="res://textures/rule_changes/FULL_RESET.png" id="3_cjllw"]
+[ext_resource type="Texture2D" uid="uid://2t4vmp8kypqg" path="res://textures/rule_changes/SPEED_DOWN.png" id="4_1ff3q"]
 [ext_resource type="Texture2D" uid="uid://c1mpi5ugfnok0" path="res://textures/gameplay/ico_pause.png" id="4_44dh1"]
 [ext_resource type="Texture2D" uid="uid://dvf5pbrq5hgss" path="res://textures/exit-door.png" id="5_u3jus"]
 
@@ -71,6 +72,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 tooltip_text = "Restart the game, at the end of the round."
 texture_normal = ExtResource("3_cjllw")
+texture_disabled = ExtResource("4_1ff3q")
 ignore_texture_size = true
 stretch_mode = 5
 
