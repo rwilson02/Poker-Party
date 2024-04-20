@@ -25,12 +25,11 @@ func _ready():
 			do_it_again.emit(true)
 		)
 		end_screen.get_node("HBoxContainer/ContinueButton").visible = true
-		var pause_restart: Button = pause.get_node("%Restart")
+		var pause_restart = pause.get_node("%Restart")
 		pause_restart.visible = true
 		pause_restart.pressed.connect(
 			func(): 
 				request_restart.emit()
-				pause_restart.text = "AWAITING..."
 				pause_restart.disabled = true
 		)
 	
