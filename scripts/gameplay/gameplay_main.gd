@@ -34,6 +34,7 @@ func player_ready():
 		player_responses = 0
 		
 		DISPLAY.get_node("MultiplayerSynchronizer").set_visibility_for(0, true)
+		BETTING.betting_round_ended.connect(DISPLAY.reset_icons)
 		
 		for id in range(0, -Rules.num_ai, -1):
 			var ai_player = Node.new()
@@ -53,7 +54,6 @@ func start_game(restart):
 	if restart:
 		Rules.reset()
 		
-		MENU.get_node("Pause/%Restart").text = "RESTART"
 		MENU.get_node("Pause/%Restart").disabled = false
 	
 	Netgame.game_state = {
@@ -141,6 +141,8 @@ func initial_round_tasks():
 	Netgame.game_state.comm_cards.clear()
 	for id in Netgame.game_state.active_players:
 		get_ante(id)
+	
+	DISPLAY.reset_icons()
 
 func deal_cards():
 	for i in (Rules.RULES.CARDS_PER_HAND - Rules.RULES.HOLE_CARDS):
@@ -153,6 +155,8 @@ func deal_cards():
 		Netgame.game_state.comm_cards.append(card)
 #		print("given comm card")
 	var player_card_probs = []
+	for id in Netgame.players:
+		Netgame.players[id].cards.clear() # Just in case
 	for i in Rules.RULES.HOLE_CARDS:
 		player_card_probs.append(Rules.odds(Rules.RULES.BLINDING))
 	for i in player_card_probs:
@@ -183,7 +187,7 @@ func get_winners() -> Array:
 			var back = winners.pop_back()
 			winners.push_front(back)
 	
-	winners = winners.map(func(c): return [c[0], c[1].cards])
+	#winners = winners.map(func(c): return [c[0], c[1].cards])
 	
 	return winners
 

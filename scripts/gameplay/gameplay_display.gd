@@ -183,10 +183,12 @@ func display_showdown(results: Array):
 	
 	var any_flips = false
 	for marker in (comm_card_holder.get_children() + hole_card_holder.get_children()):
-		var possible_card = marker.get_child(0)
-		if possible_card != null and possible_card.flipped:
+		if marker.get_child_count() == 0: continue
+		
+		var card = marker.get_child(0)
+		if card.flipped:
 			any_flips = true
-			possible_card.flip()
+			card.flip()
 			await get_tree().create_timer(0.5).timeout
 	if any_flips:
 		await get_tree().create_timer(1).timeout
@@ -197,10 +199,10 @@ func display_showdown(results: Array):
 	var proper = 0
 	for pair in results:
 		var id = pair[0]
-		var hand = Hand.new(pair[1])
+		var hand = pair[1]
 		
 		showdown_text.append_text("%s:\n" % Netgame.players[id].name)
-		if not pair[1].is_empty():
+		if not hand.rank.is_empty():
 			showdown_text.append_text("[b]%s[/b]\n" % Hand.hand_to_string(hand))
 			showdown_text.append_text("[i]%s[/i]\n\n" % hand.get_name())
 			proper += 1
@@ -256,3 +258,15 @@ func setup_icons(ids):
 		for i in icons:
 			if not host_timer.timeout.is_connected(i.update):
 				host_timer.timeout.connect(i.update)
+
+func update_icon(id, state):
+	var position = -1
+	for icon in players.get_child_count():
+		if players.get_child(icon).id == id: 
+			position = icon
+			break
+	players.get_child(position).update(state)
+
+func reset_icons():
+	for icon in players.get_children():
+		icon.update("RESET")
