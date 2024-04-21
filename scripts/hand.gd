@@ -10,7 +10,6 @@ func _init(given_cards: Array):
 	if not given_cards.is_empty():
 		self.cards = given_cards
 		classify()
-#		prints(self.rank, Hand.hand_to_string(self.cards))
 
 func classify():
 	var clean_values = self.cards.map(Rules.get_value)
@@ -50,6 +49,7 @@ func classify():
 		var val_count = clean_values.count(value)
 		if val_count > 1:
 			runs.append([val_count, value])
+			# Lowest value runs first
 	
 	# Wild adjustments
 	wild_count = self.cards.count(Rules.FREE_WILD)
@@ -82,22 +82,41 @@ func classify():
 	
 	#assert(runs.all(func(c): return c[0] <= self.cards.size()))
 	
+	for i in clean_values.size():
+		if clean_values[i] == Rules.FREE_WILD:
+			clean_values[i] = Rules.get_value(self.cards[i])
+	clean_values.sort()
+	
 	match [not is_straight.is_empty(), is_flush]:
 		[true, var also_flush]:
-			if Rules.get_value(clean_values[0]) == Rules.RULES.VALS_PER_SUIT - 1 and \
-				Rules.get_value(clean_values[1]) == Rules.RULES.CARDS_PER_HAND - 2:
-					self.kickerA = clean_values[1]
+			if Rules.get_value(clean_values[-1]) == Rules.RULES.VALS_PER_SUIT - 1 and \
+				Rules.get_value(clean_values[-2]) == Rules.RULES.CARDS_PER_HAND - 2:
+					self.kickerA = clean_values[-2]
 			else:
-				self.kickerA = clean_values.front()
+				self.kickerA = clean_values.back()
 			
 			self.rank = "SF" if also_flush else "ST"
 		[false, true]:
 			self.rank = "FL"
+			self.kickerA = clean_values[-1]
+			self.kickerB = clean_values[-2]
+			self.kickerC = clean_values[-3]
 		[false, false]:
 			match runs.size():
-				0: self.rank = "HC"
+				0: 
+					self.rank = "HC"
+					self.kickerA = clean_values[-1]
+					self.kickerB = clean_values[-2]
+					self.kickerC = clean_values[-3]
 				1:
 					self.kickerA = runs[0][1]
+					var rest = clean_values.duplicate()
+					for i in runs[0][0]:
+						rest.erase(runs[0][1])
+					
+					if rest.size() > 0: self.kickerB = rest[-1]
+					if rest.size() > 1: self.kickerC = rest[-2]
+					
 					match runs[0][0]:
 						6: self.rank = "6K"
 						5: self.rank = "5K"
@@ -106,20 +125,29 @@ func classify():
 						2: self.rank = "1P"
 				2:
 					var groups = [runs[1][0], runs[0][0]]
-					#groups.sort_custom(func(a,b): return a > b)
-					groups.sort()
-					self.kickerA = runs[1][1] if runs[1][0] == groups[0] else runs[0][1]
-					self.kickerB = runs[0][1] if self.kickerA == runs[1][1] else runs[1][1]
+					var full = groups[0] + groups[1] == clean_values.size()
+					
+					if groups[0] == groups[1]:
+						self.kickerA = maxi(runs[1][1], runs[0][1])
+						self.kickerB = mini(runs[0][1], runs[1][1])
+					else:
+						self.kickerA = runs[1][1] if groups[0] > groups[1] else runs[0][1]
+						self.kickerB = runs[1][1] if groups[0] < groups[1] else runs[0][1]
+					
+					if not full:
+						self.kickerC = clean_values.reduce(func(a, n): 
+							return n if not (n in [self.kickerA, self.kickerB]) else a, -1)
+					
 					match groups:
 						[2, 2]:
 							self.rank = "2P"
 						[3, 3]:
 							self.rank = "2T"
 						[_, _]:
-							if groups[0] + groups[1] < clean_values.size():
-								self.rank = "CR"
-							else: 
+							if full:
 								self.rank = "FH"
+							else: 
+								self.rank = "CR"
 				3:
 					self.rank = "3P"
 					self.kickerA = runs[2][1]
@@ -127,6 +155,8 @@ func classify():
 					self.kickerC = runs[0][1]
 				_:
 					push_error("wadda hell")
+	
+	#print("%s: %s | [%d, %d, %d]" % [self.rank, clean_values, self.kickerA, self.kickerB, self.kickerC])
 
 func get_name():
 	var hand_name = ""
@@ -349,39 +379,23 @@ static func sort(a: Hand, b:Hand) -> bool:
 	if a == null or a.rank.is_empty(): return false
 	if b == null or b.rank.is_empty(): return true
 	
-	if Rules.RULES.BALL == 1:
-		# Highball
-		if a.rank != b.rank:
-			return Rules.RULES.HAND_RANKS[a.rank] > Rules.RULES.HAND_RANKS[b.rank]
-		elif a.kickerA != b.kickerA:
-			return a.kickerA > b.kickerA
-		elif a.kickerB != b.kickerB:
-			return a.kickerB > b.kickerB
-		elif a.kickerC != b.kickerC:
-			return a.kickerC > b.kickerC
-		else:
-			return a.cards.map(Rules.get_value) > b.cards.map(Rules.get_value)
+	# A != B -> A - B <> 0
+	# * BALL (1 or -1) flips result, compared to 0
+	if a.rank != b.rank:
+		return ((Rules.RULES.HAND_RANKS[a.rank] - Rules.RULES.HAND_RANKS[b.rank]) * Rules.RULES.BALL) > 0
+	elif a.kickerA != b.kickerA:
+		return ((a.kickerA - b.kickerA) * Rules.RULES.BALL) > 0
+	elif a.kickerB != b.kickerB:
+		return ((a.kickerB - b.kickerB) * Rules.RULES.BALL) > 0
+	elif a.kickerC != b.kickerC:
+		return ((a.kickerC - b.kickerC) * Rules.RULES.BALL) > 0
 	else:
-		# Lowball
-		if a.rank != b.rank:
-			return Rules.RULES.HAND_RANKS[a.rank] < Rules.RULES.HAND_RANKS[b.rank]
-		elif a.kickerA != b.kickerA:
-			return a.kickerA < b.kickerA
-		elif a.kickerB != b.kickerB:
-			return a.kickerB < b.kickerB
-		elif a.kickerC != b.kickerC:
-			return a.kickerC < b.kickerC
-		else:
-			return a.cards.map(Rules.get_value) < b.cards.map(Rules.get_value)
+		return (a.cards.map(Rules.get_value) > b.cards.map(Rules.get_value)) != (Rules.RULES.BALL != 1)
 
 static func is_equal(a, b) -> bool:
-	if typeof(a) == typeof(Hand) and typeof(b) == typeof(Hand):
-		return a.cards.map(Rules.get_value) == b.cards.map(Rules.get_value)
-	elif typeof(a) == TYPE_ARRAY and typeof(b) == TYPE_ARRAY:
-		return a.map(Rules.get_value) == b.map(Rules.get_value)
-	else:
-		push_error("Type mismatch on parameters")
-		return false
+	if typeof(a) != typeof(Hand): a = Hand.new(a)
+	if typeof(b) != typeof(Hand): a = Hand.new(b)
+	return Hand.sort(a, b) == Hand.sort(b, a)
 
 static func get_best_hand(given_cards: Array):
 	var best_hand: Hand = Hand.new([])
@@ -414,20 +428,23 @@ static func get_combinations(n: Array, k: int):
 				returned.append(next)
 	return returned
 
-static func hand_to_string(hand):
+static func hand_to_string(hand, unicode = false):
 	if hand is Hand:
 		hand = hand.cards
 	hand.sort_custom(func(a,b): return Rules.get_value(a) > Rules.get_value(b))
 	
 	var hand_string = "["
-	for card in hand:
-		hand_string += Rules.get_card_string(card)
-		hand_string += " "
-	hand_string[-1] = "]"
-	
-#	if Rules.get_value(hand[0]) == Rules.RULES.VALS_PER_SUIT - 1 \
-#		and Rules.get_value(hand[1]) == Rules.RULES.CARDS_PER_HAND - 2:
-#			var slices = hand_string.split(" ", false, 1)
-#			hand_string = "[%s %s]" % [slices[1].left(-1), slices[0].right(2)]
+	if not unicode:
+		for card in hand:
+			hand_string += Rules.get_card_string(card)
+			hand_string += " "
+		hand_string[-1] = "]"
+	else:
+		for card in hand:
+			hand_string += Rules.get_proper_value(card)
+			var suit = Rules.get_suit(card)
+			hand_string += "\u2660\u2665\u2663\u2666\u2605\u263E"[suit] if suit < Rules.RULES.SUITS else "\U01F0CF"
+			hand_string += " "
+		hand_string[-1] = "]"
 	
 	return hand_string

@@ -77,6 +77,7 @@ func do_betting_round(start_index):
 	if all_bets_equal():
 		#print("Everyone checked.")
 		collect_all_bets()
+		betting_round_ended.emit()
 		return
 	
 	# Keep it rolling around if people are there

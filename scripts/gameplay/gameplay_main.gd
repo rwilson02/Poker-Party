@@ -40,7 +40,7 @@ func player_ready():
 			var ai_player = Node.new()
 			ai_player.set_script(AI)
 			BETTING.get_node("AI").add_child(ai_player)
-			ai_player.setup(id)
+			ai_player.setup(id, 1)
 			BETTING.betting_round_ended.connect(ai_player.round_reset)
 			
 			Netgame.players[id] = ai_player.player_info
