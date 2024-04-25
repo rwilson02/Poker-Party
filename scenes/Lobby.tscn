@@ -2,8 +2,8 @@
 
 [ext_resource type="Theme" uid="uid://b4yajy8yajabe" path="res://theming/general.tres" id="1_6mw0b"]
 [ext_resource type="Script" path="res://scripts/lobby.gd" id="1_vmmqq"]
-[ext_resource type="Texture2D" uid="uid://b4s2sve4r8kiq" path="res://textures/lobby/bg_lobby_new.png" id="3_3ya66"]
 [ext_resource type="PackedScene" uid="uid://dqf80ncy8fmxq" path="res://scenes/ui/id_card.tscn" id="3_6nbw5"]
+[ext_resource type="Texture2D" uid="uid://msj4ape5ehbn" path="res://textures/lobby/bg_lobby_test.png" id="3_tvrbo"]
 [ext_resource type="Texture2D" uid="uid://krcwl10ikm4" path="res://textures/lobby/logo_neon.png" id="4_p4ilm"]
 [ext_resource type="Texture2D" uid="uid://bi4pkxxksssk4" path="res://textures/lobby/bg_lobby_curtain.png" id="4_qaqqp"]
 [ext_resource type="StyleBox" uid="uid://dvekrj5kb734i" path="res://theming/card_panel.tres" id="6_6dq0q"]
@@ -14,12 +14,20 @@
 bg_color = Color(0.713726, 0.635294, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uvgmb"]
-bg_color = Color(0.831373, 0.741176, 0, 1)
+bg_color = Color(0.235294, 0.211765, 0.0156863, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_color = Color(0.831373, 0.741176, 0, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mt7s4"]
 bg_color = Color(0.235294, 0.211765, 0.0156863, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_color = Color(0.235294, 0.211765, 0.0156863, 1)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 
@@ -124,7 +132,7 @@ modulate = Color(0.74902, 0.74902, 0.74902, 1)
 layout_mode = 0
 offset_right = 1280.0
 offset_bottom = 2160.0
-texture = ExtResource("3_3ya66")
+texture = ExtResource("3_tvrbo")
 
 [node name="CurtainL" type="TextureRect" parent="Background"]
 top_level = true
@@ -238,6 +246,7 @@ offset_right = 210.0
 offset_bottom = 520.0
 grow_horizontal = 2
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_uvgmb")
+theme_override_styles/tab_hovered = SubResource("StyleBoxFlat_uvgmb")
 theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_mt7s4")
 theme_override_styles/panel = SubResource("StyleBoxFlat_pd5t6")
 tab_alignment = 1
@@ -648,27 +657,23 @@ grow_horizontal = 2
 scale = Vector2(1.5, 1.5)
 do_show_anim = true
 
-[node name="VBoxContainer" type="HBoxContainer" parent="PlayerSetup"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = -82.0
-offset_right = 190.0
-offset_bottom = -20.0
-grow_vertical = 0
-
-[node name="OpenPokerpedia" type="TextureButton" parent="PlayerSetup/VBoxContainer"]
+[node name="OpenPokerpedia" type="TextureButton" parent="PlayerSetup"]
 custom_minimum_size = Vector2(125, 100)
 layout_mode = 2
+offset_left = 20.0
+offset_top = 520.0
+offset_right = 200.0
+offset_bottom = 670.0
 texture_normal = ExtResource("8_mxpqv")
 ignore_texture_size = true
 stretch_mode = 4
 
-[node name="QuitButton" type="TextureButton" parent="PlayerSetup/VBoxContainer"]
+[node name="QuitButton" type="TextureButton" parent="PlayerSetup"]
 custom_minimum_size = Vector2(125, 0)
 layout_mode = 2
+offset_left = 1055.0
+offset_right = 1180.0
+offset_bottom = 62.0
 texture_normal = ExtResource("7_dnmwq")
 ignore_texture_size = true
 stretch_mode = 5
@@ -688,4 +693,4 @@ libraries = {
 [connection signal="pressed" from="LobbyControls/Control/PreGame/Joining/Join" to="." method="on_join_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/VBoxContainer/StartButton" to="." method="on_start_button"]
 [connection signal="pressed" from="LobbyControls/Control/InGame/CancelButton" to="." method="on_cancel_button"]
-[connection signal="pressed" from="PlayerSetup/VBoxContainer/OpenPokerpedia" to="." method="show_how_to_play"]
+[connection signal="pressed" from="PlayerSetup/OpenPokerpedia" to="." method="show_how_to_play"]

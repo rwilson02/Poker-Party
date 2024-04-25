@@ -104,8 +104,8 @@ func think(bet):
 	think_timer.start(get_think_time())
 	
 	# Small boosts to make lategame more fun
-	confidence += 0.2 * (last_active - Netgame.game_state.active_players.size()) if last_active > 0 else 0
-	optimism += 0.1 if (last_active - Netgame.game_state.active_players.size()) > 0 else 0
+	confidence += 0.2 * (last_active - Netgame.game_state.active_players.size()) if last_active > 0 else 0.0
+	optimism += 0.1 if (last_active - Netgame.game_state.active_players.size()) > 0 else 0.0
 	last_active = Netgame.game_state.active_players.size()
 	
 	if bet >= player_info.chips + player_info.current_bet:
@@ -232,7 +232,7 @@ func answer_outs():
 	
 	var call_amt = maxi(current_max_bet - player_info.current_bet, 0)
 	# Positive net value on calls with equity better than pot odds
-	prints(snappedf(thread_result[1] * certainty * confidence, 0.001), snappedf(pot_odds, 0.001))
+	#prints(snappedf(thread_result[1] * certainty * confidence, 0.001), snappedf(pot_odds, 0.001))
 	if thread_result[1] * certainty * confidence > pot_odds + (randf() * 0.7):
 		if thread_result[1] * optimism * confidence > randf():
 			# Even raise a little bit
@@ -473,7 +473,7 @@ func think_with_outs():
 		
 		mutex.lock()
 		result = [chance_to_improve, approx_equity]
-		print("Thinking done: Chance to improve %.2f%%, approximate equity %.2f%%" % [result[0] * 100, result[1] * 100])
+		#print("Thinking done: Chance to improve %.2f%%, approximate equity %.2f%%" % [result[0] * 100, result[1] * 100])
 		mutex.unlock()
 		
 		if keep_thinking:

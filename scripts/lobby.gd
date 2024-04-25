@@ -21,7 +21,7 @@ func _ready():
 	timer.timeout.connect(timeout)
 	Netgame.players.clear()
 	Rules.reset()
-	$PlayerSetup/VBoxContainer/QuitButton.pressed.connect(func(): get_tree().quit())
+	$PlayerSetup/QuitButton.pressed.connect(func(): get_tree().quit())
 	$Background/QuitButton.pressed.connect(func(): get_tree().quit())
 	$Background/Logo/Button.pressed.connect(func(): $AnimationPlayer.play("go_to_lobby"))
 	
@@ -92,7 +92,7 @@ func on_join_button():
 		player_inputs.set_editable(false)
 		lobby_controls.visible = false
 		start_controls.visible = true
-		start_controls.get_node("StartButton").visible = false
+		start_controls.get_node("VBoxContainer").visible = false
 		
 		player_display.clear()
 		player_display.append_text("...")
