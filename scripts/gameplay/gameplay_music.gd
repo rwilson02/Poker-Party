@@ -24,7 +24,7 @@ func play_sfx(clip: String):
 
 func readjust():
 	var config = ConfigFile.new()
-	var err = config.open("user://config.cfg")
+	var err = config.load("user://config.cfg")
 	if not err:
 		MUSIC.volume_db = linear_to_db(config.get_value("settings", "music_vol"))
 		SFX.volume_db = linear_to_db(config.get_value("settings", "sfx_vol"))
