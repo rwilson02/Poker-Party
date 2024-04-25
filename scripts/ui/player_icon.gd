@@ -13,24 +13,32 @@ const ICON_ATLAS = preload("res://textures/lobby/icon_atlas.png")
 const ICON_SIZE = 256
 
 var id: int = -17160
+var is_setup = false
 
 func setup(this_player: int):
 	id = this_player
 	
-	var icons_per_row = ICON_ATLAS.get_width() / ICON_SIZE
-	var pos = Vector2(Netgame.players[id].icon % icons_per_row, Netgame.players[id].icon / icons_per_row)
-	var new_region = Rect2(pos * ICON_SIZE, Vector2.ONE * ICON_SIZE)
-	if icon.texture.region != new_region:
-		icon.texture.region = new_region
-	
-	if position.y >= get_viewport().get_visible_rect().size.y / 2:
-		text.position = Vector2.ZERO
-		icon.position = Vector2.DOWN * text.size.y
-	
-	update()
+	if id in Netgame.players:
+		var icons_per_row = ICON_ATLAS.get_width() / ICON_SIZE
+		var pos = Vector2(Netgame.players[id].icon % icons_per_row, Netgame.players[id].icon / icons_per_row)
+		var new_region = Rect2(pos * ICON_SIZE, Vector2.ONE * ICON_SIZE)
+		if icon.texture.region != new_region:
+			icon.texture.region = new_region
+		
+		if position.y >= get_viewport().get_visible_rect().size.y / 2:
+			text.position = Vector2.ZERO
+			icon.position = Vector2.DOWN * text.size.y
+		
+		is_setup = true
+		update()
 
 func update(state = null):
 	if id == -17160: return
+	if not is_setup and id in Netgame.players:
+		setup(id)
+		return # another call to update in setup
+	elif id not in Netgame.players:
+		return
 	
 	var player = Netgame.players[id]
 	var top_line: String

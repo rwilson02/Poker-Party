@@ -23,6 +23,7 @@ func _ready():
 	MENU.request_restart.connect(func(): restart_requested = true)
 	BETTING.DISPLAY = DISPLAY
 	DISPLAY.JUKEBOX = JUKEBOX
+	BETTING.betting_round_ended.connect(DISPLAY.reset_icons)
 	
 	rpc_id(1, "player_ready")
 
@@ -34,7 +35,6 @@ func player_ready():
 		player_responses = 0
 		
 		DISPLAY.get_node("MultiplayerSynchronizer").set_visibility_for(0, true)
-		BETTING.betting_round_ended.connect(DISPLAY.reset_icons)
 		
 		for id in range(0, -Rules.num_ai, -1):
 			var ai_player = Node.new()
@@ -142,7 +142,7 @@ func initial_round_tasks():
 	for id in Netgame.game_state.active_players:
 		get_ante(id)
 	
-	DISPLAY.reset_icons()
+	DISPLAY.reset_icons.rpc()
 
 func deal_cards():
 	for i in (Rules.RULES.CARDS_PER_HAND - Rules.RULES.HOLE_CARDS):

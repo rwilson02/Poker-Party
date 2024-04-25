@@ -259,6 +259,7 @@ func setup_icons(ids):
 			if not host_timer.timeout.is_connected(i.update):
 				host_timer.timeout.connect(i.update)
 
+@rpc("authority", "call_local", "reliable")
 func update_icon(id, state):
 	var position = -1
 	for icon in players.get_child_count():
@@ -267,6 +268,7 @@ func update_icon(id, state):
 			break
 	players.get_child(position).update(state)
 
+@rpc("authority", "call_local", "reliable")
 func reset_icons():
 	for icon in players.get_children():
 		icon.update("RESET")

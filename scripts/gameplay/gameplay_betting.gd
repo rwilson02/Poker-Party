@@ -178,7 +178,7 @@ func send_option(option, value, sender):
 		"DISCONNECT":
 			DISPLAY.log_to_chat("player(%d) disconnected." % sender)
 	
-	DISPLAY.update_icon(sender, option)
+	DISPLAY.update_icon.rpc(sender, option)
 	input_received.emit(option == "RAISE")
 	return option == "RAISE"
 
