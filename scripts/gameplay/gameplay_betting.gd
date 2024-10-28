@@ -78,6 +78,7 @@ func do_betting_round(start_index):
 		#print("Everyone checked.")
 		collect_all_bets()
 		betting_round_ended.emit()
+		DISPLAY.reset_icons.rpc()
 		return
 	
 	# Keep it rolling around if people are there
@@ -104,6 +105,7 @@ func do_betting_round(start_index):
 	# End of betting round
 	collect_all_bets()
 	betting_round_ended.emit()
+	DISPLAY.reset_icons.rpc()
 
 @rpc("authority","call_local","reliable")
 func get_bet_option(current_bet):

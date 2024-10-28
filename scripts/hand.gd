@@ -394,7 +394,7 @@ static func sort(a: Hand, b:Hand) -> bool:
 
 static func is_equal(a, b) -> bool:
 	if typeof(a) != typeof(Hand): a = Hand.new(a)
-	if typeof(b) != typeof(Hand): a = Hand.new(b)
+	if typeof(b) != typeof(Hand): b = Hand.new(b)
 	return Hand.sort(a, b) == Hand.sort(b, a)
 
 static func get_best_hand(given_cards: Array):

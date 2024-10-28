@@ -13,6 +13,7 @@ const AI = preload("res://scripts/ai.gd")
 
 var player_responses = 0
 var round_start_index = -1
+var rounds_to_play
 var restart_requested = false
 var deck: Array
 var showed_KO = false
@@ -24,6 +25,7 @@ func _ready():
 	BETTING.DISPLAY = DISPLAY
 	DISPLAY.JUKEBOX = JUKEBOX
 	BETTING.betting_round_ended.connect(DISPLAY.reset_icons)
+	rounds_to_play = Rules.RULES.GAMEPLAY_ROUNDS - 1
 	
 	rpc_id(1, "player_ready")
 
@@ -49,12 +51,15 @@ func player_ready():
 
 func start_game(restart):
 	MENU.hide_end_screen.rpc()
+	restart_requested = false
 	showed_KO = false
 	
 	if restart:
 		Rules.reset()
-		
+		round_start_index = 0
 		MENU.get_node("Pause/%Restart").disabled = false
+	else:
+		rounds_to_play += Rules.RULES.GAMEPLAY_ROUNDS
 	
 	Netgame.game_state = {
 		"pot": 0,
@@ -72,7 +77,7 @@ func start_game(restart):
 	DISPLAY.setup_icons.rpc(Netgame.game_state.active_players)
 	DISPLAY.redo_change_icons = true
 	
-	while Netgame.game_state.active_players.size() > 1 and round_start_index < Rules.RULES.GAMEPLAY_ROUNDS:
+	while Netgame.game_state.active_players.size() > 1 and round_start_index < rounds_to_play:
 		await gameplay_loop()
 		
 		if not showed_KO and Netgame.game_state.active_players.all(func(c): return c < 1):
@@ -163,6 +168,7 @@ func deal_cards():
 		for id in Netgame.game_state.active_players:
 #			prints("given hole card to", id)
 			Netgame.players[id].cards.append(deck.pop_back() | (Rules.HIDDEN * int(i)))
+	JUKEBOX.play_sfx("cards")
 
 # Returns array of [winner id, winning hand] from best to worst
 func get_winners() -> Array:
@@ -187,7 +193,7 @@ func get_winners() -> Array:
 			var back = winners.pop_back()
 			winners.push_front(back)
 	
-	#winners = winners.map(func(c): return [c[0], c[1].cards])
+	winners = winners.map(func(c): return [c[0], c[1].cards])
 	
 	return winners
 

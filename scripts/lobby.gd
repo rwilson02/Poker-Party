@@ -29,15 +29,17 @@ func _ready():
 		$Background/CurtainL.visible = false
 		$Background/CurtainR.visible = false
 		$Camera2D.position = Vector2.DOWN * 1440
+		$PlayerSetup/OpenPokerpedia/ReadingHint.visible = false
 		player_inputs.show_anim()
 
-func test_start(remaining_players = 1):
-	var rem = maxi(remaining_players, Netgame.players.keys().size())
+func test_start(_remaining_players = 1):
 	ai_input.max_value = Netgame.MAX_CONNECTIONS - Netgame.players.keys().filter(func(c): return c > 0).size()
 	
-	start_controls.get_node("%StartButton").disabled = (rem + ai_input.value) < 2
+	start_controls.get_node("%StartButton").disabled = (Netgame.players.size() + ai_input.value) < 2
+	if multiplayer.get_unique_id() == 1: update_player_display.rpc(Netgame.players.size() + ai_input.value)
 
-func update_player_display(_remaining = null):
+@rpc("call_local", "authority")
+func update_player_display(num_players: int = -1):
 	var template_string = "%s\n"
 	
 	player_display.clear()
@@ -55,6 +57,17 @@ func update_player_display(_remaining = null):
 			player_display.pop()
 		else:
 			player_display.add_text(template_string % Netgame.players[player_id].name)
+	
+	var remainder = num_players - Netgame.players.size() if typeof(num_players) == TYPE_INT else 0
+	if remainder > 0:
+		player_display.push_color(Color.DARK_GRAY)
+		player_display.push_italics()
+		player_display.add_text("\t+%d CPU player" % remainder)
+		if remainder > 1:
+			player_display.add_text("s")
+		player_display.pop()
+		player_display.pop()
+	
 	player_display.pop()
 
 func create_game():
@@ -191,5 +204,6 @@ func get_rule_change(rule_name):
 
 func show_how_to_play():
 	var polka = POKERPEDIA.instantiate()
+	$PlayerSetup/OpenPokerpedia/ReadingHint.visible = false
 	add_child(polka)
 	polka.position = Vector2.DOWN * get_tree().root.content_scale_size.y * 2

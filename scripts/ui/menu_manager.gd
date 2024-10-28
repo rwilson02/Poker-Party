@@ -110,6 +110,9 @@ func show_end_screen(game_over = true):
 			end_text += THIRD % get_player_name.call(Netgame.game_state.losers[-2])
 		end_screen.get_node("Ranking").text = end_text
 		
+		continue_button.text = "KEEP PLAYING"
+		continue_button.tooltip_text = "Give everyone a fresh set of chips and keep playing with the current ruleset."
+		
 		if Netgame.game_state.active_players.has(multiplayer.get_unique_id()):
 			end_screen.get_node("BigText").text = "YOU WIN"
 		if multiplayer.is_server():
@@ -123,6 +126,9 @@ func show_end_screen(game_over = true):
 	else:
 		end_screen.get_node("Ranking").text = "[center][font_size=24]All human players knocked out!"
 		end_screen.get_node("Message").text = "You can continue to watch, or leave the lobby."
+		
+		continue_button.text = "KEEP WATCHING"
+		continue_button.tooltip_text = "Continue to watch the CPU players."
 		
 		continue_button.visible = true
 		continue_button.pressed.connect(func(): 

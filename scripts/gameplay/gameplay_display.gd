@@ -20,6 +20,7 @@ const ICON_SIZE = 40
 var JUKEBOX
 var host_timer
 var redo_change_icons = false
+var prev_changes = []
 
 func _ready():
 	if(multiplayer.get_unique_id() == 1):
@@ -96,7 +97,25 @@ func adjust_change_icons():
 	var CHANGE_DESCS: Dictionary = {}
 	var CHANGES: Dictionary = {}
 	
+	var config = ConfigFile.new()
+	config.load("user://config.cfg")
+	
+	var array_subtract = func(a: Array, b: Array):
+		var result: Array = a.duplicate()
+		for item in b:
+			result.erase(item)
+		return result
+	
 	var curr = Rules.RULES.CURRENT_CHANGES
+	var change_diff = 0
+	var affected_change = ""
+	
+	if curr == prev_changes:
+		return
+	else:
+		change_diff = curr.size() - prev_changes.size()
+		affected_change = curr[-1] if change_diff > 0 else array_subtract.call(prev_changes, curr)[0]
+	
 	var descs = Rules.get_changes()
 	for idx in curr.size():
 		var change = curr[idx]
@@ -107,7 +126,9 @@ func adjust_change_icons():
 	
 	for child in change_icons.get_children():
 		child.free()
+	
 	if curr.size() == 0: return
+	
 	for idx in CHANGES.keys():
 		var icon = TextureRect.new()
 		icon.custom_minimum_size = Vector2.ONE * ICON_SIZE
@@ -128,7 +149,23 @@ func adjust_change_icons():
 			badge.self_modulate = Color.GOLDENROD
 			icon.add_child(badge)
 	
+	if config.get_value("prefs", "do_rule_hinting", false) and not affected_change.is_empty():
+		var update_panel = $UpdatePanel
+		update_panel.position = $ChangePanel.position + (Vector2.RIGHT * (ICON_SIZE * CHANGES.size() + 10))
+		
+		var change_name = RuleChanger.get_option_information(affected_change)[3]
+		var inserts = ["Added", change_name] if change_diff > 0 else ["Removed", change_name]
+		update_panel.text = "%s rule: %s" % inserts
+		
+		update_panel.self_modulate = Color.WHITE
+		update_panel.visible = true
+		var tween = update_panel.create_tween()
+		tween.tween_interval(2.5)
+		tween.tween_property(update_panel, "self_modulate", Color.TRANSPARENT, 0.5)
+		tween.tween_property(update_panel, "visible", false, 0)
+	
 	redo_change_icons = false
+	prev_changes = curr.duplicate()
 
 func determine_card(flavor: String, holder: Node, id: int):
 	var known_cards
@@ -199,7 +236,7 @@ func display_showdown(results: Array):
 	var proper = 0
 	for pair in results:
 		var id = pair[0]
-		var hand = pair[1]
+		var hand = Hand.new(pair[1])
 		
 		showdown_text.append_text("%s:\n" % Netgame.players[id].name)
 		if not hand.rank.is_empty():
@@ -207,7 +244,7 @@ func display_showdown(results: Array):
 			showdown_text.append_text("[i]%s[/i]\n\n" % hand.get_name())
 			proper += 1
 		else:
-			showdown_text.append_text("[i]Folded[/i]\n\n")
+			showdown_text.append_text("[i]Folded (had %s)[/i]\n\n" % Hand.hand_to_string(Netgame.players[id].cards))
 	
 	var in_tween = create_tween()
 	in_tween.tween_property(showdown_panel, "position", showdown_panel.position + (Vector2.LEFT * 400), 0.5)

@@ -13,6 +13,8 @@ func _ready():
 		%CheckHotkey.text = OS.get_keycode_string(config.get_value("settings", "check_ctrl", InputMap.action_get_events("check_call")[0].keycode))
 		%BetHotkey.text = OS.get_keycode_string(config.get_value("settings", "bet_ctrl", InputMap.action_get_events("bet_raise")[0].keycode))
 		%FoldHotkey.text = OS.get_keycode_string(config.get_value("settings", "fold_ctrl", InputMap.action_get_events("fold")[0].keycode))
+		
+		%RuleHint.button_pressed = config.get_value("prefs", "do_rule_hinting", false)
 	
 	%CheckHotkey.pressed.connect(start_listening.bind(%CheckHotkey))
 	%BetHotkey.pressed.connect(start_listening.bind(%BetHotkey))
@@ -30,6 +32,8 @@ func _exit_tree():
 			config.set_value("settings", "bet_ctrl", OS.find_keycode_from_string(%BetHotkey.text))
 			config.set_value("settings", "fold_ctrl", OS.find_keycode_from_string(%FoldHotkey.text))
 			
+			config.set_value("prefs", "do_rule_hinting", %RuleHint.button_pressed)
+			
 			config.save("user://config.cfg");
 	
 	get_tree().get_root().get_node("Main").settings_changed.emit()
@@ -44,6 +48,7 @@ func _input(event):
 				listening_button.text = OS.get_keycode_string(event.get_keycode_with_modifiers())
 				change_control(listening_button.get_meta("action"), event)
 				stop_listening(true)
+			get_viewport().set_input_as_handled()
 
 func start_listening(who):
 	if who is BaseButton:
